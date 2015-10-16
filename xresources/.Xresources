@@ -1,0 +1,16 @@
+URxvt*depth: 32
+URxvt*buffered: true
+URxvt*intensityStyles: false
+URxvt*loginShell: true
+URxvt*scrollstyle: rxvt
+URxvt*scrollBar: false
+URxvt*transparent: true
+URxvt*shading: 25
+! URxvt*saveLines: number
+URxvt*termName: rxvt-256color
+URxvt*mouseWheelScrollPage: false
+URxvt*cursorBlink: true
+URxvt*pointerBlank: true
+! URxvt*url-launcher: string
+URxvt*font: xft:Meslo\ LG\ S\ for\ Powerline:style=RegularForPowerline:size=10
+!URxvt*letterSpace: -1
