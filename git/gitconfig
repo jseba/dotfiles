@@ -1,0 +1,96 @@
+[color]
+  ui = true
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red
+  new = green
+
+[alias]
+  # add
+  a = add                       # add
+  cadd = add --patch            # add commits chunk by chunk
+
+  # assume
+  assume   = update-index --assume-unchanged
+  unassume = update-index --no-assume-unchanged
+  assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
+
+  # snapshot stashes
+  snapshot  = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
+  snapshots = !git stash list --grep snapshot
+
+  # branch
+  b = branch -v             # branch verbose
+
+  # commit
+  c  = commit -m            # commit with message
+  ca = commit -am           # commit all with message
+  ci = commit               # normal commit
+  amend = commit --amend    # amend previous commit
+
+  # checkout
+  co = checkout             # normal checkout
+  nb = checkout -b          # new branch
+
+  # cherry-pick
+  cp = cherry-pick -x       # grab a change from a branch
+
+  # diff
+  d = diff                  # diff unstaged changes
+  dc = diff --cached        # diff staged changes
+  last = diff HEAD^         # diff with last commit
+
+  # log
+  l = log --graph --date=short
+  changes = log --pretty=format:\"%h %cr %cn %Cgreen %s%Creset\" --name=status
+  short = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\"
+  simple = log --pretty=format:\" * %s\"
+  shortnocolor = log --pretty=format:\"%h %cr %cn %s\"
+
+  # rebase
+  rc = rebase --continue    # continue rebase
+  rs = rebase --skip        # skip rebase
+
+  # reset
+  unstage = reset HEAD
+  uncommit = reset --soft HEAD^
+  filelog = log -u
+
+[format]
+  pretty = format:%C(blue)%ad%Creset %C(yellow)%h%C(green)%d%Creset %C(blue)%s %C(magenta) [%an]%Creset
+
+[mergetool]
+  prompt = false
+
+[merge]
+  summary = true
+  verbosity = 1
+
+[apply]
+  whitespace = nowarn
+
+[branch]
+  autosetupmerge = true
+
+[push]
+  default = upstream
+
+[core]
+  autocrlf = false
+  editor = vim
+  excludesfile = ~/.gitignore
+
+[advice]
+  statusHints = false
+
+[diff]
+  mnemonicprefix= true
+  algorithm = patience
+
+[rerere]
+  enabled = true

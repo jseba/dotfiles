@@ -12,5 +12,5 @@ URxvt*mouseWheelScrollPage: false
 URxvt*cursorBlink: true
 URxvt*pointerBlank: true
 ! URxvt*url-launcher: string
-URxvt*font: xft:Meslo\ LG\ S\ for\ Powerline:style=RegularForPowerline:size=10
-!URxvt*letterSpace: -1
+URxvt*font: xft:Meslo\ LG\ S\ for\ Powerline:style=RegularForPowerline:size=8
+URxvt*letterSpace: -1
