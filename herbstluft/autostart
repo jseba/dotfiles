@@ -20,7 +20,7 @@ hc keybind $Mod-Shift-c close
 
 # programs
 hc keybind $Mod-c spawn google-chrome
-hc keybind $Mod-Return spawn ${TERMINAL:-xterm}
+hc keybind $Mod-Return spawn urxvt-256color
 # basic movement
 # focusing clients
 hc keybind $Mod-h     focus left
