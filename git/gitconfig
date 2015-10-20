@@ -94,3 +94,6 @@
 
 [rerere]
   enabled = true
+[user]
+	name = Josh Seba
+	email = jseba@bats.com
