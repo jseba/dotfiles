@@ -89,11 +89,14 @@
   statusHints = false
 
 [diff]
-  mnemonicprefix= true
+  mnemonicprefix = true
   algorithm = patience
+  tool = vimdiff
+  guitool = meld
 
 [rerere]
   enabled = true
+
 [user]
-	name = Josh Seba
-	email = jseba@bats.com
+  name = Josh Seba
+  email = jseba@bats.com
