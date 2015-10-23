@@ -36,6 +36,7 @@ plugins=(git zypper suse z sudo tmux svn man)
 export LANG=en_US.UTF-8
 export EDITOR='vim'
 export PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
+export LESS=-FXR
 
 source $ZSH/oh-my-zsh.sh
 source $HOME/.dotfiles/base16/base16-atelierforest.dark.sh

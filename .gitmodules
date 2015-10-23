@@ -31,6 +31,6 @@
 [submodule "vim/.vim/bundle/ultisnips"]
 	path = vim/.vim/bundle/ultisnips
 	url = https://github.com/SirVer/ultisnips
-[submodule "vim/.vim/bundle/command-t"]
-	path = vim/.vim/bundle/command-t
-	url = https://github.com/wincent/command-t
+[submodule "vim/.vim/bundle/ctrlp.vim"]
+	path = vim/.vim/bundle/ctrlp.vim
+	url = https://github.com/kien/ctrlp.vim

@@ -48,11 +48,17 @@ au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
 let mapleader=','
 inoremap jj <ESC>
 nnoremap ; :
-map <C-J> <C-W>j<C-W>_
-map <C-K> <C-W>k<C-W>_
-map <C-L> <C-W>k<C-W>_
-map <C-H> <C-W>h<C-W>_
 map <leader>fc /\v^[<\|=>]{7}( .*\|$)<CR>
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+nnoremap <Leader>< :bp<CR>
+nnoremap <Leader>> :bn<CR>
+nnoremap <C-p> :CtrlPMixed<CR>
+nnoremap <Leader>b :CtrlPBuffer<CR>
+nnoremap <Leader>f :CtrlP<CR>
+nmap <silent> <leader>/ :set invhlsearch<CR>
 
 " Powerline setup
 set t_Co=256
@@ -98,4 +104,4 @@ nnoremap <silent> <leader>gg :SignifyToggle<CR>
 " YouCompleteMe
 let g:acp_enableAtStartup=0
 let g:ycm_collect_identifiers_from_tags_files=1
-
+let g:ycm_confirm_extra_conf=0
