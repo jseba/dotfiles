@@ -31,7 +31,7 @@ COMPLETION_WAITING_DOTS="true"
 # much, much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-plugins=(git zypper suse z sudo tmux svn man)
+plugins=(git svn zypper suse z sudo tmux svn man)
 
 export LANG=en_US.UTF-8
 export EDITOR='vim'
