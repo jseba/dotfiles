@@ -105,3 +105,6 @@ nnoremap <silent> <leader>gg :SignifyToggle<CR>
 let g:acp_enableAtStartup=0
 let g:ycm_collect_identifiers_from_tags_files=1
 let g:ycm_confirm_extra_conf=0
+
+" Polyglot
+let g:cpp_class_scope_highlight=1
