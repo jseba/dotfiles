@@ -60,12 +60,22 @@ nnoremap <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>f :CtrlP<CR>
 nmap <silent> <leader>/ :set invhlsearch<CR>
 
-" Powerline setup
+" Airline setup
 set t_Co=256
 set laststatus=2
-python from powerline.vim import setup as powerline_setup
-python powerline_setup()
-python del powerline_setup
+if !exists('g:airline_symbols')
+    let g:airline_symbols={}
+endif
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
+let g:airline_theme='murmur'
+let g:airline_inactive_collapse=0
+let g:airline_powerline_fonts=1
 
 " Omnicomplete
 autocmd Filetype * 
@@ -108,3 +118,6 @@ let g:ycm_confirm_extra_conf=0
 
 " Polyglot
 let g:cpp_class_scope_highlight=1
+
+" CtrlP
+let g:ctrlp_switch_buffer=0
