@@ -60,6 +60,22 @@ nnoremap <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>f :CtrlP<CR>
 nmap <silent> <leader>/ :set invhlsearch<CR>
 
+" Color scheme
+if has('gui_running')
+    colorscheme PaperColor
+    set background=light
+    set guifont=Source\ Code\ Pro\ 8
+    set guioptions-=T
+    set guioptions-=e
+    set guioptions-=m
+    set guioptions-=r
+    set guioptions-=l
+    set guioptions-=C
+else
+    set background=dark
+    colorscheme default
+endif
+
 " Airline setup
 set t_Co=256
 set laststatus=2
@@ -73,7 +89,7 @@ let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
-let g:airline_theme='murmur'
+let g:airline_theme='papercolor'
 let g:airline_inactive_collapse=0
 let g:airline_powerline_fonts=1
 

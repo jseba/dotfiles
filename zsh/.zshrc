@@ -5,7 +5,8 @@ export ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="xiong-chiamiov-plus"
+ZSH_THEME="powerlevel9k"
+POWERLEVEL9K_MODE="icons"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -34,7 +35,7 @@ COMPLETION_WAITING_DOTS="true"
 plugins=(git zypper suse z sudo tmux svn man)
 
 source $ZSH/oh-my-zsh.sh
-source $HOME/.dotfiles/base16/base16-atelierforest.dark.sh
+#source $HOME/.dotfiles/base16/base16-atelierforest.dark.sh
 
 export LANG=en_US.UTF-8
 export EDITOR='vim'
