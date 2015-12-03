@@ -40,6 +40,9 @@
 [submodule "vim/.vim/bundle/vim-airline"]
 	path = vim/.vim/bundle/vim-airline
 	url = https://github.com/bling/vim-airline
+[submodule "vim/.vim/bundle/papercolor-theme"]
+    path = vim/.vim/bundle/papercolor-theme
+    url = https://github.com/NLKNguyen/papercolor-theme
 [submodule "vim/.vim/bundle/vim-obsession"]
 	path = vim/.vim/bundle/vim-obsession
 	url = https://github.com/tpope/vim-obsession
