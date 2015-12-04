@@ -34,17 +34,13 @@ COMPLETION_WAITING_DOTS="true"
 
 plugins=(git zypper suse z sudo tmux svn man)
 
-export TERM=screen-256color
 source $ZSH/oh-my-zsh.sh
+#source $HOME/.dotfiles/base16/base16-atelierforest.dark.sh
 
 export LANG=en_US.UTF-8
 export EDITOR='vim'
 export PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
 export LESS=-FXR
-
-if [ -f $HOME/.aliases ]; then
-    source $HOME/.aliases
-fi
 
 if [ -f $HOME/.zshrc.local ] ; then
     source $HOME/.zshrc.local
