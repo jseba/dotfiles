@@ -1,0 +1,12 @@
+#!/bin/bash
+
+IMAGE="/home/jseba/.i3/lockpaper.png"
+TEXT="Type password to unlock"
+PARAM='--textcolor=ffffff00 --insidecolor=ffffff1c --ringcolor=ffffff3e --linecolor=ffffff00 --keyhlcolor=00000080 --ringvercolor=00000000 --insidevercolor=0000001c --ringwrongcolor=00000055 --insidewrongcolor=0000001c'
+
+i3lock $PARAM -i "$IMAGE" > /dev/null 2>&1
+
+if [ $? -ne 0 ]; then
+    # We have failed, lets get back to stock one
+    i3lock -i $IMAGE
+fi
