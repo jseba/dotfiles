@@ -94,6 +94,9 @@
   tool = vimdiff
   guitool = meld
 
+[difftool "p4merge"]
+  path = /opt/p4v/bin/p4merge
+
 [rerere]
   enabled = true
 
