@@ -33,9 +33,6 @@ COMPLETION_WAITING_DOTS="true"
 
 plugins=(git zypper suse z sudo tmux svn man)
 
-source $ZSH/oh-my-zsh.sh
-#source $HOME/.dotfiles/base16/base16-atelierforest.dark.sh
-
 export LANG=en_US.UTF-8
 export EDITOR='vim'
 export PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
@@ -45,3 +42,4 @@ if [ -f $HOME/.zshrc.local ] ; then
     source $HOME/.zshrc.local
 fi
 
+source $ZSH/oh-my-zsh.sh
