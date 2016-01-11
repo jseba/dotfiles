@@ -38,7 +38,7 @@
   nb = checkout -b          # new branch
 
   # cherry-pick
-  cp = cherry-pick -x       # grab a change from a branch
+  cp = cherry-pick          # grab a change from a branch
 
   # diff
   d = diff                  # diff unstaged changes
