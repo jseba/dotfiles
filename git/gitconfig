@@ -29,7 +29,7 @@
 
   # commit
   c  = commit -m            # commit with message
-  ca = commit -am           # commit all with message
+  ca = commit -a            # commit all
   ci = commit               # normal commit
   amend = commit --amend    # amend previous commit
 
