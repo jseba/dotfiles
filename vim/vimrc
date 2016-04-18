@@ -1,42 +1,25 @@
 set nocompatible
 scriptencoding utf-8
 
-" Pre-setup
-if filereadable(expand("~/.vimrc.before.local"))
-    source ~/.vimrc.before.local
-endif
-
 " Bundles
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
+Plugin 'rking/ag.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'luochen1990/rainbow'
 Plugin 'scrooloose/syntastic'
-Plugin 'majutsushi/tagbar'
 Plugin 'sheerun/vim-polyglot'
-if !exists('g:s_neocomplete')
-    Plugin 'Valloric/YouCompleteMe'
-else
-    Plugin 'Shougo/neocomplete.vim.git'
-    Plugin 'Shougo/neosnippet'
-    Plugin 'Shougo/neosnippet-snippets'
-    Plugin 'honza/vim-snippets'
-endif
-if exists('g:s_python')
-    Plugin 'klen/python-mode'
-    Plugin 'mjbrownie/pythoncomplete.vim'
-endif
-if exists('g:s_golang')
-    Plugin 'fatih/vim-go'
-endif
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'tpope/vim-unimpaired'
 call vundle#end()
 
 " General settings
@@ -64,7 +47,7 @@ set whichwrap=b,s,h,l,<,>,[,]
 set scrolljump=5
 set scrolloff=3
 set list
-set listchars=tab:›\ ,trail:•,extends:#,nbsp:.
+set listchars=tab:>>,trail:-,extends:#,nbsp:.
 set nowrap
 set autoindent
 set shiftwidth=4
@@ -74,26 +57,39 @@ set softtabstop=4
 set nojoinspaces
 set splitright
 set splitbelow
+set cursorline
+set undofile
+set undodir=$HOME/.vim/undo
 
 " Automatically set the cursor to first line
 " when editing a git commit message
 au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
+" Automatically close NerdTree when it's the last buffer open
+au bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " Keybindings
 let mapleader=','
 inoremap jj <ESC>
 nnoremap ; :
 map <leader>fc /\v^[<\|=>]{7}( .*\|$)<CR>
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+map <C-J> <C-W>j
+map <C-K> <C-W>k
+map <C-L> <C-W>l
+map <C-H> <C-W>h
+map <C-S-J> <C-W><C-S-J>
+map <C-S-K> <C-W><C-S-K>
+map <C-S-L> <C-W><C-S-L>
+map <C-S-H> <C-W><C-S-H>
 nnoremap <Leader>< :bp<CR>
 nnoremap <Leader>> :bn<CR>
-nnoremap <C-p> :CtrlPMixed<CR>
+nnoremap <C-p> :CtrlPMRUFiles<CR>
 nnoremap <Leader>b :CtrlPBuffer<CR>
 nnoremap <Leader>f :CtrlP<CR>
+nnoremap <Leader>vs :vsplit<CR>
+nnoremap <Leader>ss :split<CR>
+nnoremap <Leader>hh :resize 60<CR>
 nmap <silent> <leader>/ :set invhlsearch<CR>
+nmap <C-]> :YcmCompleter GoTo<CR>
 
 " Color scheme
 set background=dark
@@ -112,19 +108,31 @@ endif
 " Airline setup
 set t_Co=256
 set laststatus=2
-if !exists('g:airline_symbols')
-    let g:airline_symbols={}
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+if $SSH_TTY != ""
+    " Disable powerline symbols over ssh
+    let g:airline_powerline_fonts=0
+    let g:airline_left_sep = ''
+    let g:airline_left_alt_sep = ''
+    let g:airline_right_sep = ''
+    let g:airline_right_alt_sep = ''
+else
+    if !exists('g:airline_symbols')
+        let g:airline_symbols={}
+    endif
+    let g:airline_left_sep = ''
+    let g:airline_left_alt_sep = ''
+    let g:airline_right_sep = ''
+    let g:airline_right_alt_sep = ''
+    let g:airline_symbols.branch = ''
+    let g:airline_symbols.readonly = ''
+    let g:airline_symbols.linenr = ''
+    let g:airline_powerline_fonts=1
 endif
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
 let g:airline_theme='murmur'
 let g:airline_inactive_collapse=0
-let g:airline_powerline_fonts=1
 
 " Omnicomplete
 autocmd Filetype * 
@@ -137,7 +145,6 @@ hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=da
 
 " Tags
 set tags=./tags;./TAGS
-nnoremap <silent> <leader>tt :TagbarToggle<CR>
 
 " Rainbow
 let g:rainbow_active=1
@@ -146,12 +153,14 @@ let g:rainbow_active=1
 map <C-e> <plug>NERDTreeTabsToggle<CR>
 map <leader>e :NERDTreeFind<CR>
 nmap <leader>nt :NERDTreeFind<CR>
-let NERDTreeShowBookmarks=1
-let NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$']
-let NERDTreeChDirMode=0
-let NERDTreeQuitOnOpen=1
-let NERDTreeShowHidden=1
-let NERDTreeKeepTreeInNewTab=1
+let g:NERDTreeShowBookmarks=1
+let g:NERDTreeIgnore=['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$']
+let g:NERDTreeChDirMode=0
+let g:NERDTreeQuitOnOpen=1
+let g:NERDTreeShowHidden=1
+let g:NERDTreeKeepTreeInNewTab=1
+let g:NERDTreeDirArrowExpandable='>'
+let g:NERDTreeDirArrowCollapsible='v'
 let g:nerdtree_tabs_open_on_gui_startup=0
 
 " Fugitive
@@ -167,63 +176,9 @@ nnoremap <silent> <leader>ge :Gedit<CR>
 nnoremap <silent> <leader>gi :Git add -p %<CR>
 nnoremap <silent> <leader>gg :SignifyToggle<CR>
 
-" Code completion
-if !exists('g:s_neocomplete')
-    let g:acp_enableAtStartup=0
-    let g:ycm_collect_identifiers_from_tags_files=1
-    let g:ycm_confirm_extra_conf=0
-else
-    let g:acp_enableAtStartup = 0
-    let g:neocomplete#enable_at_startup = 1
-    let g:neocomplete#enable_smart_case = 1
-    let g:neocomplete#enable_auto_delimiter = 1
-    let g:neocomplete#max_list = 15
-    let g:neocomplete#force_overwrite_completefunc = 1
-    let g:neocomplete#sources#dictionary#dictionaries = {
-                \ 'default' : '',
-                \ 'vimshell' : $HOME.'/.vimshell_hist',
-                \ 'scheme' : $HOME.'/.gosh_completions'
-                \ }
-    let g:neocomplete#keyword_patterns = {}
-    let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-    let g:neocomplete#sources#omni#input_patterns = {}
-    let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-    let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-    let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-    let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-    let g:neocomplete#sources#omni#input_patterns.ruby = '[^. *\t]\.\h\w*\|\h\w*::'
-
-    inoremap <CR> <CR>
-    inoremap <expr> <Esc>   pumvisible() ? "\<C-y>\<Esc>" : "\<Esc>"
-    inoremap <expr> <CR>    pumvisible() ? "\<C-y>\<CR>" : "\<CR>"
-    inoremap <expr> <Down>  pumvisible() ? "\<C-n>" : "\<Down>"
-    inoremap <expr> <Up>    pumvisible() ? "\<C-p>" : "\<Up>"
-    inoremap <expr> <C-d>   pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<C-d>"
-    inoremap <expr> <C-u>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<C-u>"
-    inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<TAB>"
-
-    function! CleverTab()
-        if pumvisible()
-            return "\<C-n>"
-        endif
-        let substr = strpart(getline('.'), 0, col('.') - 1)
-        let substr = matchstr(substr, '[^ \t]*$')
-        if strlen(substr) == 0
-            " nothing to match on empty string
-            return "\<Tab>"
-        else
-            " existing text matching
-            if neosnippet#expandable_or_jumpable()
-                return "\<Plug>(neosnippet_expand_or_jump)"
-            else
-                return neocomplete#start_manual_complete()
-            endif
-        endif
-    endfunction
-
-    imap <expr> <Tab> CleverTab()
-endif
+let g:acp_enableAtStartup=0
+let g:ycm_collect_identifiers_from_tags_files=1
+let g:ycm_confirm_extra_conf=0
 
 " Polyglot
 let g:cpp_class_scope_highlight=1
@@ -247,23 +202,3 @@ let g:ctrlp_user_command = {
             \ 'fallback': s:ctrlp_fallback
         \}
 
-" Golang
-if exists('g:s_golang')
-    let g:go_highlight_functions = 1
-    let g:go_highlight_methods = 1
-    let g:go_highlight_structs = 1
-    let g:go_highlight_operators = 1
-    let g:go_highlight_build_constraints = 1
-    let g:go_fmt_command = "goimports"
-    let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
-    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
-    au FileType go nmap <Leader>s <Plug>(go-implements)
-    au FileType go nmap <Leader>i <Plug>(go-info)
-    au FileType go nmap <Leader>e <Plug>(go-rename)
-    au FileType go nmap <leader>r <Plug>(go-run)
-    au FileType go nmap <leader>b <Plug>(go-build)
-    au FileType go nmap <leader>t <Plug>(go-test)
-    au FileType go nmap <Leader>gd <Plug>(go-doc)
-    au FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
-    au FileType go nmap <leader>co <Plug>(go-coverage)
-endif

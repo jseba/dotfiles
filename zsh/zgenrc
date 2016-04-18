@@ -1,0 +1,39 @@
+if [[ -z $ZGENRC || (! -z $TMUX && -z $ZGENMUX) ]]; then
+    source $HOME/.dotfiles/zsh/zgen/zgen.zsh
+
+    # Check for init script
+    if ! zgen saved; then
+        echo -n "Creating a zgen save..."
+
+        # Library/Frameworks
+        zgen oh-my-zsh
+
+        # Bundles
+        zgen loadall << EOPLUGINS
+            smallhadroncollider/antigen-git-rebase
+            horosgrisa/autoenv
+            unixorn/git-extra-commands
+            supercrabtree/k
+            hlohm/mfunc
+            rupa/z
+            bric3/nice-exit-code
+            chrissicool/zsh-256color
+            zsh-users/zsh-autosuggestions
+            Tarrasch/zsh-bd
+            psprint/zsh-cmd-architect
+            psprint/zsh-navigation-tools
+            zsh-users/zsh-syntax-highlighting
+            RobSis/zsh-completion-generator
+EOPLUGINS
+
+        # Theme
+        zgen oh-my-zsh themes/mortalscumbag
+
+        zgen save
+    fi
+
+    export ZGENRC=1
+    if [ ! -z $TMUX ]; then
+        export ZGENMUX=1
+    fi
+fi
