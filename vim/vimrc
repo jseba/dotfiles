@@ -92,9 +92,11 @@ nmap <silent> <leader>/ :set invhlsearch<CR>
 nmap <C-]> :YcmCompleter GoTo<CR>
 
 " Color scheme
+set t_Co=256
 set background=dark
+let base16colorspace=256
+colorscheme base16-atelierdune
 if has('gui_running')
-    colorscheme base16-atelierforest
     set guifont=Source\ Code\ Pro\ 8
     set guioptions-=T
     set guioptions-=e
@@ -106,12 +108,10 @@ if has('gui_running')
 endif
 
 " Airline setup
-set t_Co=256
 set laststatus=2
-let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
-if $SSH_TTY != ""
+if !has("gui_running")
     " Disable powerline symbols over ssh
     let g:airline_powerline_fonts=0
     let g:airline_left_sep = ''
