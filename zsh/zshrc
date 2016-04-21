@@ -29,6 +29,12 @@ export PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
 export LESS=-FXR
 export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
 
+# Colorscheme
+export COLORSCHEME=$HOME/.dotfiles/base16/base16-atelierforest.dark.sh
+if [ -f $COLORSCHEME ] ; then
+    source $COLORSCHEME
+fi
+
 # Aliases
 alias cd='cd -P'
 
