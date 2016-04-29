@@ -8,7 +8,7 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'rking/ag.vim'
-Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'wincent/command-t'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'scrooloose/nerdcommenter'
@@ -35,6 +35,7 @@ set nospell
 set showmode
 set backspace=indent,eol,start
 set linespace=0
+set textwidth=90
 set number
 set showmatch
 set incsearch
@@ -82,9 +83,8 @@ map <C-S-L> <C-W><C-S-L>
 map <C-S-H> <C-W><C-S-H>
 nnoremap <Leader>< :bp<CR>
 nnoremap <Leader>> :bn<CR>
-nnoremap <C-p> :CtrlPMRUFiles<CR>
-nnoremap <Leader>b :CtrlPBuffer<CR>
-nnoremap <Leader>f :CtrlP<CR>
+nnoremap <Leader>b :CommandTBuffer<CR>
+nnoremap <C-p> :CommandT<CR>
 nnoremap <Leader>vs :vsplit<CR>
 nnoremap <Leader>ss :split<CR>
 nnoremap <Leader>hh :resize 60<CR>
@@ -92,9 +92,11 @@ nmap <silent> <leader>/ :set invhlsearch<CR>
 nmap <C-]> :YcmCompleter GoTo<CR>
 
 " Color scheme
-set t_Co=256
 set background=dark
-let base16colorspace=256
+if $TERM != "linux"
+    set t_Co=256
+    let base16colorspace=256
+endif
 colorscheme base16-atelierdune
 if has('gui_running')
     set guifont=Source\ Code\ Pro\ 8
@@ -109,6 +111,7 @@ endif
 
 " Airline setup
 set laststatus=2
+let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 if !has("gui_running")
@@ -183,22 +186,5 @@ let g:ycm_confirm_extra_conf=0
 " Polyglot
 let g:cpp_class_scope_highlight=1
 
-" CtrlP
-let g:ctrlp_switch_buffer=0
-let g:ctrlp_working_path_mode='ra'
-if executable('ag')
-    let s:ctrlp_fallback='ag %s --nocolor -l -g ""'
-else
-    let s:ctrlp_fallback='find %s -type f'
-endif
-if exists('g:ctrlp_user_command')
-    unlet g:ctrlp_user_command
-endif
-let g:ctrlp_user_command = {
-            \ 'types': {
-                \ 1: ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others'],
-                \ 2: ['.hg', 'hg --cwd %s locate -I .'],
-            \},
-            \ 'fallback': s:ctrlp_fallback
-        \}
-
+" CommandT
+let g:CommandTFileScanner='watchman'

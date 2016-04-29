@@ -1,3 +1,6 @@
+!!!!!!!!!!!!!
+!!  URXVT  !!
+!!!!!!!!!!!!!
 URxvt*depth: 32
 URxvt*buffered: true
 URxvt*intensityStyles: false
@@ -15,3 +18,23 @@ URxvt*pointerBlank: true
 URxvt*font: xft:Source\ Code\ Pro:style=Regular:size=8,xft:PragmataPro:size=8
 !URxvt*letterSpace: -1
 URxvt*borderColor: #000000
+
+
+!!!!!!!!!!!!!!!!!!!!
+!!  XSCREENSAVER  !!
+!!!!!!!!!!!!!!!!!!!!
+xscreensaver.Dialog.headingFont: -*-bitstream vera sans-bold-r-*-*-17-*-*-*-*-*-*-*
+xscreensaver.Dialog.bodyFont: -*-bitstream vera sans-medium-r-*-*-17-*-*-*-*-*-*-*
+xscreensaver.Dialog.labelFont: -*-bitstream vera sans-medium-r-*-*-17-*-*-*-*-*-*-*
+xscreensaver.Dialog.unameFont: -*-bitstream vera sans-medium-r-*-*-17-*-*-*-*-*-*-*
+xscreensaver.Dialog.buttonFont: -*-bitstream vera sans-bold-r-*-*-17-*-*-*-*-*-*-*
+xscreensaver.Dialog.dateFont: -*-bitstream vera sans-bold-r-*-*-17-*-*-*-*-*-*-*
+xscreensaver.Dialog.passwdFont: -*-courier 10 pitch-*-r-*-*-14-*-*-*-*-*-*-*
+xscreensaver.Dialog.text.foreground: #AB9BAB
+xscreensaver.Dialog.text.background: #1B181B
+xscreensaver.Dialog.internalBorderWidth: 60
+xscreensaver.Dialog.borderWidth: 0
+xscreensaver.Dialog.shadowThickness: 2
+xscreensaver.passwd.thermometer.foreground: #F7F3F7
+xscreensaver.passwd.thermometer.background: #1B181B
+xscreensaver.dateFormat: %H:%M %a %b %d, %Y
