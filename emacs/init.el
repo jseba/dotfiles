@@ -9,9 +9,10 @@
   (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   (if (fboundp 'horizontal-scroll-bar-mode) (horizontal-scroll-bar-mode -1)))
-(setq scroll-margin 0
-      scroll-conservatively 100000
+(setq scroll-margin 5
+      scroll-conservatively 1000
       scroll-preserve-screen-position 1
+      scroll-step 1
       frame-title-format '("" invocation-name " - " (:eval (if (buffer-file-name)
                                                                (abbreviate-file-name (buffer-file-name))
                                                              "%b")))
@@ -19,8 +20,9 @@
       initial-scratch-message ""
       visible-bell nil)
 (size-indication-mode t)
-(set-face-attribute 'default t :font "Source Code Pro 9")
-(set-face-attribute 'default nil :font "Source Code Pro 9")
+(set-face-attribute 'default t :font "xos4 Terminess Powerline 9")
+(set-face-attribute 'default nil :font "xos4 Terminess Powerline 9")
+(defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Setup package manager
 (require 'package)
@@ -42,7 +44,38 @@
 (use-package base16-theme
   :ensure t
   :init
-  (load-theme 'base16-atelierforest-dark t))
+  (load-theme 'base16-bright-dark t))
+;; (use-package evil
+;;   :ensure t
+;;   :bind
+;;   (:map evil-normal-state-map ((";" . evil-ex)))
+;;   :init
+;;   (setq evil-emacs-state-cursor    '("red" box)
+;;         evil-normal-state-cursor   '("blue" box)
+;;         evil-visual-state-cursor   '("orange" box)
+;;         evil-insert-state-cursor   '("green" bar)
+;;         evil-replace-state-cursor  '("red" bar)
+;;         evil-operator-state-cursor '("red" hollow))
+;;   (evil-mode))
+;; (use-package evil-leader
+;;   :ensure t
+;;   :diminish evil-leader-mode
+;;   :init
+;;   (global-evil-leader-mode)
+;;   (evil-leader/set-leader ","))
+;; (use-package evil-tabs
+;;   :ensure t
+;;   :diminish evil-tabs-mode
+;;   :init
+;;   (global-evil-tabs-mode))
+;; (use-package key-chord
+;;   :ensure t
+;;   :diminish key-chord-mode
+;;   :init
+;;   (setq key-chord-two-keys-delay 0.5)
+;;   (key-chord-mode 1)
+;;   :config
+;;   (key-chord-define evil-insert-state-map "jj" 'evil-normal-state))
 (use-package helm
   :ensure t
   :diminish helm-mode
@@ -64,15 +97,13 @@
    ("C-h a" . helm-apropos)
    ("C-x C-b" . helm-buffers-list)
    ("C-x b" . helm-buffers-list)
+   ("C-x C-f" . helm-find-files)
    ("M-x" . helm-M-x)
    ("M-y" . helm-show-kill-ring)
    ("C-x c o" . helm-occur)
    ("C-x c s" . helm-swoop))
   :config
   (ido-mode -1))
-(use-package company
-  :ensure t
-  )
 (use-package projectile
   :ensure t
   :init
@@ -83,9 +114,47 @@
 (use-package helm-projectile
   :ensure t
   :bind
-  (("C-c C-f" . helm-projectile-find-file))
+  (("C-c C-f" . helm-projectile-find-file)
+   ("C-c C-d" . helm-projectile-find-dir))
   :init
   (setq helm-projectile-fuzzy-match t))
+(use-package helm-gtags
+  :ensure t
+  :init
+  (setq helm-gtags-fuzzy-match nil
+        helm-gtags-direct-helm-completing t
+        helm-gtags-display-style 'detail
+        helm-gtags-ignore-case t
+        helm-gtags-prefix-key "\C-t"
+        helm-gtags-suggested-key-mapping t))
+;; (use-package irony
+;;   :ensure t
+;;   :init
+;;   (add-hook 'c++-mode-hook 'irony-mode)
+;;   (add-hook 'c-mode-hook 'irony-mode)
+;;   :config
+;;   (defun my-irony-mode-hook ()
+;;     (define-key irony-mode-map [remap completion-at-point] 'irony-completion-at-point-async)
+;;     (define-key irony-mode-map [remap complete-symbol] 'irony-completion-at-point-async))
+;;   (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+;;   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+(use-package company
+  :ensure t
+  :bind
+  ("C-;" . company-complete-common)
+  :init
+  (add-hook 'after-init-hook 'global-company-mode)
+  :config
+  (setq company-idle-delay nil
+        company-minimum-prefix-length 2
+        company-show-numbers nil
+        company-tooltip-limit 10
+        company-abbrev-downcase nil
+        company-backends '(company-gtags)))
+;; (use-package company-irony
+;;   :ensure t
+;;   :config
+;;   (add-to-list 'company-backends 'company-irony))
 (use-package magit
   :ensure t
   :bind
@@ -171,7 +240,17 @@
         c-basic-offset 4
         c-toggle-hungry-state 1)
   (setq-default indent-tabs-mode nil
-                tab-width 4))
+                tab-width 4)
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+  (defun my-c++-mode-hook ()
+    (electric-mode)
+    (diminish 'electric-mode)
+    (c-set-style "stroustrup")
+    (c-set-offset 'innamespace '0) ;; don't indent when in namespace
+    )
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'my-c++-mode-hook))
 (use-package fiplr
   :ensure t
   :bind
@@ -257,6 +336,8 @@ the beginning of the line."
                 'smarter-move-beginning-of-line)
 (global-set-key (kbd "C-a") 'smarter-move-beginning-of-line)
 (global-set-key (kbd "C-k") 'close-and-kill-this-pane)
+(define-key prog-mode-map (kbd "C-c c") 'comment-region)
+(define-key prog-mode-map (kbd "C-c u") 'uncomment-region)
 
 ;; Backups
 (defvar backup-directory "~/.emacs.d/backups/")
@@ -316,6 +397,10 @@ the beginning of the line."
       dired-recursive-deletes 'top     ; only ask for the top directory
       dired-listing-switches "-lha")
 (add-hook 'dired-mode-hook 'auto-revert-mode)
+(add-hook 'dired-mode-hook 'helm-gtags-mode)
+
+;;; Load local machine settings
+(require 'bats)
 
 (provide 'init)
 ;;; init.el ends here
