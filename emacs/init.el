@@ -155,6 +155,10 @@
 ;;   :ensure t
 ;;   :config
 ;;   (add-to-list 'company-backends 'company-irony))
+(use-package rtags
+  :ensure t)
+(use-package cmake-ide
+  :ensure t)
 (use-package magit
   :ensure t
   :bind
@@ -243,7 +247,7 @@
                 tab-width 4)
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
   (defun my-c++-mode-hook ()
-    (electric-mode)
+    (electric-indent-mode)
     (diminish 'electric-mode)
     (c-set-style "stroustrup")
     (c-set-offset 'innamespace '0) ;; don't indent when in namespace
@@ -374,8 +378,6 @@ the beginning of the line."
 ;;; Semantic parsing
 (semantic-mode 1)
 
-;;; Projectile
-
 ;;; Diff mode
 (add-hook 'diff-mode-hook (lambda ()
 							(setq-local whitespace-style
@@ -398,6 +400,10 @@ the beginning of the line."
       dired-listing-switches "-lha")
 (add-hook 'dired-mode-hook 'auto-revert-mode)
 (add-hook 'dired-mode-hook 'helm-gtags-mode)
+
+;;; GDB settings
+(setq gdb-many-windows t
+      gdb-show-main t)
 
 ;;; Load local machine settings
 (require 'bats)
