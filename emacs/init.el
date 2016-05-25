@@ -18,14 +18,12 @@
 ;; Begin
 
 (add-to-list 'load-path "~/.emacs.d/site")
-(toggle-debug-on-error)
 
 ;; Set core interface settings as early as possible
-(when window-system
-  (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-  (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-  (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-  (when (fboundp 'horizontal-scroll-bar-mode) (horizontal-scroll-bar-mode -1)))
+(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(when (fboundp 'horizontal-scroll-bar-mode) (horizontal-scroll-bar-mode -1))
 (setq inhibit-startup-screen t
       initial-scratch-message ""
       visible-bell nil)
@@ -138,7 +136,7 @@
 (use-package volatile-highlights
   :ensure t
   :diminish volatile-highlights-mode
-  :init
+  :config
   (volatile-highlights-mode))
 
 ;; AFTER volatile-highlights!
@@ -478,10 +476,25 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package cc-mode
-  ;; built-in
-  :bind
+  :ensure t
+  :bind (:map c-mode-base-map
+              ("RET" . newline-and-indent))
   :init
-  :config)
+  (setq c-default-style "stroustrup"
+        c-basic-offset 4
+        c-toggle-hungry-state 1)
+  (setq-default indent-tabs-mode nil
+                tab-width 4)
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+  (defun my-c++-mode-hook ()
+    (electric-indent-mode)
+    (diminish 'electric-mode)
+    (c-set-style "stroustrup")
+    (c-set-offset 'innamespace '0) ;; don't indent when in namespace
+    )
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'my-c++-mode-hook))
 
 (use-package ggtags
   :ensure t
@@ -491,6 +504,48 @@
             (lambda ()
               (when (derived-mode-p 'c-mode 'c++-mode)
                 (ggtags-mode +1)))))
+
+(use-package rtags
+  :ensure t
+  :init
+  (require 'company)
+  (use-package flycheck-rtags
+    :init
+    (setq rtags-autostart-diagnostics t
+          flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
+  (use-package company-rtags
+    :init
+    (defun my-company-rtags-hook ()
+      (setq company-rtags-begin-after-member-access t
+            rtags-autostart-diagnostics t
+            rtags-completions-enabled t
+            company-backends (delete 'company-clang company-backends)))
+    (add-to-list 'company-backends 'company-rtags)
+    (add-hook 'c-mode-common-hook #'my-company-rtags-hook))
+
+  (defun my-flycheck-rtags-hook ()
+    (flycheck-select-checker 'rtags)
+    (setq-local flycheck-highlighting-mode nil)
+    (setq-local flycheck-check-syntax-automatically nil))
+  (add-hook 'c-mode-common-hook #'rtags-start-process-unless-running)
+  (add-hook 'c-mode-common-hook #'my-flycheck-rtags-hook))
+
+;(use-package irony
+;  :ensure t
+;  :init
+;  (defun my-irony-mode-hook ()
+;    (define-key irony-mode-map [remap completion-at-point] #'irony-completion-at-point-async)
+;    (define-key irony-mode-map [remap complete-symbol] #'irony-completion-at-point-async))
+;  (add-hook 'irony-mode-hook #'my-irony-mode-hook)
+; (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
+; (add-hook 'c-mode-hook (lambda () (setq irony-additional-clang-options '("-std=c11"))))
+; (add-hook 'c++-mode-hook (lambda () (setq irony-addition-clang-options '("-std=c++11")))))
+
+(use-package cmake-ide
+  :ensure t
+  :init
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Version Control
@@ -542,26 +597,6 @@
   :init
   (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 
-(use-package cc-mode
-  :ensure t
-  :bind (:map c-mode-base-map
-              ("RET" . newline-and-indent))
-  :init
-  (setq c-default-style "stroustrup"
-        c-basic-offset 4
-        c-toggle-hungry-state 1)
-  (setq-default indent-tabs-mode nil
-                tab-width 4)
-  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-  (defun my-c++-mode-hook ()
-    (electric-indent-mode)
-    (diminish 'electric-mode)
-    (c-set-style "stroustrup")
-    (c-set-offset 'innamespace '0) ;; don't indent when in namespace
-    )
-  (add-hook 'c-mode-hook 'helm-gtags-mode)
-  (add-hook 'c++-mode-hook 'helm-gtags-mode)
-  (add-hook 'c++-mode-hook 'my-c++-mode-hook))
 
 ;;; Functions
 ;; Smarter move to beginning of line
@@ -641,18 +676,18 @@ the beginning of the line."
 
 ;;; Diff mode
 (add-hook 'diff-mode-hook (lambda ()
-							(setq-local whitespace-style
-										'(face
-										  tabs
-										  tab-mark
-										  spaces
-										  space-mark
-										  trailing
-										  indentation::space
-										  indentation::tab
-										  newline
-										  newline-mark))
-							(whitespace-mode 1)))
+                            (setq-local whitespace-style
+                                        '(face
+                                        tabs
+                                        tab-mark
+                                        spaces
+                                        space-mark
+                                        trailing
+                                        indentation::space
+                                        indentation::tab
+                                        newline
+                                        newline-mark))
+                            (whitespace-mode 1)))
 
 ;;; Dired settings
 (setq dired-dwim-target t
