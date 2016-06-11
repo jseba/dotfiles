@@ -3,6 +3,8 @@ HISTSIZE=10000
 SAVEHIST=100000
 HISTFILE=$HOME/.zsh_history
 
+setopt PUSHD_SILENT
+
 autoload -Uz compinit
 compinit
 
@@ -31,13 +33,15 @@ export LESS=-FXR
 export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
 
 # Colorscheme
+eval `dircolors -b`
+
 export COLORSCHEME=$HOME/.dotfiles/base16/base16-atelierforest.dark.sh
 if [ -f $COLORSCHEME ] ; then
     source $COLORSCHEME
 fi
 
 # Aliases
-alias cd='cd -P'
+#alias cd='cd -P'
 
 # Plugins
 export DISABLE_AUTO_TITLE="true"
