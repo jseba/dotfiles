@@ -11,19 +11,9 @@ if [[ -z $ZGENRC || (! -z $TMUX && -z $ZGENMUX) ]]; then
         # Bundles
         zgen loadall << EOPLUGINS
             smallhadroncollider/antigen-git-rebase
-            horosgrisa/autoenv
             unixorn/git-extra-commands
-            supercrabtree/k
-            hlohm/mfunc
             rupa/z
-            bric3/nice-exit-code
-            chrissicool/zsh-256color
-            zsh-users/zsh-autosuggestions
-            Tarrasch/zsh-bd
             psprint/zsh-cmd-architect
-            psprint/zsh-navigation-tools
-            zsh-users/zsh-syntax-highlighting
-            RobSis/zsh-completion-generator
 EOPLUGINS
 
         # Theme

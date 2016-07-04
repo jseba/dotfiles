@@ -8,14 +8,18 @@ URxvt*loginShell: true
 URxvt*scrollstyle: rxvt
 URxvt*scrollBar: false
 URxvt*transparent: true
-URxvt*shading: 25
+URxvt*shading: 15
 ! URxvt*saveLines: number
 URxvt*termName: rxvt-256color
 URxvt*mouseWheelScrollPage: false
 URxvt*cursorBlink: true
 URxvt*pointerBlank: true
 ! URxvt*url-launcher: string
-URxvt*font: xft:Source\ Code\ Pro:style=Regular:size=8,xft:PragmataPro:size=8
+URxvt.perl-ext-common: default,resize-font
+URxvt*font: xft:Source\ Code\ Pro:style=Regular:size=8
+URxvt*boldFont: xft:Source\ Code\ Pro:style=Bold:size=8
+URxvt*italicFont: xft:Source\ Code\ Pro:style=Italic:size=8
+URxvt*boldItalicFont: xft:Source\ Code\ Pro:style=Bold\ Italic:size=8
 !URxvt*letterSpace: -1
 URxvt*borderColor: #000000
 
@@ -38,3 +42,20 @@ xscreensaver.Dialog.shadowThickness: 2
 xscreensaver.passwd.thermometer.foreground: #F7F3F7
 xscreensaver.passwd.thermometer.background: #1B181B
 xscreensaver.dateFormat: %H:%M %a %b %d, %Y
+
+
+!!!!!!!!!
+!! XFT !!
+!!!!!!!!!
+Xft.dpi: 96
+Xft.autohint: 0
+Xft.lcdfilter: lcddefault
+Xft.hintstyle: hintfull
+Xft.hinting: 1
+Xft.antialias: 1
+Xft.rgba: rgb
+
+!!!!!!!!!!!!!
+!! XCURSOR !!
+!!!!!!!!!!!!!
+Xcursor.size: 32

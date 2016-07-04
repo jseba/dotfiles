@@ -7,15 +7,14 @@ set $right l
 
 floating_modifier Mod4
 
-bindsym Mod4+Return exec urxvtc-256color
-bindsym Mod4+Shift+Return exec urxvtc-256color -e ssh lxld-jseb1
-bindsym Mod4+semicolon exec gvim -c 'cd /opt/ecn/users/jseba/source/ecn/source/cpp'
+bindsym Mod4+Return exec urxvt
+bindsym Mod4+semicolon exec gvim
 bindsym Mod4+c exec /usr/bin/firefox
 bindsym Mod4+Shift+c exec /usr/bin/google-chrome-unstable
-bindsym Mod4+t exec remmina
+bindsym Mod4+v exec vmware
+bindsym Mod4+g exec pidgin
+bindsym Mod4+Shift+g exec ~/.apps/yakyak/yakyak
 bindsym Mod4+m exec ~/.i3/lock
-bindsym Mod4+b exec /opt/pycharm/bin/pycharm.sh
-bindsym Mod4+y exec evince
 
 # kill focused window
 bindsym Mod4+d kill
@@ -89,6 +88,8 @@ bindsym Mod4+Shift+0 move container to workspace 10
 bindsym Mod1+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym Mod1+Shift+r restart
+# exit i3 (closes X session)
+bindsym Mod1+Shift+q exit
 
 # resize window (you can also use the mouse for that)
 mode "resize" {

@@ -93,8 +93,9 @@ nmap <silent> <leader>/ :set invhlsearch<CR>
 set background=dark
 if $TERM != "linux"
     set t_Co=256
-    let base16colorspace=256
-    "colorscheme base16-atelierdune
+    colorscheme brogrammer
+    hi Normal ctermbg=none
+    hi NonText ctermbg=none
 endif
 if has('gui_running')
     set guifont=Source\ Code\ Pro\ 9

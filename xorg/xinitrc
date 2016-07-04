@@ -1,1 +1,2 @@
-exec herbstluftwm --locked
+urxvtd -q -f -o -m
+exec i3
