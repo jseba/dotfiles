@@ -139,7 +139,7 @@ else
     let g:airline_symbols.linenr = ''
     let g:airline_powerline_fonts=1
 endif
-let g:airline_theme='murmur'
+let g:airline_theme='dark'
 let g:airline_inactive_collapse=0
 
 " Omnicomplete
@@ -192,7 +192,6 @@ noremap <C-]> :YcmCompleter GoTo<CR>
 
 " Polyglot
 let g:cpp_class_scope_highlight=1
-
 
 " Unite
 let g:unite_source_history_yank_enable=1

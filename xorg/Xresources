@@ -8,7 +8,7 @@ URxvt*loginShell: true
 URxvt*scrollstyle: rxvt
 URxvt*scrollBar: false
 URxvt*transparent: true
-URxvt*shading: 15
+URxvt*shading: 10
 ! URxvt*saveLines: number
 URxvt*termName: rxvt-256color
 URxvt*mouseWheelScrollPage: false
