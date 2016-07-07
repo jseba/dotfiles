@@ -93,9 +93,14 @@ nmap <silent> <leader>/ :set invhlsearch<CR>
 set background=dark
 if $TERM != "linux"
     set t_Co=256
-    colorscheme brogrammer
-    hi Normal ctermbg=none
-    hi NonText ctermbg=none
+    set t_so=[7m
+    set t_ZH=[3m
+    set t_ZR=[23m
+    let base16colorspace=256
+    let g:base16_termtrans=1
+    let g:base16_underline=1
+    let g:base16_italic=1
+    colorscheme base16
 endif
 if has('gui_running')
     set guifont=Source\ Code\ Pro\ 9
@@ -201,6 +206,6 @@ call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#custom#profile('default', 'context', {
             \ 'direction': 'dynamicbottom'
             \ })
-nnoremap <silent> <Leader>b :Unite -quick-match -winheight=10 buffer<CR>
+nnoremap <silent> <Leader>b :Unite -winheight=10 buffer<CR>
 nnoremap <silent> <C-p> :Unite -buffer-name=files -start-insert file_rec/async<CR>
 nnoremap <silent> <Leader>f :Unite -start-insert -auto-preview grep:.<CR>
