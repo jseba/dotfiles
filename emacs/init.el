@@ -28,8 +28,8 @@
       initial-scratch-message ""
       visible-bell nil)
 (size-indication-mode t)
-(set-face-attribute 'default t :font "Source Code Pro 12")
-(set-face-attribute 'default nil :font "Source Code Pro 12")
+(set-face-attribute 'default t :font "Source Code Pro 9")
+(set-face-attribute 'default nil :font "Source Code Pro 9")
 
 ;; Sane defaults
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -140,15 +140,24 @@
   (volatile-highlights-mode))
 
 ;; AFTER volatile-highlights!
-;; add cutting the current line without marking i
+;; add cutting the current line without marking it
 (use-package rect
   :init
-  (defadvice kill-region (before smart-cut activate compile)
+  (defun slick-cut (beg end)
     "When called interactively with no active region, kill a single line instead."
     (interactive
-     (if mark-active (list (region-beginning) (region-end) rectangle-mark-mode)
-       (list (line-beginning-position)
-             (line-beginning-position 2))))))
+     (if mark-active
+         (list (region-beginning) (region-end) 'rectangle-mark-mode)
+       (list (line-beginning-position) (line-beginning-position 2)))))
+  (defun slick-copy (beg end)
+    "When called interactively with no active region, copy a single line instead."
+    (interactive
+      (if mark-active
+          (list (region-beginning) (region-end))
+        (message "Copied line")
+        (list (line-beginning-position) (line-beginning-position 2)))))
+  (advice-add 'kill-region :before #'slick-cut)
+  (advice-add 'kill-ring-save :before #'slick-copy))
 
 ;; tramp (for sudo)
 ;; (use-package tramp
@@ -505,30 +514,29 @@
               (when (derived-mode-p 'c-mode 'c++-mode)
                 (ggtags-mode +1)))))
 
-(use-package rtags
-  :ensure t
-  :init
-  (require 'company)
-  (use-package flycheck-rtags
-    :init
-    (setq rtags-autostart-diagnostics t
-          flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
-  (use-package company-rtags
-    :init
-    (defun my-company-rtags-hook ()
-      (setq company-rtags-begin-after-member-access t
-            rtags-autostart-diagnostics t
-            rtags-completions-enabled t
-            company-backends (delete 'company-clang company-backends)))
-    (add-to-list 'company-backends 'company-rtags)
-    (add-hook 'c-mode-common-hook #'my-company-rtags-hook))
-
-  (defun my-flycheck-rtags-hook ()
-    (flycheck-select-checker 'rtags)
-    (setq-local flycheck-highlighting-mode nil)
-    (setq-local flycheck-check-syntax-automatically nil))
-  (add-hook 'c-mode-common-hook #'rtags-start-process-unless-running)
-  (add-hook 'c-mode-common-hook #'my-flycheck-rtags-hook))
+;(use-package rtags
+;  :ensure t
+;  :init
+;  (require 'company)
+;  (use-package flycheck-rtags
+;    :init
+;    (setq rtags-autostart-diagnostics t
+;          flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
+;  (use-package company-rtags
+;    :init
+;    (defun my-company-rtags-hook ()
+;      (setq company-rtags-begin-after-member-access t
+;            rtags-autostart-diagnostics t
+;            rtags-completions-enabled t
+;            company-backends (delete 'company-clang company-backends)))
+;    (add-hook 'c-mode-common-hook #'my-company-rtags-hook))
+;
+;  (defun my-flycheck-rtags-hook ()
+;    (flycheck-select-checker 'rtags)
+;    (setq-local flycheck-highlighting-mode nil)
+;    (setq-local flycheck-check-syntax-automatically nil))
+;  (add-hook 'c-mode-common-hook #'rtags-start-process-unless-running)
+;  (add-hook 'c-mode-common-hook #'my-flycheck-rtags-hook))
 
 ;(use-package irony
 ;  :ensure t
@@ -541,10 +549,10 @@
 ; (add-hook 'c-mode-hook (lambda () (setq irony-additional-clang-options '("-std=c11"))))
 ; (add-hook 'c++-mode-hook (lambda () (setq irony-addition-clang-options '("-std=c++11")))))
 
-(use-package cmake-ide
-  :ensure t
-  :init
-)
+;(use-package cmake-ide
+;  :ensure t
+;  :init
+;)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -566,6 +574,7 @@
    ("C-c g t" . magit-tag))
   :init
   (add-hook 'magit-mode-hook 'magit-load-config-extensions)
+  (add-hook 'after-save-hook 'magit-after-save-refresh-status)
   :config
   (set-default 'magit-stage-all-confirm nil)
   (setq magit-save-repository-buffers 'dontask
@@ -703,3 +712,18 @@ the beginning of the line."
 
 (provide 'init)
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (flycheck-rtags zenburn-theme volatile-highlights use-package sr-speedbar smex smartrep smartparens smart-mode-line rtags operate-on-number noctilux-theme monokai-theme molokai-theme mmm-mako material-theme magit leuven-theme key-chord ido-vertical-mode ido-ubiquitous highlight-numbers helm-projectile helm-gtags golden-ratio gitignore-mode gitconfig-mode ggtags flycheck-tip flycheck-irony flx-ido fiplr expand-region excorporate evil-tabs evil-leader diff-hl cyberpunk-theme company-irony-c-headers company-irony cmake-ide browse-kill-ring benchmark-init beacon base16-theme avy anzu ample-theme ag)))
+ '(safe-local-variable-values (quote ((cmake-ide-build-dir . "/ecn/build.clang")))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
