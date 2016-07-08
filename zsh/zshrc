@@ -35,7 +35,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
 # Colorscheme
 eval `dircolors -b`
 
-export COLORSCHEME=$HOME/.dotfiles/base16/base16-atelierforest.dark.sh
+export COLORSCHEME=$HOME/.dotfiles/base16/scripts/base16-spacemacs.sh
 if [ -f $COLORSCHEME ] ; then
     source $COLORSCHEME
 fi
