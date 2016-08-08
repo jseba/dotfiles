@@ -58,12 +58,6 @@
 [submodule "nvim/bundle/vim-airline-themes"]
 	path = nvim/bundle/vim-airline-themes
 	url = https://github.com/vim-airline/vim-airline-themes
-[submodule "nvim/bundle/deoplete.nvim"]
-	path = nvim/bundle/deoplete.nvim
-	url = https://github.com/Shougo/deoplete.nvim
-[submodule "nvim/bundle/deoplete-clang"]
-	path = nvim/bundle/deoplete-clang
-	url = https://github.com/zchee/deoplete-clang
 [submodule "nvim/bundle/YouCompleteMe"]
 	path = nvim/bundle/YouCompleteMe
 	url = https://github.com/Valloric/YouCompleteMe
