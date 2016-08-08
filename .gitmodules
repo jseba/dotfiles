@@ -13,3 +13,57 @@
 [submodule "zsh/zgen"]
 	path = zsh/zgen
 	url = https://github.com/tarjoilija/zgen
+[submodule "nvim/bundle/vim-pathogen"]
+	path = nvim/bundle/vim-pathogen
+	url = https://github.com/tpope/vim-pathogen
+[submodule "nvim/bundle/vim-gitgutter"]
+	path = nvim/bundle/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter
+[submodule "nvim/bundle/rainbow"]
+	path = nvim/bundle/rainbow
+	url = https://github.com/luochen1990/rainbow
+[submodule "nvim/bundle/ag.vim"]
+	path = nvim/bundle/ag.vim
+	url = https://github.com/rking/ag.vim
+[submodule "nvim/bundle/nerdcommenter"]
+	path = nvim/bundle/nerdcommenter
+	url = https://github.com/scrooloose/nerdcommenter
+[submodule "nvim/bundle/nerdtree"]
+	path = nvim/bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree
+[submodule "nvim/bundle/syntastic"]
+	path = nvim/bundle/syntastic
+	url = https://github.com/scrooloose/syntastic
+[submodule "nvim/bundle/vim-polyglot"]
+	path = nvim/bundle/vim-polyglot
+	url = https://github.com/sheerun/vim-polyglot
+[submodule "nvim/bundle/vimproc.vim"]
+	path = nvim/bundle/vimproc.vim
+	url = https://github.com/Shougo/vimproc.vim
+[submodule "nvim/bundle/unite.vim"]
+	path = nvim/bundle/unite.vim
+	url = https://github.com/Shougo/unite.vim
+[submodule "nvim/bundle/vim-fugitive"]
+	path = nvim/bundle/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
+[submodule "nvim/bundle/vim-surround"]
+	path = nvim/bundle/vim-surround
+	url = https://github.com/tpope/vim-surround
+[submodule "nvim/bundle/vim-unimpaired"]
+	path = nvim/bundle/vim-unimpaired
+	url = https://github.com/tpope/vim-unimpaired
+[submodule "nvim/bundle/vim-airline"]
+	path = nvim/bundle/vim-airline
+	url = https://github.com/vim-airline/vim-airline
+[submodule "nvim/bundle/vim-airline-themes"]
+	path = nvim/bundle/vim-airline-themes
+	url = https://github.com/vim-airline/vim-airline-themes
+[submodule "nvim/bundle/deoplete.nvim"]
+	path = nvim/bundle/deoplete.nvim
+	url = https://github.com/Shougo/deoplete.nvim
+[submodule "nvim/bundle/deoplete-clang"]
+	path = nvim/bundle/deoplete-clang
+	url = https://github.com/zchee/deoplete-clang
+[submodule "nvim/bundle/YouCompleteMe"]
+	path = nvim/bundle/YouCompleteMe
+	url = https://github.com/Valloric/YouCompleteMe
