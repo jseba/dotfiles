@@ -6,9 +6,7 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'airblade/vim-gitgutter'
-Plugin 'flazz/vim-colorschemes'
 Plugin 'luochen1990/rainbow'
-Plugin 'qualiabyte/vim-colorstepper'
 Plugin 'rking/ag.vim'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/nerdtree'
@@ -69,6 +67,15 @@ au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
 " Automatically close NerdTree when it's the last buffer open
 au bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
+" Automatically delete trailing whitespace
+func! DeleteTrailingWS()
+    exe "normal mz"
+    $s/\s\+$//ge
+    exe "normal `z"
+endfunc
+autocmd BufWrite *.cpp :call DeleteTrailingWS()
+autocmd BufWrite *.h :call DeleteTrailingWS()
+
 " Keybindings
 let mapleader=','
 inoremap jj <ESC>
@@ -88,6 +95,8 @@ nnoremap <Leader>vs :vsplit<CR>
 nnoremap <Leader>ss :split<CR>
 nnoremap <Leader>hh :resize 60<CR>
 nmap <silent> <leader>/ :set invhlsearch<CR>
+map <Leader>pp :setlocal paste!<CR>
+map <Leader>ss :setlocal spell!<CR>
 
 " Color scheme
 set background=dark

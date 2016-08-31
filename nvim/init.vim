@@ -177,15 +177,11 @@ nnoremap <silent> <Leader>ge :Gedit<CR>
 nnoremap <silent> <Leader>gi :Git add -p %<CR>
 nnoremap <silent> <Leader>gg :SignifyToggle<CR>
 
-" Deoplete
-let g:deoplete#enable_at_startup=1
-
-" Deoplete-clang
-let g:deoplete#sources#clang#libclang_path="/usr/local/lib/libclang.so"
-let g:deoplete#sources#clang#clang_header="/usr/local/lib/clang/3.9.0/include"
-let g:deoplete#sources#clang#std={'c': 'c11', 'cpp': 'c++11' }
-let g:deoplete#sources#clang#clang_complete_database="/ecn/cpp/build/debug"
-inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "<Tab>"
+" YouCompleteMe
+let g:acp_enableAtStartup=0
+let g:ycm_collect_identifiers_from_tags_files=1
+let g:ycm_confirm_extra_conf=0
+noremap <C-]> :YcmCompleter GoTo<CR>
 
 " Polyglot
 let g:cpp_class_scope_highlight=1
