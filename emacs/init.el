@@ -415,7 +415,6 @@ none."
    ("C-k" . evil-window-up)
    ("C-l" . evil-window-right)
    ("C-]" . rtags-find-symbol-at-point)
-   :map evil-insert-state-map
    :map evil-visual-state-map
    (":" . evil-ex)
    (";" . evil-ex)
@@ -477,13 +476,14 @@ none."
   (setq evil-leader/leader ","
         evil-leader/in-all-states t)
   :config
-  (evil-leader/set-key "vs" 'split-window-horizontally)
-  (evil-leader/set-key "cc" 'comment-dwim)
-  (evil-leader/set-key "cu" 'comment-kill)
-  (evil-leader/set-key ">" 'switch-to-next-buffer)
-  (evil-leader/set-key "<" 'switch-to-prev-buffer)
-  (evil-leader/set-key "b" 'helm-mini)
-  (evil-leader/set-key "f" 'helm-ag))
+  (evil-leader/set-key
+    "vs" 'split-window-horizontally
+    "cc" 'comment-dwim
+    "cu" 'comment-kill
+    ">"  'switch-to-next-buffer
+    "<"  'switch-to-prev-buffer
+    "b"  'helm-mini
+    "f"  'helm-ag))
 
 (use-package evil-surround
   :ensure t
@@ -1075,6 +1075,8 @@ none."
 
 (use-package subword                    ; Subword/superword editing
   :defer t
+  :init
+  (subword-mode 1)
   :diminish subword-mode)
 
 (use-package adaptive-wrap              ; Choose wrap prefix automatically
@@ -2685,10 +2687,10 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
                                    )))
 
 ;; Set the theme
-(use-package zenburn-theme
+(use-package molokai-theme
   :ensure t
   :init
-  (load-theme 'zenburn t))
+  (load-theme 'molokai t))
 
 (provide 'init)
 ;;; init.el ends here
