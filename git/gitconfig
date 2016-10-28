@@ -41,8 +41,8 @@
   cp = cherry-pick          # grab a change from a branch
 
   # diff
-  d = diff                  # diff unstaged changes
-  dc = diff --cached        # diff staged changes
+  d = diff -b               # diff unstaged changes
+  dc = diff --cached -b     # diff staged changes
   last = diff HEAD^         # diff with last commit
 
   # log
@@ -62,7 +62,7 @@
   filelog = log -u
 
 [format]
-  pretty = format:%C(blue)%ad%Creset %C(yellow)%h%C(green)%d%Creset %C(blue)%s %C(magenta) [%an]%Creset
+  pretty = format:%C(cyan)%ad%Creset %C(yellow)%h%C(green)%d%Creset %C(white)%s %C(magenta) [%an]%Creset
 
 [mergetool]
   prompt = false
@@ -84,6 +84,7 @@
   autocrlf = false
   editor = vim
   excludesfile = ~/.gitignore
+  preloadindex = true
 
 [advice]
   statusHints = false
@@ -96,6 +97,9 @@
 
 [difftool "p4merge"]
   path = /opt/p4v/bin/p4merge
+
+[difftool "vimdiff"]
+  cmd = vim -f '+next' '+execute \"DirDiff\" argv(0) argv(1)' $LOCAL $REMOTE '+syntax off'
 
 [rerere]
   enabled = true

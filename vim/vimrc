@@ -19,7 +19,9 @@ Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-unimpaired'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+Plugin 'will133/vim-dirdiff'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'wincent/command-t'
 call vundle#end()
 
 " General settings
@@ -57,9 +59,19 @@ set softtabstop=4
 set nojoinspaces
 set splitright
 set splitbelow
-set cursorline
 set undofile
 set undodir=$HOME/.vim/undo
+
+" Speed up vim drawing over ssh
+if $TERM !="putty-256color"
+    set cursorline
+    set relativenumber
+else
+    set nocursorline
+    set norelativenumber
+    set lazyredraw
+    set ttyfast
+endif
 
 " Automatically set the cursor to first line
 " when editing a git commit message
@@ -68,17 +80,11 @@ au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
 au bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " Automatically delete trailing whitespace
-func! DeleteTrailingWS()
-    exe "normal mz"
-    $s/\s\+$//ge
-    exe "normal `z"
-endfunc
-autocmd BufWrite *.cpp :call DeleteTrailingWS()
-autocmd BufWrite *.h :call DeleteTrailingWS()
+"autocmd BufWritePre * :%s/\s\+$//e
 
 " Keybindings
 let mapleader=','
-inoremap jj <ESC>
+inoremap kj <ESC>
 nnoremap ; :
 map <leader>fc /\v^[<\|=>]{7}( .*\|$)<CR>
 map <C-J> <C-W>j
@@ -89,27 +95,29 @@ map <C-S-J> <C-W><C-S-J>
 map <C-S-K> <C-W><C-S-K>
 map <C-S-L> <C-W><C-S-L>
 map <C-S-H> <C-W><C-S-H>
+map <C-G> <ESC>
+map! <C-G> <ESC>
 nnoremap <Leader>< :bp<CR>
 nnoremap <Leader>> :bn<CR>
 nnoremap <Leader>vs :vsplit<CR>
 nnoremap <Leader>ss :split<CR>
-nnoremap <Leader>hh :resize 60<CR>
+nnoremap <Leader>hh :resize 35<CR>
 nmap <silent> <leader>/ :set invhlsearch<CR>
 map <Leader>pp :setlocal paste!<CR>
 map <Leader>ss :setlocal spell!<CR>
 
 " Color scheme
 set background=dark
+colorscheme jellybeans
 if $TERM != "linux"
     set t_Co=256
     set t_so=[7m
     set t_ZH=[3m
     set t_ZR=[23m
-    let base16colorspace=256
-    let g:base16_termtrans=1
-    let g:base16_underline=1
-    let g:base16_italic=1
-    colorscheme base16
+    "let base16colorspace=256
+    "let g:base16_termtrans=1
+    "let g:base16_underline=1
+    "let g:base16_italic=1
 endif
 if has('gui_running')
     set guifont=Source\ Code\ Pro\ 9
@@ -148,11 +156,11 @@ else
     let g:airline_symbols.linenr = ''
     let g:airline_powerline_fonts=1
 endif
-let g:airline_theme='base16'
+let g:airline_theme='jellybeans'
 let g:airline_inactive_collapse=0
 
 " Omnicomplete
-autocmd Filetype * 
+autocmd Filetype *
     \if &omnifunc == "" |
         \setlocal omnifunc=syntaxcomplete#Complete |
     \endif
@@ -166,6 +174,10 @@ set tags=./tags;./TAGS
 " Rainbow
 let g:rainbow_active=1
 
+" cmd-t
+nnoremap <C-p> :CommandT<CR>
+let g:CommandTFileScanner='git'
+
 " NerdTree
 map <C-e> <plug>NERDTreeTabsToggle<CR>
 map <leader>e :NERDTreeFind<CR>
@@ -176,8 +188,8 @@ let g:NERDTreeChDirMode=0
 let g:NERDTreeQuitOnOpen=1
 let g:NERDTreeShowHidden=1
 let g:NERDTreeKeepTreeInNewTab=1
-let g:NERDTreeDirArrowExpandable='>'
-let g:NERDTreeDirArrowCollapsible='v'
+"let g:NERDTreeDirArrowExpandable='>'
+"let g:NERDTreeDirArrowCollapsible='v'
 let g:nerdtree_tabs_open_on_gui_startup=0
 
 " Fugitive
@@ -215,5 +227,4 @@ call unite#custom#profile('default', 'context', {
             \ 'direction': 'dynamicbottom'
             \ })
 nnoremap <silent> <Leader>b :Unite -winheight=10 buffer<CR>
-nnoremap <silent> <C-p> :Unite -buffer-name=files -start-insert file_rec/async<CR>
 nnoremap <silent> <Leader>f :Unite -start-insert -auto-preview grep:.<CR>

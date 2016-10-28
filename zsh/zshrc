@@ -61,22 +61,23 @@ export LANG=en_US.UTF-8
 export EDITOR=vim
 export PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
 export MANPATH=/usr/local/share/man:/usr/share/man
-export LESS=-FXR
 export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
-
-# Colorscheme
-
-export COLORSCHEME=$HOME/.dotfiles/base16/scripts/base16-solar-flare.sh
-if [ -f $COLORSCHEME ] ; then
-    source $COLORSCHEME
-fi
-
-# Aliases
-#alias cd='cd -P'
 
 # Plugins
 export DISABLE_AUTO_TITLE="true"
 source $HOME/.zgenrc
+
+# down here because something in OMZ overwrites it >:(
+export LESS=-FXR
+
+# Colorscheme
+export COLORSCHEME=$HOME/.dotfiles/base16/scripts/base16-solar-flare.sh
+if [[ -f $COLORSCHEME  && $TERM != "putty-256color" ]] ; then
+    #source $COLORSCHEME
+fi
+
+# Aliases
+#alias cd='cd -P'
 
 # Keybindings
 bindkey -e

@@ -16,7 +16,7 @@ if ! zgen saved; then
 EOPLUGINS
 
     # Theme
-    zgen oh-my-zsh themes/mortalscumbag
+    zgen oh-my-zsh themes/xiong-chiamiov-plus
 
     zgen save
 fi

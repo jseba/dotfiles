@@ -34,10 +34,10 @@
 ;; Fonts
 (set-face-attribute 'default nil
           :family "Source Code Pro"
-          :height 80)
+          :height 100)
 (set-face-attribute 'variable-pitch nil
           :family "Fira Sans"
-          :height 90
+          :height 110
           :weight 'regular)
 
 ;; Sane defaults
@@ -385,12 +385,12 @@ none."
   :bind (("C-c w z" . text-scale-adjust)))
 
 ;; Flash the cursor after a large movement
-(use-package beacon
-  :ensure t
-  :init
-  (beacon-mode +1)
-  :diminish
-  beacon-mode)
+;(use-package beacon
+  ;:ensure t
+  ;:init
+  ;(beacon-mode +1)
+  ;:diminish
+  ;beacon-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -720,12 +720,12 @@ none."
   (add-hook 'flyspell-mode-hook #'auto-dictionary-mode))
 
 ;; Turn page breaks into lines
-(use-package page-break-lines
-  :ensure t
-  :init
-  (global-page-break-lines-mode)
-  :diminish
-  page-break-lines-mode)
+;(use-package page-break-lines
+  ;:ensure t
+  ;:init
+  ;(global-page-break-lines-mode)
+  ;:diminish
+  ;page-break-lines-mode)
 
 ;; keep an eye on whitespace misuse
 (use-package whitespace
@@ -938,7 +938,7 @@ none."
   (setq reb-re-syntax 'string))
 
 ;;; Terminal emulation and shells
-(use-package shell                      ; Dump shell in Emacs
+(use-package shell                      ; Dumb shell in Emacs
   :bind
   ("C-c a t" . shell))
 
@@ -1116,25 +1116,25 @@ none."
    ("C-c x a (" . lunaryorn/align-repeat-left-paren)
    ("C-c x a )" . lunaryorn/align-repeat-right-paren)))
 
-(use-package multiple-cursors           ; Edit text with multiple cursors
-  :ensure t
-  :bind
-  (("C-c o <SPC>" . mc/vertical-align-with-space)
-   ("C-c o a"     . mc/vertical-align)
-   ("C-c o e"     . mc/mark-more-like-this-extended)
-   ("C-c o h"     . mc/mark-all-like-this-dwim)
-   ("C-c o l"     . mc/edit-lines)
-   ("C-c o n"     . mc/mark-next-like-this)
-   ("C-c o p"     . mc/mark-previous-like-this)
-   ("C-c o r"     . vr/mc-mark)
-   ("C-c o C-a"   . mc/edit-beginnings-of-lines)
-   ("C-c o C-e"   . mc/edit-ends-of-lines)
-   ("C-c o C-s"   . mc/mark-all-in-region))
-  :config
-  (setq mc/mode-line
-        ;; Simplify the MC mode line indicator
-        '(:propertize (:eval (concat " " (number-to-string (mc/num-cursors))))
-                      face font-lock-warning-face)))
+;(use-package multiple-cursors           ; Edit text with multiple cursors
+  ;:ensure t
+  ;:bind
+  ;(("C-c o <SPC>" . mc/vertical-align-with-space)
+   ;("C-c o a"     . mc/vertical-align)
+   ;("C-c o e"     . mc/mark-more-like-this-extended)
+   ;("C-c o h"     . mc/mark-all-like-this-dwim)
+   ;("C-c o l"     . mc/edit-lines)
+   ;("C-c o n"     . mc/mark-next-like-this)
+   ;("C-c o p"     . mc/mark-previous-like-this)
+   ;("C-c o r"     . vr/mc-mark)
+   ;("C-c o C-a"   . mc/edit-beginnings-of-lines)
+   ;("C-c o C-e"   . mc/edit-ends-of-lines)
+   ;("C-c o C-s"   . mc/mark-all-in-region))
+  ;:config
+  ;(setq mc/mode-line
+        ;;; Simplify the MC mode line indicator
+        ;'(:propertize (:eval (concat " " (number-to-string (mc/num-cursors))))
+                      ;face font-lock-warning-face)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1158,37 +1158,37 @@ none."
         ;; invert the navigation direction if pop-up is above point
         company-tooltip-flip-when-above t))
 
-;; Sort company candidates by statistics
-(use-package company-statistics
-  :ensure t
-  :after company
-  :if window-system
-  :config
-  (company-statistics-mode))
+;;; Sort company candidates by statistics
+;(use-package company-statistics
+  ;:ensure t
+  ;:after company
+  ;:if window-system
+  ;:config
+  ;(company-statistics-mode))
 
-;; Completion for Math symbols
-(use-package company-math
-  :ensure t
-  :after company
-  :config
-  ;; Add backends for math characters
-  (add-to-list 'company-backends 'company-math-symbols-unicode)
-  (add-to-list 'company-backends 'company-math-symbols-latex))
+;;; Completion for Math symbols
+;(use-package company-math
+  ;:ensure t
+  ;:after company
+  ;:config
+  ;;; Add backends for math characters
+  ;(add-to-list 'company-backends 'company-math-symbols-unicode)
+  ;(add-to-list 'company-backends 'company-math-symbols-latex))
 
-;; Emojis completion like Github/Slack
-(use-package company-emoji
-  :ensure t
-  :after company
-  :config
-  (add-to-list 'company-backends 'company-emoji))
+;;; Emojis completion like Github/Slack
+;(use-package company-emoji
+  ;:ensure t
+  ;:after company
+  ;:config
+  ;(add-to-list 'company-backends 'company-emoji))
 
 (use-package company-anaconda           ; Python backend for Company
   :ensure t
    :after company
   :config (add-to-list 'company-backends 'company-anaconda))
 
-;; If less than 5 completion candidates, cycle instead of pop-up
-(setq completion-cycle-threshold 5)
+;;; If less than 5 completion candidates, cycle instead of pop-up
+;(setq completion-cycle-threshold 5)
 
 ;; Replace dabbrev with hippie-expand
 (use-package hippie-exp
@@ -1215,25 +1215,25 @@ none."
   (("C-c i a" . auto-insert)))
 
 ;; Deal with copyright notices
-(use-package copyright
-  :defer t
-  :bind
-  (("C-c i c" . copyright-update))
-  :init
-  ;; Update copyright when visiting files
-  (defun lunaryorn-copyright-update ()
-    (interactive)
-    (unless buffer-read-only
-      (copyright-update nil 'interactive)
-      (unless copyright-update
-        ;; Fix years when the copyright information was updated
-        (copyright-fix-years))))
-  (add-hook 'find-file-hook #'lunaryorn-copyright-update)
-  :config
-  ;; Use ranges to denote consecutive years
-  (setq copyright-year-ranges t
-        ;; Limit copyright changes to my own copyright
-        copyright-names-regexp (regexp-quote user-full-name)))
+;(use-package copyright
+  ;:defer t
+  ;:bind
+  ;(("C-c i c" . copyright-update))
+  ;:init
+  ;;; Update copyright when visiting files
+  ;(defun lunaryorn-copyright-update ()
+    ;(interactive)
+    ;(unless buffer-read-only
+      ;(copyright-update nil 'interactive)
+      ;(unless copyright-update
+        ;;; Fix years when the copyright information was updated
+        ;(copyright-fix-years))))
+  ;(add-hook 'find-file-hook #'lunaryorn-copyright-update)
+  ;:config
+  ;;; Use ranges to denote consecutive years
+  ;(setq copyright-year-ranges t
+        ;;; Limit copyright changes to my own copyright
+        ;copyright-names-regexp (regexp-quote user-full-name)))
 
 ;; Smarter M-x - smex
 (use-package smex
@@ -1304,16 +1304,16 @@ none."
                              #'lunaryorn-neotree-project-root
                              helm-source-projectile-projects 1))
 
-(use-package helm-gtags
-  :ensure t
-  :init
-  (setq helm-gtags-fuzzy-match nil
-        helm-gtags-direct-helm-completing t
-        helm-gtags-display-style 'detail
-        helm-gtags-ignore-case t
-        helm-gtags-prefix-key "\C-t"
-        helm-gtags-suggested-key-mapping t)
-  :diminish helm-gtags-mode)
+;(use-package helm-gtags
+  ;:ensure t
+  ;:init
+  ;(setq helm-gtags-fuzzy-match nil
+        ;helm-gtags-direct-helm-completing t
+        ;helm-gtags-display-style 'detail
+        ;helm-gtags-ignore-case t
+        ;helm-gtags-prefix-key "\C-t"
+        ;helm-gtags-suggested-key-mapping t)
+  ;:diminish helm-gtags-mode)
 
 ;; Regex search using helm
 (use-package helm-regexp
@@ -1377,19 +1377,19 @@ none."
    ([remap insert-register] . helm-register)))
 
 ;; Run makefile targets through Helm
-(use-package helm-make
-  :ensure t
-  :bind
-  (("C-c c c" . helm-make-projectile)
-  ;; FIXME: Write a more sophisticated command that checks whether a
-  ;; Makefile exists and falls back to an alternative if not.
-  ("<f5>" . helm-make-projectile)))
+;(use-package helm-make
+  ;:ensure t
+  ;:bind
+  ;(("C-c c c" . helm-make-projectile)
+  ;;; FIXME: Write a more sophisticated command that checks whether a
+  ;;; Makefile exists and falls back to an alternative if not.
+  ;("<f5>" . helm-make-projectile)))
 
 ;; Input unicode with helm
-(use-package helm-unicode
-  :ensure t
-  :bind
-  ("C-c i 8" . helm-unicode))
+;(use-package helm-unicode
+  ;:ensure t
+  ;:bind
+  ;("C-c i 8" . helm-unicode))
 
 ;; Helm frontend for company
 (use-package helm-company
@@ -1408,19 +1408,19 @@ none."
   :bind (([remap apropos-command] . helm-apropos)
          ("C-c f l" . helm-locate-library)))
 
-(use-package helm-gitignore             ; Generate gitignore files
-  :ensure t
-  :defer t
-  :bind
-  ("C-c g I" . helm-gitignore))
+;(use-package helm-gitignore             ; Generate gitignore files
+  ;:ensure t
+  ;:defer t
+  ;:bind
+  ;("C-c g I" . helm-gitignore))
 
-(use-package helm-open-github ; Open Github pages for current repo
-  ;; FIXME: Triggers a password prompt during load?!
-  :disabled t
-  :ensure t
-  :bind
-  (("C-c g g i" . helm-open-github-from-issues)
-   ("C-c g g p" . helm-open-github-from-pull-requests)))
+;(use-package helm-open-github ; Open Github pages for current repo
+  ;;; FIXME: Triggers a password prompt during load?!
+  ;:disabled t
+  ;:ensure t
+  ;:bind
+  ;(("C-c g g i" . helm-open-github-from-issues)
+   ;("C-c g g p" . helm-open-github-from-pull-requests)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1439,6 +1439,7 @@ none."
     nil '(("\\<\\(\\(FIX\\(ME\\)?\\|TODO\\|OPTIMIZE\\|HACK\\|REFACTOR\\):\\)"
            1 font-lock-warning-face t))))
   (set (make-local-variable 'comment-auto-fill-only-comments) t)
+  (setq font-lock-maximum-decoration 2)
   :config
   (add-hook 'prog-mode-hook #'font-lock-comment-annotations)
   :bind
@@ -1591,221 +1592,221 @@ mouse-3: go to end")))))
 ;  :init
 ;)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Programming - LaTeX
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package table                      ; Edit tables in text files
-  :defer t
-  :init
-  (add-hook 'text-mode-hook #'table-recognize))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;
+;;;; Programming - LaTeX
+;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;(use-package table                      ; Edit tables in text files
+  ;:defer t
+  ;:init
+  ;(add-hook 'text-mode-hook #'table-recognize))
 
-(use-package tildify                    ; Insert non-breaking spaces on the fly
-  :defer t
-  :bind (("C-c x t" . tildify-region)
-  ("C-c t ~" . tildify-mode))
-  :config
-  ;; Use the right space for LaTeX
-  (add-hook 'latex-mode-hook
-    (lambda () (setq-local tildify-space-string "~"))))
+;(use-package tildify                    ; Insert non-breaking spaces on the fly
+  ;:defer t
+  ;:bind (("C-c x t" . tildify-region)
+  ;("C-c t ~" . tildify-mode))
+  ;:config
+  ;;; Use the right space for LaTeX
+  ;(add-hook 'latex-mode-hook
+    ;(lambda () (setq-local tildify-space-string "~"))))
 
-(use-package typo                       ; Automatically use typographic quotes
-  :ensure t
-  :bind (("C-c t t" . typo-mode)
-  ("C-c l L" . typo-change-language))
-  :init
-  (typo-global-mode)
-  (add-hook 'text-mode-hook #'typo-mode)
-  :config
-  ;; TODO: Automatically set from ispell dictionary in
-  ;; `adict-change-dictionary-hook', to update the typo language whenever the
-  ;; spelling language changed
-  (setq-default typo-language "English")
-  :diminish typo-mode)
+;(use-package typo                       ; Automatically use typographic quotes
+  ;:ensure t
+  ;:bind (("C-c t t" . typo-mode)
+  ;("C-c l L" . typo-change-language))
+  ;:init
+  ;(typo-global-mode)
+  ;(add-hook 'text-mode-hook #'typo-mode)
+  ;:config
+  ;;; TODO: Automatically set from ispell dictionary in
+  ;;; `adict-change-dictionary-hook', to update the typo language whenever the
+  ;;; spelling language changed
+  ;(setq-default typo-language "English")
+  ;:diminish typo-mode)
 
-;;; LaTeX with AUCTeX
-(use-package tex-site                   ; AUCTeX initialization
-  :ensure auctex)
+;;;; LaTeX with AUCTeX
+;(use-package tex-site                   ; AUCTeX initialization
+  ;:ensure auctex)
 
-(use-package tex                        ; TeX editing/processing
-  :ensure auctex
-  :defer t
-  :config
-  (setq TeX-parse-self t                ; Parse documents to provide completion
-                                        ; for packages, etc.
-        TeX-auto-save t                 ; Automatically save style information
-        TeX-electric-sub-and-superscript t ; Automatically insert braces after
-                                           ; sub- and superscripts in math mode
-        TeX-electric-math '("\\(" "\\)")
-        ;; Don't insert magic quotes right away.
-        TeX-quote-after-quote t
-        ;; Don't ask for confirmation when cleaning
-        TeX-clean-confirm nil
-        ;; Provide forward and inverse search with SyncTeX
-        TeX-source-correlate-mode t
-        TeX-source-correlate-method 'synctex)
-        (setq-default TeX-master nil          ; Ask for the master file
-                      TeX-engine 'luatex      ; Use a modern engine
-                      ;; Redundant in 11.88, but keep for older AUCTeX
-                      TeX-PDF-mode t)
+;(use-package tex                        ; TeX editing/processing
+  ;:ensure auctex
+  ;:defer t
+  ;:config
+  ;(setq TeX-parse-self t                ; Parse documents to provide completion
+                                        ;; for packages, etc.
+        ;TeX-auto-save t                 ; Automatically save style information
+        ;TeX-electric-sub-and-superscript t ; Automatically insert braces after
+                                           ;; sub- and superscripts in math mode
+        ;TeX-electric-math '("\\(" "\\)")
+        ;;; Don't insert magic quotes right away.
+        ;TeX-quote-after-quote t
+        ;;; Don't ask for confirmation when cleaning
+        ;TeX-clean-confirm nil
+        ;;; Provide forward and inverse search with SyncTeX
+        ;TeX-source-correlate-mode t
+        ;TeX-source-correlate-method 'synctex)
+        ;(setq-default TeX-master nil          ; Ask for the master file
+                      ;TeX-engine 'luatex      ; Use a modern engine
+                      ;;; Redundant in 11.88, but keep for older AUCTeX
+                      ;TeX-PDF-mode t)
 
-  ;; Move to chktex
-  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s"))
+  ;;; Move to chktex
+  ;(setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s"))
 
-(use-package tex-buf                    ; TeX buffer management
-  :ensure auctex
-  :defer t
-  ;; Don't ask for confirmation when saving before processing
-  :config
-  (setq TeX-save-query nil))
+;(use-package tex-buf                    ; TeX buffer management
+  ;:ensure auctex
+  ;:defer t
+  ;;; Don't ask for confirmation when saving before processing
+  ;:config
+  ;(setq TeX-save-query nil))
 
-(use-package tex-style                  ; TeX style
-  :ensure auctex
-  :defer t
-  :config
-  ;; Enable support for csquotes
-  (setq LaTeX-csquotes-close-quote "}"
-        LaTeX-csquotes-open-quote "\\enquote{"))
+;(use-package tex-style                  ; TeX style
+  ;:ensure auctex
+  ;:defer t
+  ;:config
+  ;;; Enable support for csquotes
+  ;(setq LaTeX-csquotes-close-quote "}"
+        ;LaTeX-csquotes-open-quote "\\enquote{"))
 
-(use-package tex-fold                   ; TeX folding
-  :ensure auctex
-  :defer t
-  :init
-  (add-hook 'TeX-mode-hook #'TeX-fold-mode))
+;(use-package tex-fold                   ; TeX folding
+  ;:ensure auctex
+  ;:defer t
+  ;:init
+  ;(add-hook 'TeX-mode-hook #'TeX-fold-mode))
 
-(use-package tex-mode                   ; TeX mode
-  :ensure auctex
-  :defer t
-  :config
-  (font-lock-add-keywords 'latex-mode
-                          `((,(rx "\\"
-                                  symbol-start
-                                  "fx" (1+ (or (syntax word) (syntax symbol)))
-                                  symbol-end)
-                             . font-lock-warning-face))))
+;(use-package tex-mode                   ; TeX mode
+  ;:ensure auctex
+  ;:defer t
+  ;:config
+  ;(font-lock-add-keywords 'latex-mode
+                          ;`((,(rx "\\"
+                                  ;symbol-start
+                                  ;"fx" (1+ (or (syntax word) (syntax symbol)))
+                                  ;symbol-end)
+                             ;. font-lock-warning-face))))
 
-(use-package latex                      ; LaTeX editing
-  :ensure auctex
-  :defer t
-  :config
-  ;; Teach TeX folding about KOMA script sections
-  (setq TeX-outline-extra `((,(rx (0+ space) "\\section*{") 2)
-                            (,(rx (0+ space) "\\subsection*{") 3)
-                            (,(rx (0+ space) "\\subsubsection*{") 4)
-                            (,(rx (0+ space) "\\minisec{") 5))
-        ;; No language-specific hyphens please
-        LaTeX-babel-hyphen nil)
+;(use-package latex                      ; LaTeX editing
+  ;:ensure auctex
+  ;:defer t
+  ;:config
+  ;;; Teach TeX folding about KOMA script sections
+  ;(setq TeX-outline-extra `((,(rx (0+ space) "\\section*{") 2)
+                            ;(,(rx (0+ space) "\\subsection*{") 3)
+                            ;(,(rx (0+ space) "\\subsubsection*{") 4)
+                            ;(,(rx (0+ space) "\\minisec{") 5))
+        ;;; No language-specific hyphens please
+        ;LaTeX-babel-hyphen nil)
 
-  (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode))    ; Easy math input
+  ;(add-hook 'LaTeX-mode-hook #'LaTeX-math-mode))    ; Easy math input
 
-(use-package auctex-latexmk             ; latexmk command for AUCTeX
-  :ensure t
-  :defer t
-  :after latex
-  :config (auctex-latexmk-setup))
+;(use-package auctex-latexmk             ; latexmk command for AUCTeX
+  ;:ensure t
+  ;:defer t
+  ;:after latex
+  ;:config (auctex-latexmk-setup))
 
-(use-package bibtex                     ; BibTeX editing
-  :defer t
-  :config
-  ;; Run prog mode hooks for bibtex
-  (add-hook 'bibtex-mode-hook (lambda () (run-hooks 'prog-mode-hook)))
+;(use-package bibtex                     ; BibTeX editing
+  ;:defer t
+  ;:config
+  ;;; Run prog mode hooks for bibtex
+  ;(add-hook 'bibtex-mode-hook (lambda () (run-hooks 'prog-mode-hook)))
 
-  ;; Use a modern BibTeX dialect
-  (bibtex-set-dialect 'biblatex))
+  ;;; Use a modern BibTeX dialect
+  ;(bibtex-set-dialect 'biblatex))
 
-(use-package reftex                     ; TeX/BibTeX cross-reference management
-  :defer t
-  :init (add-hook 'LaTeX-mode-hook #'reftex-mode)
-  :config
-  ;; Plug into AUCTeX
-  (setq reftex-plug-into-AUCTeX t
-        ;; Automatically derive labels, and prompt for confirmation
-        reftex-insert-label-flags '(t t)
-        reftex-label-alist
-        '(
-          ;; Additional label definitions for RefTeX.
-          ("definition" ?d "def:" "~\\ref{%s}"
-           lunaryorn-reftex-find-ams-environment-caption
-          ("definition" "def.") -3)
-          ("theorem" ?h "thm:" "~\\ref{%s}"
-           lunaryorn-reftex-find-ams-environment-caption
-          ("theorem" "th.") -3)
-          ("example" ?x "ex:" "~\\ref{%s}"
-           lunaryorn-reftex-find-ams-environment-caption
-          ("example" "ex") -3)
-          ;; Algorithms package
-          ("algorithm" ?a "alg:" "~\\ref{%s}"
-           "\\\\caption[[{]" ("algorithm" "alg") -3)))
-  ;; Provide basic RefTeX support for biblatex
-  (unless (assq 'biblatex reftex-cite-format-builtin)
-    (add-to-list 'reftex-cite-format-builtin
-                 '(biblatex "The biblatex package"
-                            ((?\C-m . "\\cite[]{%l}")
-                            (?t . "\\textcite{%l}")
-                            (?a . "\\autocite[]{%l}")
-                            (?p . "\\parencite{%l}")
-                            (?f . "\\footcite[][]{%l}")
-                            (?F . "\\fullcite[]{%l}")
-                            (?x . "[]{%l}")
-                            (?X . "{%l}"))))
-    (setq reftex-cite-format 'biblatex))
-  :diminish reftex-mode)
+;(use-package reftex                     ; TeX/BibTeX cross-reference management
+  ;:defer t
+  ;:init (add-hook 'LaTeX-mode-hook #'reftex-mode)
+  ;:config
+  ;;; Plug into AUCTeX
+  ;(setq reftex-plug-into-AUCTeX t
+        ;;; Automatically derive labels, and prompt for confirmation
+        ;reftex-insert-label-flags '(t t)
+        ;reftex-label-alist
+        ;'(
+          ;;; Additional label definitions for RefTeX.
+          ;("definition" ?d "def:" "~\\ref{%s}"
+           ;lunaryorn-reftex-find-ams-environment-caption
+          ;("definition" "def.") -3)
+          ;("theorem" ?h "thm:" "~\\ref{%s}"
+           ;lunaryorn-reftex-find-ams-environment-caption
+          ;("theorem" "th.") -3)
+          ;("example" ?x "ex:" "~\\ref{%s}"
+           ;lunaryorn-reftex-find-ams-environment-caption
+          ;("example" "ex") -3)
+          ;;; Algorithms package
+          ;("algorithm" ?a "alg:" "~\\ref{%s}"
+           ;"\\\\caption[[{]" ("algorithm" "alg") -3)))
+  ;;; Provide basic RefTeX support for biblatex
+  ;(unless (assq 'biblatex reftex-cite-format-builtin)
+    ;(add-to-list 'reftex-cite-format-builtin
+                 ;'(biblatex "The biblatex package"
+                            ;((?\C-m . "\\cite[]{%l}")
+                            ;(?t . "\\textcite{%l}")
+                            ;(?a . "\\autocite[]{%l}")
+                            ;(?p . "\\parencite{%l}")
+                            ;(?f . "\\footcite[][]{%l}")
+                            ;(?F . "\\fullcite[]{%l}")
+                            ;(?x . "[]{%l}")
+                            ;(?X . "{%l}"))))
+    ;(setq reftex-cite-format 'biblatex))
+  ;:diminish reftex-mode)
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Programming - Markdown/JSON/etc.
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;
+;;;; Programming - Markdown/JSON/etc.
+;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package markdown-mode              ; Markdown
-  :ensure t
-  ;; Just no, dear Markdown Mode.  Don't force that bastard Github dialect upon
-  ;; me!
-  :mode ("\\.md\\'" . markdown-mode)
-  :config
-  ;; Process Markdown with Pandoc, using a custom stylesheet for nice output
-  (let ((stylesheet (expand-file-name
-    (locate-user-emacs-file "etc/pandoc.css"))))
-    (setq markdown-command
-    (mapconcat #'shell-quote-argument
-               `("pandoc" "--toc" "--section-divs"
-                 "--css" ,(concat "file://" stylesheet)
-                 "--standalone" "-f" "markdown" "-t" "html5")
-                 " ")))
+;(use-package markdown-mode              ; Markdown
+  ;:ensure t
+  ;;; Just no, dear Markdown Mode.  Don't force that bastard Github dialect upon
+  ;;; me!
+  ;:mode ("\\.md\\'" . markdown-mode)
+  ;:config
+  ;;; Process Markdown with Pandoc, using a custom stylesheet for nice output
+  ;(let ((stylesheet (expand-file-name
+    ;(locate-user-emacs-file "etc/pandoc.css"))))
+    ;(setq markdown-command
+    ;(mapconcat #'shell-quote-argument
+               ;`("pandoc" "--toc" "--section-divs"
+                 ;"--css" ,(concat "file://" stylesheet)
+                 ;"--standalone" "-f" "markdown" "-t" "html5")
+                 ;" ")))
 
-  ;; No filling in GFM, because line breaks are significant.
-  (add-hook 'gfm-mode-hook #'turn-off-auto-fill)
-  ;; Use visual lines instead
-  (add-hook 'gfm-mode-hook #'visual-line-mode)
-  (add-hook 'gfm-mode-hook #'lunaryorn-whitespace-style-no-long-lines)
-  (bind-key "C-c C-s C" #'markdown-insert-gfm-code-block markdown-mode-map)
-  (bind-key "C-c C-s P" #'markdown-insert-gfm-code-block markdown-mode-map)
+  ;;; No filling in GFM, because line breaks are significant.
+  ;(add-hook 'gfm-mode-hook #'turn-off-auto-fill)
+  ;;; Use visual lines instead
+  ;(add-hook 'gfm-mode-hook #'visual-line-mode)
+  ;(add-hook 'gfm-mode-hook #'lunaryorn-whitespace-style-no-long-lines)
+  ;(bind-key "C-c C-s C" #'markdown-insert-gfm-code-block markdown-mode-map)
+  ;(bind-key "C-c C-s P" #'markdown-insert-gfm-code-block markdown-mode-map)
 
-  ;; Fight my habit of constantly pressing M-q.  We should not fill in GFM
-  ;; Mode.
-  (bind-key "M-q" #'ignore gfm-mode-map))
+  ;;; Fight my habit of constantly pressing M-q.  We should not fill in GFM
+  ;;; Mode.
+  ;(bind-key "M-q" #'ignore gfm-mode-map))
 
-(use-package yaml-mode                  ; YAML
-  :ensure t
-  :defer t
-  :config
-  (add-hook 'yaml-mode-hook (lambda () (run-hooks 'prog-mode-hook))))
+;(use-package yaml-mode                  ; YAML
+  ;:ensure t
+  ;:defer t
+  ;:config
+  ;(add-hook 'yaml-mode-hook (lambda () (run-hooks 'prog-mode-hook))))
 
-(use-package json-mode                  ; JSON files
-  :ensure t
-  :defer t
-  :config
-  (add-hook 'json-mode-hook
-    ;; Fix JSON mode indentation
-    (lambda () (setq-local js-indent-level 4))))
+;(use-package json-mode                  ; JSON files
+  ;:ensure t
+  ;:defer t
+  ;:config
+  ;(add-hook 'json-mode-hook
+    ;;; Fix JSON mode indentation
+    ;(lambda () (setq-local js-indent-level 4))))
 
-(use-package json-reformat              ; Reformat JSON
-  :ensure t
-  :defer t
-  :bind
-  (("C-c x j" . json-reformat-region)))
+;(use-package json-reformat              ; Reformat JSON
+  ;:ensure t
+  ;:defer t
+  ;:bind
+  ;(("C-c x j" . json-reformat-region)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1861,34 +1862,34 @@ mouse-3: go to end")))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (bind-key "C-c t d" #'toggle-debug-on-error)
 
-(use-package elisp-slime-nav            ; Jump to definition of symbol at point
-  :ensure t
-  :init (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode)
-  :bind
-  (:map elisp-slime-nav-mode-map
-        ("C-c h ." . elisp-slive-nav-describe-elisp-thing-at-point))
-  :config
-  (dolist (key '("C-c C-d d" "C-c C-d C-d"))
-    (define-key elisp-slime-nav-mode-map (kbd key) nil))
-  :diminish elisp-slime-nav-mode)
+;(use-package elisp-slime-nav            ; Jump to definition of symbol at point
+  ;:ensure t
+  ;:init (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode)
+  ;:bind
+  ;(:map elisp-slime-nav-mode-map
+        ;("C-c h ." . elisp-slive-nav-describe-elisp-thing-at-point))
+  ;:config
+  ;(dolist (key '("C-c C-d d" "C-c C-d C-d"))
+    ;(define-key elisp-slime-nav-mode-map (kbd key) nil))
+  ;:diminish elisp-slime-nav-mode)
 
-(use-package pcre2el                    ; Convert regexps to RX and back
-  :disabled t
-  :ensure t
-  :init (rxt-global-mode))
+;(use-package pcre2el                    ; Convert regexps to RX and back
+  ;:disabled t
+  ;:ensure t
+  ;:init (rxt-global-mode))
 
-(use-package ielm                       ; Emacs Lisp REPL
-  :bind
-  (("C-c a '" . ielm)))
+;(use-package ielm                       ; Emacs Lisp REPL
+  ;:bind
+  ;(("C-c a '" . ielm)))
 
-(use-package elisp-mode                 ; Emacs Lisp editing
-  :defer t
-  :interpreter ("emacs" . emacs-lisp-mode)
-  :bind (:map emacs-lisp-mode-map
-              ("C-c m e r" . eval-region)
-              ("C-c m e b" . eval-buffer)
-              ("C-c m e e" . eval-last-sexp)
-              ("C-c m e f" . eval-defun)))
+;(use-package elisp-mode                 ; Emacs Lisp editing
+  ;:defer t
+  ;:interpreter ("emacs" . emacs-lisp-mode)
+  ;:bind (:map emacs-lisp-mode-map
+              ;("C-c m e r" . eval-region)
+              ;("C-c m e b" . eval-buffer)
+              ;("C-c m e e" . eval-last-sexp)
+              ;("C-c m e f" . eval-defun)))
 
 ;; (use-package el-search                  ; pcase-based search for elisp
 ;;   :ensure t
@@ -1901,36 +1902,36 @@ mouse-3: go to end")))))
 ;;; Documents
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package doc-view
-  :defer t
-  :config
-  ;; Render PDFs at 300dpi
-  (setq doc-view-resolution 300)
+;(use-package doc-view
+  ;:defer t
+  ;:config
+  ;;; Render PDFs at 300dpi
+  ;(setq doc-view-resolution 300)
 
-  (defconst lunaryorn-doc-view-mutool-program "mutool")
+  ;(defconst lunaryorn-doc-view-mutool-program "mutool")
 
-  (defun lunaryorn-doc-view-pdf->png-converter-mutool (pdf png page callback)
-    "Convert a PDF file to PNG at PAGE.
-After conversion invoke CALLBACK.  See `doc-view-start-process'
-for more information about CALLBACK."
-    (doc-view-start-process
-     "pdf->png" lunaryorn-doc-view-mutool-program
-     `("draw"
-       ,(concat "-o" png)
-       ,(format "-r%d" (round doc-view-resolution))
-       ,pdf
-       ,@(if page `(,(format "%d" page))))
-     callback))
+  ;(defun lunaryorn-doc-view-pdf->png-converter-mutool (pdf png page callback)
+    ;"Convert a PDF file to PNG at PAGE.
+;After conversion invoke CALLBACK.  See `doc-view-start-process'
+;for more information about CALLBACK."
+    ;(doc-view-start-process
+     ;"pdf->png" lunaryorn-doc-view-mutool-program
+     ;`("draw"
+       ;,(concat "-o" png)
+       ;,(format "-r%d" (round doc-view-resolution))
+       ;,pdf
+       ;,@(if page `(,(format "%d" page))))
+     ;callback))
 
-  ;; If `mutool' exists use our own converter function to call "mutool draw".
-  ;; Otherwise check whether docview found mudraw and warn if it didn't
-  (if (executable-find lunaryorn-doc-view-mutool-program)
-    (setq doc-view-pdf->png-converter-function
-          #'lunaryorn-doc-view-pdf->png-converter-mutool)
-    ;; Warn if Doc View falls back to Ghostscript for rendering
-    (unless (eq doc-view-pdf->png-converter-function
-                'doc-view-pdf->png-converter-mupdf)
-      (warn "Doc View is not using mupdf!"))))
+  ;;; If `mutool' exists use our own converter function to call "mutool draw".
+  ;;; Otherwise check whether docview found mudraw and warn if it didn't
+  ;(if (executable-find lunaryorn-doc-view-mutool-program)
+    ;(setq doc-view-pdf->png-converter-function
+          ;#'lunaryorn-doc-view-pdf->png-converter-mutool)
+    ;;; Warn if Doc View falls back to Ghostscript for rendering
+    ;(unless (eq doc-view-pdf->png-converter-function
+                ;'doc-view-pdf->png-converter-mupdf)
+      ;(warn "Doc View is not using mupdf!"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1985,21 +1986,21 @@ for more information about CALLBACK."
                 '((name . dired-omit-mode-diminish))))
 
 ;; Neotree
-(use-package neotree
-  :ensure t
-  :bind
-  (("C-c f t" . neotree-toggle))
-  :config
-  (setq neo-window-width 32
-        neo-create-file-auto-open t
-        neo-banner-message nil
-        neo-show-updir-line nil
-        neo-mode-line-type 'neotree
-        neo-smart-open t
-        neo-dont-be-alone t
-        neo-persist-show nil
-        neo-show-hidden-files t
-        neo-auto-indent-point t))
+;(use-package neotree
+  ;:ensure t
+  ;:bind
+  ;(("C-c f t" . neotree-toggle))
+  ;:config
+  ;(setq neo-window-width 32
+        ;neo-create-file-auto-open t
+        ;neo-banner-message nil
+        ;neo-show-updir-line nil
+        ;neo-mode-line-type 'neotree
+        ;neo-smart-open t
+        ;neo-dont-be-alone t
+        ;neo-persist-show nil
+        ;neo-show-hidden-files t
+        ;neo-auto-indent-point t))
 
 ;; Ignore uninteresting files
 (use-package ignoramus
@@ -2016,10 +2017,10 @@ for more information about CALLBACK."
   hardhat-mode)
 
 ;; Bookmarks for buffers
-(use-package bookmark
-  :bind (("C-c f b" . list-bookmarks))
-  :config
-  (setq bookmark-save-flag 1))
+;(use-package bookmark
+  ;:bind (("C-c f b" . list-bookmarks))
+  ;:config
+  ;(setq bookmark-save-flag 1))
 
 ;; Save recently visited files
 (use-package recentf
@@ -2101,12 +2102,12 @@ for more information about CALLBACK."
     ("]" forward-page  "forward")))
 
 ;; Page outlines
-(use-package outline
-  :defer t
-  :init
-  (dolist (hook '(text-mode-hook prog-mode-hook))
-    (add-hook hook #'outline-minor-mode))
-  :diminish outline-minor-mode)
+;(use-package outline
+  ;:defer t
+  ;:init
+  ;(dolist (hook '(text-mode-hook prog-mode-hook))
+    ;(add-hook hook #'outline-minor-mode))
+  ;:diminish outline-minor-mode)
 
 ;; Line numbers in margin
 (use-package nlinum
@@ -2160,19 +2161,19 @@ for more information about CALLBACK."
   ;; headers, etc.q
   :init (add-hook 'Info-selection-hook #'niceify-info))
 
-(use-package ansible-doc                ; Documentation lookup for Ansible
-  :ensure t
-  :defer t
-  :init
-  (add-hook 'yaml-mode-hook #'ansible-doc-mode)
-  :diminish ansible-doc-mode)
+;(use-package ansible-doc                ; Documentation lookup for Ansible
+  ;:ensure t
+  ;:defer t
+  ;:init
+  ;(add-hook 'yaml-mode-hook #'ansible-doc-mode)
+  ;:diminish ansible-doc-mode)
 
-(use-package dash-at-point              ; Jump to Dash docset at point
-  :ensure t
-  :defer t
-  :bind
-  (("C-c h d" . dash-at-point)
-   ("C-c h D" . dash-at-point-with-docset)))
+;(use-package dash-at-point              ; Jump to Dash docset at point
+  ;:ensure t
+  ;:defer t
+  ;:bind
+  ;(("C-c h d" . dash-at-point)
+   ;("C-c h D" . dash-at-point-with-docset)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2186,11 +2187,11 @@ for more information about CALLBACK."
   ;; Always follow symlinks to files in VCS repos
   (setq vc-follow-symlinks t))
 
-(use-package what-the-commit            ; Insert random commit messages
-  :ensure t
-  :bind
-  (("C-c i w" . what-the-commit-insert)
-   ("C-c g w" . what-the-commit)))
+;(use-package what-the-commit            ; Insert random commit messages
+  ;:ensure t
+  ;:bind
+  ;(("C-c i w" . what-the-commit-insert)
+   ;("C-c g w" . what-the-commit)))
 
 ;; Highlighting for diffs
 (use-package diff-hl
@@ -2253,11 +2254,11 @@ for more information about CALLBACK."
 (use-package gitignore-mode
   :ensure t)
 
-(use-package gh                         ; Github API library
-  :defer t
-  ;; Change the default profile.  The profile itself is set up via customize,
-  ;; and includes auth data, to prevent it from storing tokens in Git config
-  :config (setq gh-profile-default-profile "jseba"))
+;(use-package gh                         ; Github API library
+  ;:defer t
+  ;;; Change the default profile.  The profile itself is set up via customize,
+  ;;; and includes auth data, to prevent it from storing tokens in Git config
+  ;:config (setq gh-profile-default-profile "jseba"))
 
 ;; (use-package gist                       ; Create and list Gists
 ;;   :ensure t
@@ -2362,22 +2363,22 @@ _k_: kill        _s_: split                   _{_: wrap with { }
     (add-hook hook #'rainbow-delimiters-mode)))
 
 ;; Highlight symbols
-(use-package highlight-symbol
-  :ensure t
-  :defer t
-  :bind
-  (("C-c s %" . highlight-symbol-query-replace)
-   ("C-c s n" . highlight-symbol-next-in-defun)
-   ("C-c s p" . highlight-symbol-prev-in-defun))
-  ;; Navigate occurrences of the symbol under point with M-n and M-p, and
-  ;; highlight symbol occurrences
-  :init
-  (dolist (fn '(highlight-symbol-nav-mode highlight-symbol-mode))
-    (add-hook 'prog-mode-hook fn))
-  :config
-  (setq highlight-symbol-idle-delay 0.4     ; Highlight almost immediately
-        highlight-symbol-on-navigation-p t) ; Highlight immediately after navigation
-  :diminish highlight-symbol-mode)
+;(use-package highlight-symbol
+  ;:ensure t
+  ;:defer t
+  ;:bind
+  ;(("C-c s %" . highlight-symbol-query-replace)
+   ;("C-c s n" . highlight-symbol-next-in-defun)
+   ;("C-c s p" . highlight-symbol-prev-in-defun))
+  ;;; Navigate occurrences of the symbol under point with M-n and M-p, and
+  ;;; highlight symbol occurrences
+  ;:init
+  ;(dolist (fn '(highlight-symbol-nav-mode highlight-symbol-mode))
+    ;(add-hook 'prog-mode-hook fn))
+  ;:config
+  ;(setq highlight-symbol-idle-delay 0.4     ; Highlight almost immediately
+        ;highlight-symbol-on-navigation-p t) ; Highlight immediately after navigation
+  ;:diminish highlight-symbol-mode)
 
 ;; Highlight TODOs in buffers
 (use-package hl-todo
@@ -2409,9 +2410,9 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
   (global-hl-line-mode 1))
 
 ;; Regexp highlights
-(use-package hi-lock
-  :init
-  (global-hi-lock-mode))
+;(use-package hi-lock
+  ;:init
+  ;(global-hi-lock-mode))
 
 ;; Window movement
 (bind-key "C-c w =" #'balance-windows)
@@ -2444,37 +2445,37 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
    ("C-c w w" . ace-window)))
 
 ;; Auto resize windows
-(use-package golden-ratio
-  :ensure t
-  :init
-  (defun personal/toggle-golden-ratio ()
-    (interactive)
-    (if (bound-and-true-p golden-ratio-mode)
-      (progn
-        (golden-ratio-mode -1)
-        (balance-windows))
-      (golden-ratio-mode)
-      (golden-ratio)))
-  :bind
-  (("C-c t g" . personal/toggle-golden-ratio))
-  :config
-  (setq golden-ratio-extra-commands '(windmove-up
-                                      windmove-down
-                                      windmove-left
-                                      windmove-right
-                                      ace-window
-                                      ace-delete-window
-                                      ace-select-window
-                                      ace-swap-window
-                                      ace-maximize-window)
-        golden-ratio-exclude-modes '(flycheck-error-list
-                                      calc-mode
-                                      dired-mode
-                                      ediff-mode)
-        golden-ratio-exclude-buffer-regexp '(,(rx bos "*" (any "h" "H") "elm*" eos)
-                                             ,(rx bos "*which-key*" eos)
-                                             ,(rx box "*NeoTree*" eos)))
-  :diminish golden-ratio-mode)
+;(use-package golden-ratio
+  ;:ensure t
+  ;:init
+  ;(defun personal/toggle-golden-ratio ()
+    ;(interactive)
+    ;(if (bound-and-true-p golden-ratio-mode)
+      ;(progn
+        ;(golden-ratio-mode -1)
+        ;(balance-windows))
+      ;(golden-ratio-mode)
+      ;(golden-ratio)))
+  ;:bind
+  ;(("C-c t g" . personal/toggle-golden-ratio))
+  ;:config
+  ;(setq golden-ratio-extra-commands '(windmove-up
+                                      ;windmove-down
+                                      ;windmove-left
+                                      ;windmove-right
+                                      ;ace-window
+                                      ;ace-delete-window
+                                      ;ace-select-window
+                                      ;ace-swap-window
+                                      ;ace-maximize-window)
+        ;golden-ratio-exclude-modes '(flycheck-error-list
+                                      ;calc-mode
+                                      ;dired-mode
+                                      ;ediff-mode)
+        ;golden-ratio-exclude-buffer-regexp '(,(rx bos "*" (any "h" "H") "elm*" eos)
+                                             ;,(rx bos "*which-key*" eos)
+                                             ;,(rx box "*NeoTree*" eos)))
+  ;:diminish golden-ratio-mode)
 
 ;; ediff windows
 (use-package ediff-wind
@@ -2507,11 +2508,11 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
   :bind
   (("C-c a u" . browse-url)))
 
-(use-package bug-reference              ; Turn bug refs into browsable buttons
-  :defer t
-  :init
-  (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
-  (add-hook 'text-mode-hook #'bug-reference-mode))
+;(use-package bug-reference              ; Turn bug refs into browsable buttons
+  ;:defer t
+  ;:init
+  ;(add-hook 'prog-mode-hook #'bug-reference-prog-mode)
+  ;(add-hook 'text-mode-hook #'bug-reference-mode))
 
 (use-package goto-addr                  ; Make links clickable
   :defer t
@@ -2522,41 +2523,41 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
   (add-hook 'prog-mode-hook #'goto-address-prog-mode)
   (add-hook 'text-mode-hook #'goto-address-mode))
 
-(use-package eww                        ; Emacs' built-in web browser
-  :bind
-  (("C-c a w b" . eww-list-bookmarks)
-   ("C-c a w w" . eww)
-   ("C-c a w u" . eww-browse-url)))
+;(use-package eww                        ; Emacs' built-in web browser
+  ;:bind
+  ;(("C-c a w b" . eww-list-bookmarks)
+   ;("C-c a w w" . eww)
+   ;("C-c a w u" . eww-browse-url)))
 
-(use-package sx                         ; StackExchange client for Emacs
-  :ensure t
-  :bind
-  (("C-c a S a" . sx-ask)
-   ("C-c a S s" . sx-tab-all-questions)
-   ("C-c a S q" . sx-tab-all-questions)
-   ("C-c a S f" . sx-tab-all-questions)
-   ("C-c a S n" . sx-tab-newest)))
+;(use-package sx                         ; StackExchange client for Emacs
+  ;:ensure t
+  ;:bind
+  ;(("C-c a S a" . sx-ask)
+   ;("C-c a S s" . sx-tab-all-questions)
+   ;("C-c a S q" . sx-tab-all-questions)
+   ;("C-c a S f" . sx-tab-all-questions)
+   ;("C-c a S n" . sx-tab-newest)))
 
-(use-package sx-compose                 ; Write questions/answers for Stack Exchange
-   :ensure sx
-   :defer t
-   :config
-   ;; Don't fill in SX questions/answers, and use visual lines instead.  Plays
-   ;; more nicely with the website.
-   (add-hook 'sx-compose-mode-hook #'turn-off-auto-fill)
-   (add-hook 'sx-compose-mode-hook #'visual-line-mode)
+;(use-package sx-compose                 ; Write questions/answers for Stack Exchange
+   ;:ensure sx
+   ;:defer t
+   ;:config
+   ;;; Don't fill in SX questions/answers, and use visual lines instead.  Plays
+   ;;; more nicely with the website.
+   ;(add-hook 'sx-compose-mode-hook #'turn-off-auto-fill)
+   ;(add-hook 'sx-compose-mode-hook #'visual-line-mode)
 
-   ;; Clean up whitespace before sending questions
-   (add-hook 'sx-compose-before-send-hook
-     (lambda () (whitespace-cleanup) t))
+   ;;; Clean up whitespace before sending questions
+   ;(add-hook 'sx-compose-before-send-hook
+     ;(lambda () (whitespace-cleanup) t))
 
-   (bind-key "M-q" #'ignore sx-compose-mode-map))
+   ;(bind-key "M-q" #'ignore sx-compose-mode-map))
 
-(use-package sx-question-mode           ; Show Stack
-  :ensure sx
-  :defer t
-  ;; Display questions in the same window
-  :config (setq sx-question-mode-display-buffer-function #'switch-to-buffer))
+;(use-package sx-question-mode           ; Show Stack
+  ;:ensure sx
+  ;:defer t
+  ;;; Display questions in the same window
+  ;:config (setq sx-question-mode-display-buffer-function #'switch-to-buffer))
 
 ;; Backups
 (defvar backup-directory "~/.emacs.d/backups/")
