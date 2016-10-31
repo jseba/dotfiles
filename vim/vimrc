@@ -63,7 +63,7 @@ set undofile
 set undodir=$HOME/.vim/undo
 
 " Speed up vim drawing over ssh
-if $TERM !="putty-256color"
+if $TERM != "putty-256color" && $OLDTERM != "putty-256color"
     set cursorline
     set relativenumber
 else
@@ -108,7 +108,7 @@ map <Leader>ss :setlocal spell!<CR>
 
 " Color scheme
 set background=dark
-colorscheme jellybeans
+colorscheme brogrammer
 if $TERM != "linux"
     set t_Co=256
     set t_so=[7m
@@ -136,7 +136,7 @@ nmap <Leader>) <Plug>ColorstepNext
 
 " Airline setup
 set laststatus=2
-if !has('gui_running') && $TERM == "linux"
+if !has('gui_running') && ($TERM == "linux" || $TERM == "putty-255color" || $OLDTERM == "putty-256color")
     " Disable powerline symbols on Linux VT
     let g:airline_powerline_fonts=0
     let g:airline_left_sep = ''
@@ -156,7 +156,7 @@ else
     let g:airline_symbols.linenr = ''
     let g:airline_powerline_fonts=1
 endif
-let g:airline_theme='hybridline'
+let g:airline_theme='badwolf'
 let g:airline_inactive_collapse=1
 
 " Omnicomplete
