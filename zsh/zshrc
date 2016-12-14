@@ -1,4 +1,8 @@
 # ZSH {{{
+setopt correct
+unsetopt correctall
+setopt no_nomatch
+setopt rm_star_silent
 
 # define word boundaries
 WORDCHARS='*?_-.[]!=&;~#$%^(){}<>'
@@ -62,24 +66,20 @@ export EDITOR=vim
 export PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
 export MANPATH=/usr/local/share/man:/usr/share/man
 export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+export TERMINFO=$HOME/.terminfo
 
 # Plugins
 export DISABLE_AUTO_TITLE="true"
 source $HOME/.zgenrc
 
-# down here because something in OMZ overwrites it >:(
-export LESS=-FXR
+ZSH_PLUGINS=$HOME/.dotfiles/zsh/plugins
+source $ZSH_CUSTOM/lambda-mod-zsh-theme/lambda-mod.zsh-theme
 
-# Colorscheme
-export COLORSCHEME=$HOME/.dotfiles/base16/scripts/base16-solar-flare.sh
-if [[ -f $COLORSCHEME  && $TERM != "putty-256color" ]] ; then
-    #source $COLORSCHEME
-fi
+# down here because something in OMZ overwrites it >:(
+export LESS=-MIFXR
 
 # Keybindings
 bindkey -e
-bindkey "^[[A" history-search-backward
-bindkey "^[[B" history-search-forward
 
 # Functions
 function ttitle {
