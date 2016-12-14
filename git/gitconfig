@@ -82,7 +82,7 @@
 
 [core]
   autocrlf = false
-  editor = vim
+  editor = nvim
   excludesfile = ~/.gitignore
   preloadindex = true
 
@@ -107,3 +107,7 @@
 [user]
   name = Josh Seba
   email = sebajosh@outlook.com
+
+[include]
+  path = .gitconfig.local
+
