@@ -40,21 +40,9 @@
 [submodule "nvim/bundle/vim-unimpaired"]
 	path = nvim/bundle/vim-unimpaired
 	url = https://github.com/tpope/vim-unimpaired
-[submodule "nvim/bundle/vim-airline"]
-	path = nvim/bundle/vim-airline
-	url = https://github.com/vim-airline/vim-airline
-[submodule "nvim/bundle/vim-airline-themes"]
-	path = nvim/bundle/vim-airline-themes
-	url = https://github.com/vim-airline/vim-airline-themes
 [submodule "nvim/bundle/neomake"]
 	path = nvim/bundle/neomake
 	url = https://github.com/neomake/neomake
-[submodule "nvim/bundle/deoplete.nvim"]
-	path = nvim/bundle/deoplete.nvim
-	url = https://github.com/Shougo/deoplete.nvim
-[submodule "nvim/bundle/deoplete-clang"]
-	path = nvim/bundle/deoplete-clang
-	url = https://github.com/zchee/deoplete-clang
 [submodule "nvim/bundle/vim-dirdiff"]
 	path = nvim/bundle/vim-dirdiff
 	url = https://github.com/will133/vim-dirdiff
@@ -67,9 +55,6 @@
 [submodule "nvim/bundle/fzf.vim"]
 	path = nvim/bundle/fzf.vim
 	url = https://github.com/junegunn/fzf.vim
-[submodule "nvim/bundle/neoinclude.vim"]
-	path = nvim/bundle/neoinclude.vim
-	url = https://github.com/Shougo/neoinclude.vim
 [submodule "nvim/bundle/vim-easymotion"]
 	path = nvim/bundle/vim-easymotion
 	url = https://github.com/easymotion/vim-easymotion
@@ -82,12 +67,24 @@
 [submodule "nvim/bundle/incsearch-fuzzy.vim"]
 	path = nvim/bundle/incsearch-fuzzy.vim
 	url = https://github.com/haya14busa/incsearch-fuzzy.vim
-[submodule "nvim/bundle/vim-tmux-navigator"]
-	path = nvim/bundle/vim-tmux-navigator
-	url = https://github.com/christoomey/vim-tmux-navigator
 [submodule "nvim/bundle/vim-rtags"]
 	path = nvim/bundle/vim-rtags
 	url = https://github.com/jseba/vim-rtags
 [submodule "nvim/bundle/gruvbox"]
 	path = nvim/bundle/gruvbox
 	url = https://github.com/morhetz/gruvbox
+[submodule "nvim/bundle/base16-vim"]
+	path = nvim/bundle/base16-vim
+	url = https://github.com/chriskempson/base16-vim
+[submodule "nvim/bundle/YouCompleteMe"]
+	path = nvim/bundle/YouCompleteMe
+	url = https://github.com/jseba/YouCompleteMe
+[submodule "zsh/plugins/lambda-mod-zsh-theme"]
+	path = zsh/plugins/lambda-mod-zsh-theme
+	url = https://github.com/jseba/lambda-mod-zsh-theme
+[submodule "nvim/bundle/lightline.vim"]
+	path = nvim/bundle/lightline.vim
+	url = https://github.com/itchyny/lightline.vim
+[submodule "nvim/bundle/vim-tmux-navigator"]
+	path = nvim/bundle/vim-tmux-navigator
+	url = https://github.com/christoomey/vim-tmux-navigator

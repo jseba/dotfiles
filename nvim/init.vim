@@ -3,6 +3,7 @@ scriptencoding utf-8
 
 " Bundles
 filetype off
+let g:pathogen_disabled = ['YouCompleteMe', 'deoplete.nvim', 'deoplete-clang']
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#infect()
 execute pathogen#helptags()
@@ -51,6 +52,8 @@ set backupdir=$HOME/.nvim/backups
 set undofile
 set undodir=$HOME/.nvim/undo
 set viminfo^=%
+set inccommand=nosplit
+set formatoptions+=j
 
 " Automatically set the cursor to first line
 " when editing a git commit message
@@ -98,6 +101,9 @@ function! <SID>BufcloseCloseIt()
 endfunction
 command! Bclose call <SID>BufcloseCloseIt()
 
+" Automatically enter insert mode when focussing a terminal buffer
+au BufWinEnter, WinEnter term://* startinsert
+
 " Keybindings
 let mapleader=' '
 
@@ -114,16 +120,19 @@ nnoremap <Leader>> :bn<CR>
 nnoremap <Leader>vs :vsplit<CR>
 nnoremap <Leader>ss :split<CR>
 nnoremap <Leader>hh :resize 60<CR>
+nnoremap <Leader>y "+y
+nnoremap <Leader>p "+p
+nnoremap <Leader>ve :edit $HOME/.config/nvim/init.vim<CR>
 
 map <Leader>pp :setlocal paste!<CR>
 map <Leader>ss :setlocal spell!<CR>
 map <leader>fc /\v^[<\|=>]{7}( .*\|$)<CR>
-map <C-S-J> <C-W><C-S-J>
-map <C-S-K> <C-W><C-S-K>
-map <C-S-L> <C-W><C-S-L>
-map <C-S-H> <C-W><C-S-H>
-map <C-G> <ESC>
-map! <C-G> <ESC>
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+map <C-h> <C-w>h
+map <C-g> <ESC>
+map! <C-g> <ESC>
 
 vmap <Tab> >gv
 vmap <S-Tab> <gv
@@ -131,18 +140,28 @@ vmap <S-Tab> <gv
 vnoremap > >gv
 vnoremap < <gv
 
+tnoremap <C-g> <C-\><C-n>
+tnoremap <C-j> <C-\><C-n><C-w>j
+tnoremap <C-k> <C-\><C-n><C-w>k
+tnoremap <C-l> <C-\><C-n><C-w>l
+tnoremap <C-h> <C-\><C-n><C-w>h
+
 " Color scheme
 set background=dark
-colorscheme molokai
-if $TERM != "linux"
+colorscheme gruvbox
+if !has('gui_running') && !($TERM == "linux" || $TERM == "putty-256color" || $OLDTERM == "putty-256color")
     set t_Co=256
     set t_so=[7m
     set t_ZH=[3m
     set t_ZR=[23m
-    let base16colorspace = 256
     let g:base16_termtrans = 1
     let g:base16_underline = 1
     let g:base16_italic = 1
+    let g:base16_italic = 1
+    let g:base16colorspace = 1
+    let g:gruvbox_contrast_dark = 'hard'
+    let g:gruvbox_italicize_comments = 1
+    set termguicolors
 endif
 if has('gui_running')
     set guifont=Source\ Code\ Pro\ 9
@@ -156,30 +175,29 @@ if has('gui_running')
     set guioptions+=c
 endif
 
-" Airline setup
+" Lightline setup
 set laststatus=2
 if !has('gui_running') && ($TERM == "linux" || $TERM == "putty-256color" || $OLDTERM == "putty-256color")
     " Disable powerline symbols when it seems unlikely we'll have them
-    let g:airline_powerline_fonts = 0
-    let g:airline_left_sep = ''
-    let g:airline_left_alt_sep = ''
-    let g:airline_right_sep = ''
-    let g:airline_right_alt_sep = ''
+    let g:statusline_left_sep = ''
+    let g:statusline_left_alt_sep = ''
+    let g:statusline_right_sep = ''
+    let g:statusline_right_alt_sep = ''
+    let g:statusline_branch = ''
+    let g:statusline_readonly = ''
+    let g:statusline_linenr = ''
 else
-    if !exists('g:airline_symbols')
-        let g:airline_symbols={}
-    endif
-    let g:airline_left_sep = ''
-    let g:airline_left_alt_sep = ''
-    let g:airline_right_sep = ''
-    let g:airline_right_alt_sep = ''
-    let g:airline_symbols.branch = ''
-    let g:airline_symbols.readonly = ''
-    let g:airline_symbols.linenr = ''
-    let g:airline_powerline_fonts = 1
+    let g:statusline_left_sep = ''
+    let g:statusline_left_alt_sep = ''
+    let g:statusline_right_sep = ''
+    let g:statusline_right_alt_sep = ''
+    let g:statusline_branch = ''
+    let g:statusline_readonly = ''
+    let g:statusline_linenr = ''
 endif
-let g:airline_theme = 'base16'
-let g:airline_inactive_collapse = 0
+let g:lightline = {
+            \ 'colorscheme': 'jellybeans'
+            \ }
 
 " Omnicomplete
 autocmd Filetype * 
@@ -195,20 +213,6 @@ set tags=./tags;./TAGS
 
 " Rainbow
 let g:rainbow_active=1
-
-" NerdTree
-map <C-e> <plug>NERDTreeTabsToggle<CR>
-map <leader>e :NERDTreeFind<CR>
-nmap <leader>nt :NERDTreeFind<CR>
-let g:NERDTreeShowBookmarks = 1
-let g:NERDTreeIgnore = ['\.py[cd]$', '\~$', '\.swo$', '\.swp$', '^\.git$', '^\.hg$', '^\.svn$', '\.bzr$']
-let g:NERDTreeChDirMode = 0
-let g:NERDTreeQuitOnOpen = 1
-let g:NERDTreeShowHidden = 1
-let g:NERDTreeKeepTreeInNewTab = 1
-let g:NERDTreeDirArrowExpandable = '>'
-let g:NERDTreeDirArrowCollapsible = 'v'
-let g:nerdtree_tabs_open_on_gui_startup = 0
 
 " Fugitive
 nnoremap <silent> <Leader>gs :Gstatus<CR>
@@ -302,14 +306,14 @@ au VimEnter * command! -bang -nargs=* Ag
   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
   \                 <bang>0)
 
-let g:fzf_files_options = '--preview "(highlight -0 -ansi {} || cat {}) 2>/dev/null | head -'.&lines.'"'
+let g:fzf_files_options = '--preview "cat {} 2>/dev/null | head -'.&lines.'"'
 let g:fzf_layout = { 'down': '~15%' }
 let g:fzf_colors =
 \ { 'fg':      ['fg', 'Normal'],
   \ 'bg':      ['bg', 'Normal'],
   \ 'hl':      ['fg', 'Comment'],
   \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn', 'Normal'],
   \ 'hl+':     ['fg', 'Statement'],
   \ 'info':    ['fg', 'PreProc'],
   \ 'prompt':  ['fg', 'Conditional'],
@@ -328,12 +332,18 @@ nnoremap <Leader>h :Helptags<CR>
 nnoremap <Leader>t :Tags<CR>
 nnoremap <Leader>b :Buffer<CR>
 nnoremap <Leader>a :Ag<Space>
-inoremap <C-x><C-l> <Plug>(fzf-complete-line)
+inoremap <C-x><C-l> <plug>(fzf-complete-line)
+
+" YouCompleteMe
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_confirm_extra_conf = 0
 
 
 " Neomake
 let g:neomake_cpp_enabled_makers = ['clangcheck']
-"let g:neomake_cpp_clang_errorformat = '%f:%l:%c: %trror: %m,'
 
 " Read project specific settings from cwd
 if filereadable(".project.vim")
