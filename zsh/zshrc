@@ -73,7 +73,7 @@ export DISABLE_AUTO_TITLE="true"
 source $HOME/.zgenrc
 
 ZSH_PLUGINS=$HOME/.dotfiles/zsh/plugins
-source $ZSH_CUSTOM/lambda-mod-zsh-theme/lambda-mod.zsh-theme
+source $ZSH_PLUGINS/lambda-mod-zsh-theme/lambda-mod.zsh-theme
 
 # down here because something in OMZ overwrites it >:(
 export LESS=-MIFXR
