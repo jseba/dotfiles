@@ -3,7 +3,6 @@ scriptencoding utf-8
 
 " Bundles
 filetype off
-let g:pathogen_disabled = ['YouCompleteMe', 'deoplete.nvim', 'deoplete-clang']
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#infect()
 execute pathogen#helptags()
@@ -162,6 +161,7 @@ if !has('gui_running') && !($TERM == "linux" || $TERM == "putty-256color" || $OL
     let g:gruvbox_contrast_dark = 'hard'
     let g:gruvbox_italicize_comments = 1
     set termguicolors
+    hi Normal guibg=none
 endif
 if has('gui_running')
     set guifont=Source\ Code\ Pro\ 9
@@ -310,7 +310,7 @@ let g:fzf_files_options = '--preview "cat {} 2>/dev/null | head -'.&lines.'"'
 let g:fzf_layout = { 'down': '~15%' }
 let g:fzf_colors =
 \ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
+  \ 'bg':      ['bg', 'none'],
   \ 'hl':      ['fg', 'Comment'],
   \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
   \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn', 'Normal'],
