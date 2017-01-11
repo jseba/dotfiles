@@ -4,7 +4,7 @@ scriptencoding utf-8
 " Bundles
 filetype off
 runtime bundle/vim-pathogen/autoload/pathogen.vim
-execute pathogen#infect()
+execute pathogen#infect('bundle/{}', '~/.local/nvim/{}')
 execute pathogen#helptags()
 
 " General settings
@@ -47,9 +47,9 @@ set nojoinspaces
 set splitright
 set splitbelow
 set backup
-set backupdir=$HOME/.nvim/backups
+set backupdir=$HOME/.local/share/nvim/backups
 set undofile
-set undodir=$HOME/.nvim/undo
+set undodir=$HOME/.local/share/nvim/undo
 set viminfo^=%
 set inccommand=nosplit
 set formatoptions+=j
@@ -344,6 +344,11 @@ let g:ycm_confirm_extra_conf = 0
 
 " Neomake
 let g:neomake_cpp_enabled_makers = ['clangcheck']
+
+" Read local machine settings
+if filereadable($HOME . "/.local/nvim/init.vim")
+    so $HOME/.local/nvim/init.vim
+endif
 
 " Read project specific settings from cwd
 if filereadable(".project.vim")
