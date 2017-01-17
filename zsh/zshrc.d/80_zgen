@@ -1,3 +1,7 @@
+# vim: set ft=zsh:
+
+export DISABLE_AUTO_TITLE="true"
+
 source $HOME/.dotfiles/zsh/zgen/zgen.zsh
 
 # Check for init script
@@ -29,3 +33,6 @@ EOPLUGINS
 
     zgen save
 fi
+
+export ZSH_PLUGINS=$HOME/.dotfiles/zsh/plugins
+source $ZSH_PLUGINS/lambda-mod-zsh-theme/lambda-mod.zsh-theme

@@ -1,0 +1,4 @@
+# vim: set ft=zsh:
+
+# can't use a fancy prompt when using tramp
+[ $TERM = "dumb" ] && unsetopt zle && PS1='$ '

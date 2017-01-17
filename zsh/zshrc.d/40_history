@@ -1,0 +1,10 @@
+# vim: set ft=zsh:
+
+export HISTSIZE=10000
+export SAVEHIST=100000
+export HISTFILE=$HOME/.zsh_history
+setopt append_history
+setopt extended_history
+setopt share_history
+setopt hist_verify
+

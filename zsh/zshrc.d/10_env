@@ -1,0 +1,17 @@
+# vim: set ft=zsh:
+
+export LANG=en_US.UTF-8
+export PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
+export MANPATH=/usr/local/share/man:/usr/share/man
+export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
+export TERMINFO=$HOME/.terminfo
+
+if [ -x $(which nvim) ]; then
+    export EDITOR=nvim
+else
+    export EDITOR=vim
+fi
+
+if [ -d $HOME/.bin ] ; then
+    export PATH=$PATH:$HOME/.bin
+fi

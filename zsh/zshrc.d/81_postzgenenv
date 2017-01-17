@@ -1,0 +1,4 @@
+# vim: set ft=zsh:
+
+# down here because something in OMZ overwrites it >:(
+export LESS=-MIFXR
