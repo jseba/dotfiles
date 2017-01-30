@@ -4,9 +4,6 @@
 [submodule "fonts/powerline-fonts"]
 	path = fonts/powerline-fonts
 	url = https://github.com/powerline/fonts
-[submodule "vim/bundle/Vundle.vim"]
-	path = vim/bundle/Vundle.vim
-	url = https://github.com/VundleVim/Vundle.vim
 [submodule "zsh/zgen"]
 	path = zsh/zgen
 	url = https://github.com/tarjoilija/zgen
@@ -73,15 +70,18 @@
 [submodule "nvim/bundle/YouCompleteMe"]
 	path = nvim/bundle/YouCompleteMe
 	url = https://github.com/jseba/YouCompleteMe
-[submodule "zsh/plugins/lambda-mod-zsh-theme"]
-	path = zsh/plugins/lambda-mod-zsh-theme
-	url = https://github.com/jseba/lambda-mod-zsh-theme
-[submodule "nvim/bundle/lightline.vim"]
-	path = nvim/bundle/lightline.vim
-	url = https://github.com/itchyny/lightline.vim
 [submodule "nvim/bundle/vim-tmux-navigator"]
 	path = nvim/bundle/vim-tmux-navigator
 	url = https://github.com/christoomey/vim-tmux-navigator
 [submodule "nvim/bundle/vim-rtags"]
 	path = nvim/bundle/vim-rtags
 	url = https://github.com/lyuts/vim-rtags
+[submodule "nvim/bundle/vim-airline"]
+	path = nvim/bundle/vim-airline
+	url = https://github.com/vim-airline/vim-airline
+[submodule "nvim/bundle/vim-airline-themes"]
+	path = nvim/bundle/vim-airline-themes
+	url = https://github.com/vim-airline/vim-airline-themes
+[submodule "zsh/themes/lambda-mod-zsh-theme"]
+	path = zsh/themes/lambda-mod-zsh-theme
+	url = https://github.com/jseba/lambda-mod-zsh-theme

@@ -51,7 +51,6 @@ set backupdir=$HOME/.local/share/nvim/backups
 set undofile
 set undodir=$HOME/.local/share/nvim/undo
 set viminfo^=%
-set inccommand=nosplit
 set formatoptions+=j
 
 " Automatically set the cursor to first line
@@ -139,12 +138,6 @@ vmap <S-Tab> <gv
 vnoremap > >gv
 vnoremap < <gv
 
-tnoremap <C-g> <C-\><C-n>
-tnoremap <C-j> <C-\><C-n><C-w>j
-tnoremap <C-k> <C-\><C-n><C-w>k
-tnoremap <C-l> <C-\><C-n><C-w>l
-tnoremap <C-h> <C-\><C-n><C-w>h
-
 " Color scheme
 set background=dark
 colorscheme gruvbox
@@ -160,7 +153,9 @@ if !has('gui_running') && !($TERM == "linux" || $TERM == "putty-256color" || $OL
     let g:base16colorspace = 1
     let g:gruvbox_contrast_dark = 'hard'
     let g:gruvbox_italicize_comments = 1
-    set termguicolors
+    if has('nvim')
+        set termguicolors
+    endif
     hi Normal guibg=none
 endif
 if has('gui_running')
@@ -175,29 +170,27 @@ if has('gui_running')
     set guioptions+=c
 endif
 
-" Lightline setup
+" Airline setup
 set laststatus=2
+let g:airline_theme = 'badwolf'
 if !has('gui_running') && ($TERM == "linux" || $TERM == "putty-256color" || $OLDTERM == "putty-256color")
     " Disable powerline symbols when it seems unlikely we'll have them
-    let g:statusline_left_sep = ''
-    let g:statusline_left_alt_sep = ''
-    let g:statusline_right_sep = ''
-    let g:statusline_right_alt_sep = ''
-    let g:statusline_branch = ''
-    let g:statusline_readonly = ''
-    let g:statusline_linenr = ''
+    let g:airline_left_sep = ''
+    let g:airline_left_alt_sep = ''
+    let g:airline_right_sep = ''
+    let g:airline_right_alt_sep = ''
+    let g:airline_branch = ''
+    let g:airline_readonly = ''
+    let g:airline_linenr = ''
 else
-    let g:statusline_left_sep = ''
-    let g:statusline_left_alt_sep = ''
-    let g:statusline_right_sep = ''
-    let g:statusline_right_alt_sep = ''
-    let g:statusline_branch = ''
-    let g:statusline_readonly = ''
-    let g:statusline_linenr = ''
+    let g:airline_left_sep = ''
+    let g:airline_left_alt_sep = ''
+    let g:airline_right_sep = ''
+    let g:airline_right_alt_sep = ''
+    let g:airline_branch = ''
+    let g:airline_readonly = ''
+    let g:airline_linenr = ''
 endif
-let g:lightline = {
-            \ 'colorscheme': 'jellybeans'
-            \ }
 
 " Omnicomplete
 autocmd Filetype * 
@@ -345,6 +338,17 @@ let g:ycm_disable_for_files_larger_than_kb = 2000
 
 " Neomake
 let g:neomake_cpp_enabled_makers = ['clangcheck']
+
+" Neovim specific settings
+if has('nvim')
+    set inccommand=nosplit
+    tnoremap <C-g> <C-\><C-n>
+    tnoremap <C-j> <C-\><C-n><C-w>j
+    tnoremap <C-k> <C-\><C-n><C-w>k
+    tnoremap <C-l> <C-\><C-n><C-w>l
+    tnoremap <C-h> <C-\><C-n><C-w>h
+endif
+
 
 " Read local machine settings
 if filereadable($HOME . "/.local/nvim/init.vim")
