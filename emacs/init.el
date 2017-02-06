@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -353,6 +355,10 @@ none."
       (forward-list)
       (buffer-substring-no-properties beg (1- (point))))))
 
+(defun clear-background-term ()
+  (unless (display-graphic-p (selected-frame))
+    (set-face-background 'default "unspecified-bg" (selected-frame))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Appearance
@@ -473,7 +479,7 @@ none."
 (use-package evil-leader
   :ensure t
   :init
-  (setq evil-leader/leader ","
+  (setq evil-leader/leader "<SPC>"
         evil-leader/in-all-states t)
   :config
   (evil-leader/set-key
@@ -483,7 +489,8 @@ none."
     ">"  'switch-to-next-buffer
     "<"  'switch-to-prev-buffer
     "b"  'helm-mini
-    "f"  'helm-ag))
+    "f"  'helm-ag)
+  (global-evil-leader-mode))
 
 (use-package evil-surround
   :ensure t
@@ -665,9 +672,9 @@ none."
   (advice-add 'kill-ring-save :before #'slick-copy))
 
 ;; tramp (for sudo)
-;; (use-package tramp
-;;   :init
-;;   (setq tramp-default-method "ssh"))
+ (use-package tramp
+   :init
+   (setq tramp-default-method "ssh"))
 
 ;;; Spelling and syntax checking
 (use-package ispell                     ; Spell checking
@@ -718,14 +725,6 @@ none."
    ("C-c l g" . adict-guess-dictionary))
   :init
   (add-hook 'flyspell-mode-hook #'auto-dictionary-mode))
-
-;; Turn page breaks into lines
-;(use-package page-break-lines
-  ;:ensure t
-  ;:init
-  ;(global-page-break-lines-mode)
-  ;:diminish
-  ;page-break-lines-mode)
 
 ;; keep an eye on whitespace misuse
 (use-package whitespace
@@ -912,6 +911,12 @@ none."
   (global-anzu-mode)
   :config
   (setq anzu-cons-mode-line-p nil))
+
+;; Use fzf for fuzzy file finder
+(use-package fzf
+  :ensure t
+  :bind
+  (("C-p" . fzf)))
 
 ;; Ediff enhancements
 (use-package ediff
@@ -1159,12 +1164,12 @@ none."
         company-tooltip-flip-when-above t))
 
 ;;; Sort company candidates by statistics
-;(use-package company-statistics
-  ;:ensure t
-  ;:after company
-  ;:if window-system
-  ;:config
-  ;(company-statistics-mode))
+(use-package company-statistics
+  :ensure t
+  :after company
+  :if window-system
+  :config
+  (company-statistics-mode))
 
 ;;; Completion for Math symbols
 ;(use-package company-math
@@ -1175,20 +1180,13 @@ none."
   ;(add-to-list 'company-backends 'company-math-symbols-unicode)
   ;(add-to-list 'company-backends 'company-math-symbols-latex))
 
-;;; Emojis completion like Github/Slack
-;(use-package company-emoji
-  ;:ensure t
-  ;:after company
-  ;:config
-  ;(add-to-list 'company-backends 'company-emoji))
-
 (use-package company-anaconda           ; Python backend for Company
   :ensure t
    :after company
   :config (add-to-list 'company-backends 'company-anaconda))
 
-;;; If less than 5 completion candidates, cycle instead of pop-up
-;(setq completion-cycle-threshold 5)
+;;; If less than 2 completion candidates, cycle instead of pop-up
+(setq completion-cycle-threshold 2)
 
 ;; Replace dabbrev with hippie-expand
 (use-package hippie-exp
@@ -1213,27 +1211,6 @@ none."
   :defer t
   :bind
   (("C-c i a" . auto-insert)))
-
-;; Deal with copyright notices
-;(use-package copyright
-  ;:defer t
-  ;:bind
-  ;(("C-c i c" . copyright-update))
-  ;:init
-  ;;; Update copyright when visiting files
-  ;(defun lunaryorn-copyright-update ()
-    ;(interactive)
-    ;(unless buffer-read-only
-      ;(copyright-update nil 'interactive)
-      ;(unless copyright-update
-        ;;; Fix years when the copyright information was updated
-        ;(copyright-fix-years))))
-  ;(add-hook 'find-file-hook #'lunaryorn-copyright-update)
-  ;:config
-  ;;; Use ranges to denote consecutive years
-  ;(setq copyright-year-ranges t
-        ;;; Limit copyright changes to my own copyright
-        ;copyright-names-regexp (regexp-quote user-full-name)))
 
 ;; Smarter M-x - smex
 (use-package smex
@@ -1376,15 +1353,6 @@ none."
   (([remap yank-pop] . helm-show-kill-ring)
    ([remap insert-register] . helm-register)))
 
-;; Run makefile targets through Helm
-;(use-package helm-make
-  ;:ensure t
-  ;:bind
-  ;(("C-c c c" . helm-make-projectile)
-  ;;; FIXME: Write a more sophisticated command that checks whether a
-  ;;; Makefile exists and falls back to an alternative if not.
-  ;("<f5>" . helm-make-projectile)))
-
 ;; Input unicode with helm
 ;(use-package helm-unicode
   ;:ensure t
@@ -1407,20 +1375,6 @@ none."
   :defer t
   :bind (([remap apropos-command] . helm-apropos)
          ("C-c f l" . helm-locate-library)))
-
-;(use-package helm-gitignore             ; Generate gitignore files
-  ;:ensure t
-  ;:defer t
-  ;:bind
-  ;("C-c g I" . helm-gitignore))
-
-;(use-package helm-open-github ; Open Github pages for current repo
-  ;;; FIXME: Triggers a password prompt during load?!
-  ;:disabled t
-  ;:ensure t
-  ;:bind
-  ;(("C-c g g i" . helm-open-github-from-issues)
-   ;("C-c g g p" . helm-open-github-from-pull-requests)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1831,10 +1785,6 @@ mouse-3: go to end")))))
   :init
   (add-hook 'python-mode-hook #'anaconda-mode))
 
-(use-package pip-requirements           ; requirements.txt files
-  :ensure t
-  :defer t)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Programming - SQL
@@ -1873,65 +1823,24 @@ mouse-3: go to end")))))
     ;(define-key elisp-slime-nav-mode-map (kbd key) nil))
   ;:diminish elisp-slime-nav-mode)
 
-;(use-package pcre2el                    ; Convert regexps to RX and back
-  ;:disabled t
-  ;:ensure t
-  ;:init (rxt-global-mode))
-
 ;(use-package ielm                       ; Emacs Lisp REPL
   ;:bind
   ;(("C-c a '" . ielm)))
 
-;(use-package elisp-mode                 ; Emacs Lisp editing
-  ;:defer t
-  ;:interpreter ("emacs" . emacs-lisp-mode)
-  ;:bind (:map emacs-lisp-mode-map
-              ;("C-c m e r" . eval-region)
-              ;("C-c m e b" . eval-buffer)
-              ;("C-c m e e" . eval-last-sexp)
-              ;("C-c m e f" . eval-defun)))
+(use-package elisp-mode                 ; Emacs Lisp editing
+  :defer t
+  :interpreter ("emacs" . emacs-lisp-mode)
+  :bind (:map emacs-lisp-mode-map
+              ("C-c m e r" . eval-region)
+              ("C-c m e b" . eval-buffer)
+              ("C-c m e e" . eval-last-sexp)
+              ("C-c m e f" . eval-defun)))
 
 ;; (use-package el-search                  ; pcase-based search for elisp
 ;;   :ensure t
 ;;   :bind (:map emacs-lisp-mode-map
 ;;               ("C-c m s" . el-search-pattern)
 ;;               ("C-c m r" . el-search-query-replace)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Documents
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;(use-package doc-view
-  ;:defer t
-  ;:config
-  ;;; Render PDFs at 300dpi
-  ;(setq doc-view-resolution 300)
-
-  ;(defconst lunaryorn-doc-view-mutool-program "mutool")
-
-  ;(defun lunaryorn-doc-view-pdf->png-converter-mutool (pdf png page callback)
-    ;"Convert a PDF file to PNG at PAGE.
-;After conversion invoke CALLBACK.  See `doc-view-start-process'
-;for more information about CALLBACK."
-    ;(doc-view-start-process
-     ;"pdf->png" lunaryorn-doc-view-mutool-program
-     ;`("draw"
-       ;,(concat "-o" png)
-       ;,(format "-r%d" (round doc-view-resolution))
-       ;,pdf
-       ;,@(if page `(,(format "%d" page))))
-     ;callback))
-
-  ;;; If `mutool' exists use our own converter function to call "mutool draw".
-  ;;; Otherwise check whether docview found mudraw and warn if it didn't
-  ;(if (executable-find lunaryorn-doc-view-mutool-program)
-    ;(setq doc-view-pdf->png-converter-function
-          ;#'lunaryorn-doc-view-pdf->png-converter-mutool)
-    ;;; Warn if Doc View falls back to Ghostscript for rendering
-    ;(unless (eq doc-view-pdf->png-converter-function
-                ;'doc-view-pdf->png-converter-mupdf)
-      ;(warn "Doc View is not using mupdf!"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1985,23 +1894,6 @@ mouse-3: go to end")))))
                 (lambda () (diminish 'dired-omit-mode))
                 '((name . dired-omit-mode-diminish))))
 
-;; Neotree
-;(use-package neotree
-  ;:ensure t
-  ;:bind
-  ;(("C-c f t" . neotree-toggle))
-  ;:config
-  ;(setq neo-window-width 32
-        ;neo-create-file-auto-open t
-        ;neo-banner-message nil
-        ;neo-show-updir-line nil
-        ;neo-mode-line-type 'neotree
-        ;neo-smart-open t
-        ;neo-dont-be-alone t
-        ;neo-persist-show nil
-        ;neo-show-hidden-files t
-        ;neo-auto-indent-point t))
-
 ;; Ignore uninteresting files
 (use-package ignoramus
   :ensure t
@@ -2015,12 +1907,6 @@ mouse-3: go to end")))))
   (global-hardhat-mode)
   :diminish
   hardhat-mode)
-
-;; Bookmarks for buffers
-;(use-package bookmark
-  ;:bind (("C-c f b" . list-bookmarks))
-  ;:config
-  ;(setq bookmark-save-flag 1))
 
 ;; Save recently visited files
 (use-package recentf
@@ -2277,77 +2163,77 @@ mouse-3: go to end")))))
 ;;   :bind
 ;;   ("C-c g g c" . github-clone))
 
-(use-package smartparens
-  :ensure t
-  :bind
-  (("C-c k" . hydras/smartparens/body)
-    :map smartparens-strict-mode-map
-    ("M-q" . sp-indent-defun))
-  :init
-  ;; Hydra for Smartparens
-  (defhydra hydras/smartparens (:hint nil)
-    "
-Sexps (quit with _q_)
-^Nav^            ^Barf/Slurp^                 ^Depth^
-^---^------------^----------^-----------------^-----^-----------------
-_f_: forward     _→_:          slurp forward   _R_: splice
-_b_: backward    _←_:          barf forward    _r_: raise
-_u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
-_d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
-_p_: backward ↓
-_n_: forward ↑
-^Kill^           ^Misc^                       ^Wrap^
-^----^-----------^----^-----------------------^----^------------------
-_w_: copy        _j_: join                    _(_: wrap with ( )
-_k_: kill        _s_: split                   _{_: wrap with { }
-^^               _t_: transpose               _'_: wrap with ' '
-^^               _c_: convolute               _\"_: wrap with \" \"
-^^               _i_: indent defun"
-    ("q" nil)
-    ;; Wrapping
-    ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
-    ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
-    ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
-    ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
-    ;; Navigation
-    ("f" sp-forward-sexp )
-    ("b" sp-backward-sexp)
-    ("u" sp-backward-up-sexp)
-    ("d" sp-down-sexp)
-    ("p" sp-backward-down-sexp)
-    ("n" sp-up-sexp)
-    ;; Kill/copy
-    ("w" sp-copy-sexp)
-    ("k" sp-kill-sexp)
-    ;; Misc
-    ("t" sp-transpose-sexp)
-    ("j" sp-join-sexp)
-    ("s" sp-split-sexp)
-    ("c" sp-convolute-sexp)
-    ("i" sp-indent-defun)
-    ;; Depth changing
-    ("R" sp-splice-sexp)
-    ("r" sp-splice-sexp-killing-around)
-    ("<up>" sp-splice-sexp-killing-backward)
-    ("<down>" sp-splice-sexp-killing-forward)
-    ;; Barfing/slurping
-    ("<right>" sp-forward-slurp-sexp)
-    ("<left>" sp-forward-barf-sexp)
-    ("C-<left>" sp-backward-barf-sexp)
-    ("C-<right>" sp-backward-slurp-sexp))
+;(use-package smartparens
+  ;:ensure t
+  ;:bind
+  ;(("C-c k" . hydras/smartparens/body)
+    ;:map smartparens-strict-mode-map
+    ;("M-q" . sp-indent-defun))
+  ;:init
+  ;;; Hydra for Smartparens
+  ;(defhydra hydras/smartparens (:hint nil)
+    ;"
+;Sexps (quit with _q_)
+;^Nav^            ^Barf/Slurp^                 ^Depth^
+;^---^------------^----------^-----------------^-----^-----------------
+;_f_: forward     _→_:          slurp forward   _R_: splice
+;_b_: backward    _←_:          barf forward    _r_: raise
+;_u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
+;_d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
+;_p_: backward ↓
+;_n_: forward ↑
+;^Kill^           ^Misc^                       ^Wrap^
+;^----^-----------^----^-----------------------^----^------------------
+;_w_: copy        _j_: join                    _(_: wrap with ( )
+;_k_: kill        _s_: split                   _{_: wrap with { }
+;^^               _t_: transpose               _'_: wrap with ' '
+;^^               _c_: convolute               _\"_: wrap with \" \"
+;^^               _i_: indent defun"
+    ;("q" nil)
+    ;;; Wrapping
+    ;("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
+    ;("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
+    ;("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
+    ;("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
+    ;;; Navigation
+    ;("f" sp-forward-sexp )
+    ;("b" sp-backward-sexp)
+    ;("u" sp-backward-up-sexp)
+    ;("d" sp-down-sexp)
+    ;("p" sp-backward-down-sexp)
+    ;("n" sp-up-sexp)
+    ;;; Kill/copy
+    ;("w" sp-copy-sexp)
+    ;("k" sp-kill-sexp)
+    ;;; Misc
+    ;("t" sp-transpose-sexp)
+    ;("j" sp-join-sexp)
+    ;("s" sp-split-sexp)
+    ;("c" sp-convolute-sexp)
+    ;("i" sp-indent-defun)
+    ;;; Depth changing
+    ;("R" sp-splice-sexp)
+    ;("r" sp-splice-sexp-killing-around)
+    ;("<up>" sp-splice-sexp-killing-backward)
+    ;("<down>" sp-splice-sexp-killing-forward)
+    ;;; Barfing/slurping
+    ;("<right>" sp-forward-slurp-sexp)
+    ;("<left>" sp-forward-barf-sexp)
+    ;("C-<left>" sp-backward-barf-sexp)
+    ;("C-<right>" sp-backward-slurp-sexp))
 
-  (smartparens-global-mode)
-  (show-smartparens-global-mode)
+  ;(smartparens-global-mode)
+  ;(show-smartparens-global-mode)
 
-  (dolist (hook '(inferior-emacs-lisp-mode-hook
-                  emacs-lisp-mode-hook))
-    (add-hook hook #'smartparens-strict-mode))
-  :config
-  (require 'smartparens-config)
-  (setq sp-autoskip-closing-pair 'always
-        ;; Don't kill entire symbol on C-k
-        sp-hybrid-kill-entire-symbol nil)
-  :diminish smartparens-mode)
+  ;(dolist (hook '(inferior-emacs-lisp-mode-hook
+                  ;emacs-lisp-mode-hook))
+    ;(add-hook hook #'smartparens-strict-mode))
+  ;:config
+  ;(require 'smartparens-config)
+  ;(setq sp-autoskip-closing-pair 'always
+        ;;; Don't kill entire symbol on C-k
+        ;sp-hybrid-kill-entire-symbol nil)
+  ;:diminish smartparens-mode)
 
 (use-package highlight-numbers
   :ensure t
@@ -2410,9 +2296,9 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
   (global-hl-line-mode 1))
 
 ;; Regexp highlights
-;(use-package hi-lock
-  ;:init
-  ;(global-hi-lock-mode))
+(use-package hi-lock
+  :init
+  (global-hi-lock-mode))
 
 ;; Window movement
 (bind-key "C-c w =" #'balance-windows)
@@ -2445,37 +2331,37 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
    ("C-c w w" . ace-window)))
 
 ;; Auto resize windows
-;(use-package golden-ratio
-  ;:ensure t
-  ;:init
-  ;(defun personal/toggle-golden-ratio ()
-    ;(interactive)
-    ;(if (bound-and-true-p golden-ratio-mode)
-      ;(progn
-        ;(golden-ratio-mode -1)
-        ;(balance-windows))
-      ;(golden-ratio-mode)
-      ;(golden-ratio)))
-  ;:bind
-  ;(("C-c t g" . personal/toggle-golden-ratio))
-  ;:config
-  ;(setq golden-ratio-extra-commands '(windmove-up
-                                      ;windmove-down
-                                      ;windmove-left
-                                      ;windmove-right
-                                      ;ace-window
-                                      ;ace-delete-window
-                                      ;ace-select-window
-                                      ;ace-swap-window
-                                      ;ace-maximize-window)
-        ;golden-ratio-exclude-modes '(flycheck-error-list
-                                      ;calc-mode
-                                      ;dired-mode
-                                      ;ediff-mode)
-        ;golden-ratio-exclude-buffer-regexp '(,(rx bos "*" (any "h" "H") "elm*" eos)
-                                             ;,(rx bos "*which-key*" eos)
-                                             ;,(rx box "*NeoTree*" eos)))
-  ;:diminish golden-ratio-mode)
+(use-package golden-ratio
+  :ensure t
+  :init
+  (defun personal/toggle-golden-ratio ()
+    (interactive)
+    (if (bound-and-true-p golden-ratio-mode)
+      (progn
+        (golden-ratio-mode -1)
+        (balance-windows))
+      (golden-ratio-mode)
+      (golden-ratio)))
+  :bind
+  (("C-c t g" . personal/toggle-golden-ratio))
+  :config
+  (setq golden-ratio-extra-commands '(windmove-up
+                                      windmove-down
+                                      windmove-left
+                                      windmove-right
+                                      ace-window
+                                      ace-delete-window
+                                      ace-select-window
+                                      ace-swap-window
+                                      ace-maximize-window)
+        golden-ratio-exclude-modes '(flycheck-error-list
+                                      calc-mode
+                                      dired-mode
+                                      ediff-mode)
+        golden-ratio-exclude-buffer-regexp '(,(rx bos "*" (any "h" "H") "elm*" eos)
+                                             ,(rx bos "*which-key*" eos)
+                                             ,(rx box "*NeoTree*" eos)))
+  :diminish golden-ratio-mode)
 
 ;; ediff windows
 (use-package ediff-wind
@@ -2508,12 +2394,6 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
   :bind
   (("C-c a u" . browse-url)))
 
-;(use-package bug-reference              ; Turn bug refs into browsable buttons
-  ;:defer t
-  ;:init
-  ;(add-hook 'prog-mode-hook #'bug-reference-prog-mode)
-  ;(add-hook 'text-mode-hook #'bug-reference-mode))
-
 (use-package goto-addr                  ; Make links clickable
   :defer t
   :bind
@@ -2523,41 +2403,26 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
   (add-hook 'prog-mode-hook #'goto-address-prog-mode)
   (add-hook 'text-mode-hook #'goto-address-mode))
 
-;(use-package eww                        ; Emacs' built-in web browser
-  ;:bind
-  ;(("C-c a w b" . eww-list-bookmarks)
-   ;("C-c a w w" . eww)
-   ;("C-c a w u" . eww-browse-url)))
+(use-package eww                        ; Emacs' built-in web browser
+  :bind
+  (("C-c a w b" . eww-list-bookmarks)
+   ("C-c a w w" . eww)
+   ("C-c a w u" . eww-browse-url)))
 
-;(use-package sx                         ; StackExchange client for Emacs
-  ;:ensure t
-  ;:bind
-  ;(("C-c a S a" . sx-ask)
-   ;("C-c a S s" . sx-tab-all-questions)
-   ;("C-c a S q" . sx-tab-all-questions)
-   ;("C-c a S f" . sx-tab-all-questions)
-   ;("C-c a S n" . sx-tab-newest)))
+(use-package sx                         ; StackExchange client for Emacs
+  :ensure t
+  :bind
+  (("C-c a S a" . sx-ask)
+   ("C-c a S s" . sx-tab-all-questions)
+   ("C-c a S q" . sx-tab-all-questions)
+   ("C-c a S f" . sx-tab-all-questions)
+   ("C-c a S n" . sx-tab-newest)))
 
-;(use-package sx-compose                 ; Write questions/answers for Stack Exchange
-   ;:ensure sx
-   ;:defer t
-   ;:config
-   ;;; Don't fill in SX questions/answers, and use visual lines instead.  Plays
-   ;;; more nicely with the website.
-   ;(add-hook 'sx-compose-mode-hook #'turn-off-auto-fill)
-   ;(add-hook 'sx-compose-mode-hook #'visual-line-mode)
-
-   ;;; Clean up whitespace before sending questions
-   ;(add-hook 'sx-compose-before-send-hook
-     ;(lambda () (whitespace-cleanup) t))
-
-   ;(bind-key "M-q" #'ignore sx-compose-mode-map))
-
-;(use-package sx-question-mode           ; Show Stack
-  ;:ensure sx
-  ;:defer t
-  ;;; Display questions in the same window
-  ;:config (setq sx-question-mode-display-buffer-function #'switch-to-buffer))
+(use-package sx-question-mode           ; Show Stack
+  :ensure sx
+  :defer t
+  ;; Display questions in the same window
+  :config (setq sx-question-mode-display-buffer-function #'switch-to-buffer))
 
 ;; Backups
 (defvar backup-directory "~/.emacs.d/backups/")
@@ -2609,7 +2474,6 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
   :config
   (setq powerline-height (truncate (* 1.0 (frame-char-height)))
         powerline-default-separator 'utf-8))
-
 
 ;;; Setup programming modes
 (add-hook 'prog-mode-hook '(lambda ()
@@ -2688,10 +2552,11 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
                                    )))
 
 ;; Set the theme
-(use-package molokai-theme
+(use-package gruvbox-theme
   :ensure t
   :init
-  (load-theme 'molokai t))
+  (load-theme 'gruvbox t)
+  (add-hook 'window-setup-hook 'clear-background-term))
 
 (provide 'init)
 ;;; init.el ends here

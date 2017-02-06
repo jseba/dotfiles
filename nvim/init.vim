@@ -57,9 +57,6 @@ set formatoptions+=j
 " when editing a git commit message
 au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
 
-" Automatically close NerdTree when it's the last buffer open
-au bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
 " Automatically delete trailing whitespace
 func! DeleteTrailingWS()
     exe "normal mz"
@@ -334,7 +331,6 @@ let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_disable_for_files_larger_than_kb = 2000
-
 
 " Neomake
 let g:neomake_cpp_enabled_makers = ['clangcheck']
