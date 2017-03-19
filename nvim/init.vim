@@ -3,6 +3,7 @@ scriptencoding utf-8
 
 " Bundles
 filetype off
+let g:pathogen_disabled=['incsearch.vim', 'incsearch-fuzzy.vim', 'incsearch-easymotion.vim']
 runtime bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#infect('bundle/{}', '~/.local/nvim/{}')
 execute pathogen#helptags()
@@ -226,31 +227,36 @@ let g:alternateNoDefaultAlternate = 1
 " Ag
 let g:ag_working_path_mode = 'r'
 
+" Incsearch
+if index(g:pathogen_disabled, 'incsearch') >= 0
+    noremap <silent><expr> /  incsearch#go(<SID>incsearch_config())
+    noremap <silent><expr> ?  incsearch#go(<SID>incsearch_config({'command': '?'}))
+    noremap <silent><expr> g/ incsearch#go(<SID>incsearch_config({'is_stay': 1}))
+    noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
+
+    function! s:incsearch_config(...) abort
+        return incsearch#util#deepextend(deepcopy({
+                    \ 'modules': [incsearch#config#easymotion#module({'overwin': 1})],
+                    \ 'keymap': {
+                    \   "\<C-l>": '<Over>(easymotion)'
+                    \ },
+                    \   'is_expr': 0
+                    \ }), get(a:, 1, {}))
+    endfunction
+    function! s:config_easyfuzzymotion(...) abort
+        return extend(copy({
+                    \   'converters': [incsearch#config#fuzzyword#converter()],
+                    \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
+                    \   'keymap': {"\<C-l>": '<Over>(easymotion)'},
+                    \   'is_expr': 0,
+                    \   'is_stay': 1
+                    \ }), get(a:, 1, {}))
+    endfunction
+endif
+
 " EasyMotion
-function! s:incsearch_config(...) abort
-    return incsearch#util#deepextend(deepcopy({
-                \ 'modules': [incsearch#config#easymotion#module({'overwin': 1})],
-                \ 'keymap': {
-                \   "\<C-l>": '<Over>(easymotion)'
-                \ },
-                \   'is_expr': 0
-                \ }), get(a:, 1, {}))
-endfunction
-function! s:config_easyfuzzymotion(...) abort
-    return extend(copy({
-                \   'converters': [incsearch#config#fuzzyword#converter()],
-                \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
-                \   'keymap': {"\<C-l>": '<Over>(easymotion)'},
-                \   'is_expr': 0,
-                \   'is_stay': 1
-                \ }), get(a:, 1, {}))
-endfunction
 let g:EasyMotion_startofline = 0
 let g:EasyMotion_smartcase = 1
-noremap <silent><expr> /  incsearch#go(<SID>incsearch_config())
-noremap <silent><expr> ?  incsearch#go(<SID>incsearch_config({'command': '?'}))
-noremap <silent><expr> g/ incsearch#go(<SID>incsearch_config({'is_stay': 1}))
-noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
 map <Leader>f <Plug>(easymotion-bd-f)
 nmap <Leader>f <Plug>(easymotion-overwin-f)
 nmap <Leader>s <Plug>(easymotion-overwin-f2)
