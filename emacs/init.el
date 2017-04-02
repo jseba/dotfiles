@@ -37,10 +37,6 @@
 (set-face-attribute 'default nil
           :family "Source Code Pro"
           :height 100)
-(set-face-attribute 'variable-pitch nil
-          :family "Fira Sans"
-          :height 110
-          :weight 'regular)
 
 ;; Sane defaults
 (fset 'yes-or-no-p #'y-or-n-p)
@@ -391,128 +387,12 @@ none."
   :bind (("C-c w z" . text-scale-adjust)))
 
 ;; Flash the cursor after a large movement
-;(use-package beacon
-  ;:ensure t
-  ;:init
-  ;(beacon-mode +1)
-  ;:diminish
-  ;beacon-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;
-;;;; Evil
-;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package evil
-  :ensure t
-  :bind
-  (("C-c C-v" . evil-mode)
-   :map evil-normal-state-map
-   (":" . evil-ex)
-   (";" . evil-ex)
-   ("!" . string-inflection-cycle)
-   ("+" . evil-numbers/inc-at-pt)
-   ("-" . evil-numbers/dec-at-pt)
-   ("j" . evil-next-visual-line)
-   ("k" . evil-previous-visual-line)
-   ("C-h" . evil-window-left)
-   ("C-j" . evil-window-down)
-   ("C-k" . evil-window-up)
-   ("C-l" . evil-window-right)
-   ("C-]" . rtags-find-symbol-at-point)
-   :map evil-visual-state-map
-   (":" . evil-ex)
-   (";" . evil-ex)
-   :map evil-motion-state-map
-   (":" . evil-ex)
-   ([C-i] . evil-jump-forward)
-   :map evil-emacs-state-map
-   )
-  :init
-  (evil-mode 1)
-  (evil-define-command evil-maybe-exit ()
-    :repeat change
-    (interactive)
-    (let ((modified (buffer-modified-p))
-          (entry-key ?k)
-          (exit-key ?j))
-      (insert entry-key)
-      (let ((evt (read-event (format "Insert %c to exit insert state" exit-key) nil 0.5)))
-        (cond
-          ((null evt) (message ""))
-          ((and (integerp evt) (char-equal evt exit-key))
-           (delete-char -1)
-           (set-buffer-modified-p modified)
-           (push 'escape unread-command-events))
-          (t (push evt unread-command-events))))))
-
-  (defvar evil-cursors '(("normal" "DarkGoldenrod2" box)
-                         ("insert" "chartreuse3" (bar . 2))
-                         ("emacs" "SkyBlue2" box)
-                         ("hybrid" "SkyBlue2" (bar . 2))
-                         ("replace" "chocolate" (hbar . 2))
-                         ("evilified" "LightGoldenrod3" box)
-                         ("visual" "gray" (hbar . 2))
-                         ("motion" "plum3" box)
-                         ("lisp" "HotPink1" box)
-                         ("iedit" "firebrick1" box)
-                         ("iedit-insert" "firebrick1" (bar . 2))))
-  (setq evil-find-skip-newlines t
-        evil-cross-lines t
-        evil-move-cursor-back nil
-        evil-mode-line-format nil
-        evil-search-module 'evil-search
-        evil-want-C-w-in-emacs-state t
-
-        evil-normal-state-tag   (propertize "N" 'face '((:background "blue" :foreground "black")))
-        evil-emacs-state-tag    (propertize "E" 'face '((:background "orange" :foreground "black")))
-        evil-insert-state-tag   (propertize "I" 'face '((:background "green" :foreground "black")))
-        evil-visual-state-tag   (propertize "V" 'face '((:background "yellow" :foreground "black")))
-        evil-motion-state-tag   (propertize "M" 'face '((:background "grey80" :foreground "black")))
-        evil-operator-state-tag (propertize "O" 'face '((:background "purple"))))
-  :config
-  (define-key evil-insert-state-map "k" #'evil-maybe-exit)
-  (add-hook 'evil-insert-state-entry-hook (lambda () (hl-line-mode t)))
-  (add-hook 'evil-insert-state-exit-hook (lambda () (let ((current-prefix-arg '(0))) (call-interactively 'hl-line-mode)))))
-
-(use-package evil-leader
+(use-package beacon
   :ensure t
   :init
-  (setq evil-leader/leader "<SPC>"
-        evil-leader/in-all-states t)
-  :config
-  (evil-leader/set-key
-    "vs" 'split-window-horizontally
-    "cc" 'comment-dwim
-    "cu" 'comment-kill
-    ">"  'switch-to-next-buffer
-    "<"  'switch-to-prev-buffer
-    "b"  'helm-mini
-    "f"  'helm-ag)
-  (global-evil-leader-mode))
-
-(use-package evil-surround
-  :ensure t
-  :init
-  (setq-default evil-surround-pairs-alist '((?\( . ("(" . ")"))
-                                            (?\[ . ("[" . "]"))
-                                            (?\{ . ("{" . "}"))
-
-                                            (?\) . ("( " . " )"))
-                                            (?\] . ("[ " . " ]"))
-                                            (?\} . ("{ " . " }"))
-                                            (?>  . ("< " . " >"))
-
-                                            (?# . ("#{" . "}"))
-                                            (?p . ("(" . ")"))
-                                            (?b . ("[" . "]"))
-                                            (?B . ("{" . "}"))
-                                            (?< . ("<" . ">"))
-                                            (?t . evil-surround-read-tag)))
-  :config
-  (global-evil-surround-mode))
-
+  (beacon-mode +1)
+  :diminish
+  beacon-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -529,6 +409,9 @@ none."
   :config
   (setq which-key-idle-delay 0.4
         which-key-sort-order 'which-key-prefix-then-key-order
+        which-key-popup-type 'side-window
+        which-key-side-window-location 'bottom
+        which-key-side-window-max-height 0.15
         which-key-key-replacement-alist
           '(("<\\([[:alnum:]-]+\\)>" . "\\1")
             ("up"                    . "↑")
@@ -565,11 +448,10 @@ none."
     "C-c f" "files"
     "C-c f v" "variables"
     "C-c g" "git"
-    "C-c g g" "github/gist"
-    "C-c h" "helm/help"
+    "C-c h" "helm"
     "C-c i" "insert"
-    "C-c i l" "licenses"
     "C-c j" "jump"
+    "C-c k" "gtags"
     "C-c l" "language/spelling"
     "C-c m" "major mode"
     "C-c o" "cursors"
@@ -683,7 +565,7 @@ none."
   (setq ispell-program-name (if (eq system-type 'darwin)
                               (executable-find "aspell")
                               (executable-find "hunspell"))
-        ispell-dictionary "en_GB"     ; Default dictionnary
+        ispell-dictionary "en_US"     ; Default dictionnary
         ispell-silently-savep t       ; Don't ask when saving the private dict
         ;; Increase the height of the choices window to take our header line
         ;; into account.
@@ -864,14 +746,6 @@ none."
                              (unless (eq ibuffer-sorting-mode 'alphabetic)
                                (ibuffer-do-sort-by-alphabetic)))))
 
-;; Group buffers by Projectile project
-(use-package ibuffer-projectile
-  :ensure t
-  :disabled t
-  :defer t
-  :init
-  (add-hook 'ibuffer-hook #'ibuffer-projectile-set-filter-groups))
-
 ;; Projectile
 (use-package projectile
   :ensure t
@@ -911,12 +785,6 @@ none."
   (global-anzu-mode)
   :config
   (setq anzu-cons-mode-line-p nil))
-
-;; Use fzf for fuzzy file finder
-(use-package fzf
-  :ensure t
-  :bind
-  (("C-p" . fzf)))
 
 ;; Ediff enhancements
 (use-package ediff
@@ -1067,6 +935,12 @@ none."
    ("C-c c l" . comment-line)
    ("C-c c r" . comment-region)))
 
+;; Cleanup unused whitespace from electric-indent
+(use-package clean-aindent-mode
+  ;; built-in
+  :config
+  (add-hook 'prog-mode-hook 'clean-aindent-mode))
+
 ;; Cleanup whitespace in buffers
 (use-package whitespace-cleanup-mode
   :ensure t
@@ -1206,23 +1080,6 @@ none."
               try-complete-lisp-symbol-partially      ; complete LISP symbol
               try-complete-lisp-symbol)))
 
-;; Automatic insertion into new files
-(use-package auto-insert
-  :defer t
-  :bind
-  (("C-c i a" . auto-insert)))
-
-;; Smarter M-x - smex
-(use-package smex
-  :ensure t
-  :bind
-  (("M-x" . smex)
-   ("M-X" . smex-major-mode-commands))
-  :init
-  ;; remember most frequently used items
-  (setq smex-save-file (expand-file-name ".smex-mru" user-emacs-directory))
-  (smex-initialize))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Helm
@@ -1231,39 +1088,97 @@ none."
 
 (use-package helm
   :ensure t
-  :bind
-  (("C-c h l" . helm-resume))
   :init
   (require 'helm-mode)
-  (helm-mode)
-  (with-eval-after-load 'helm-config
-    (warn "`helm-config' loaded!"))
-  :config
-  (setq helm-split-window-in-side-p t)
-  :diminish helm-mode)
+  (require 'helm-config)
+  (require 'helm-elisp)
+  (require 'helm-grep)
+  (require 'helm-buffers)
+  (require 'helm-imenu)
+  (require 'helm-regexp)
+  (require 'helm-info)
+  (require 'helm-files)
+  (require 'helm-ring)
 
-(use-package helm-buffers
-  :ensure helm
-  :defer t
+  (defun helm-hide-minibuffer-maybe ()
+      (when (with-helm-buffer helm-echo-input-in-header-line)
+        (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+          (overlay-put ov 'window (selected-window))
+          (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+                                  `(:background ,bg-color :foreground ,bg-color)))
+          (setq-local cursor-type nil))))
+  (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
+
+  ; use helm for eshell history
+  (add-hook 'eshell-mode-hook #'(lambda ()
+                                  (define-key eshell-mode-map (kbd "M-l") 'helm-eshell-history)))
+
+  ; Default C-x c is a tad too close to C-x C-c, so move it
+  (global-set-key (kbd "C-c h") 'helm-command-prefix)
+  (global-unset-key (kbd "C-x c"))
+
+  (helm-mode)
   :bind
-  (([remap switch-to-buffer] . helm-mini))
+  ;; override some default functions
+  (([remap find-file] . helm-find-files)
+   ([remap switch-to-buffer] . helm-mini)
+   ([remap imenu] . helm-imenu)
+   ([remap occur] . helm-occur)
+   ([remap info] . helm-info-at-point)
+   ([remap yank-pop] . helm-show-kill-ring)
+   ([remap insert-register] . helm-register)
+   ([remap apropos-command] . helm-apropos)
+   ([remap find-tag] . helm-etags-select)
+   ([remap list-buffers] . helm-buffers-list)
+
+   ("C-c I d" . helm-info-gdb)
+   ("C-c I g" . helm-info-gnus)
+   ("C-c I i" . helm-info-at-point)
+   ("C-c I l" . helm-locate-library)
+   ("C-c I r" . helm-info-emacs)
+
+   ("C-c h i" . helm-semantic-or-imenu)
+   ("C-c h l" . helm-resume)
+   ("C-c h m" . helm-man-woman)
+   ("C-c h o" . helm-occur)
+   ("C-c h r" . helm-recentf)
+   ("C-c h x" . helm-register)
+   ("C-c s a" . helm-do-grep-ag)
+   ("C-c s A" . helm-grep-ag)
+   ("M-x" . helm-M-x)
+
+   :map helm-grep-mode-map
+   ("<return>" . helm-grep-mode-jump-other-window)
+   ("n" . helm-grep-mode-jump-other-window-forward)
+   ("p" . helm-grep-mode-jump-other-window-backward)
+   )
   :config
-  (setq helm-buffers-fuzzy-matching t))
+  (setq helm-split-window-in-side-p t
+        helm-mode-fuzzy-matching t
+        helm-buffers-fuzzy-matching t
+        helm-imenu-fuzzy-match t
+        helm-M-x-fuzzy-match t
+        helm-recentf-fuzzy-match t
+        helm-semantic-fuzzy-match t
+        helm-apropos-fuzzy-match t
+        helm-ff-file-name-history-use-recentf t
+        helm-ff-search-library-in-sexp t
+        helm-echo-input-in-header-line t
+        helm-display-header-line nil
+        ;; No insta-jumps please
+        helm-imenu-execute-action-at-once-if-one nil
+        )
+  (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+  ;; prefer rg if installed
+  (when (executable-find "rg")
+    (setq helm-grep-ag-command "rg --color=always --colors 'match:fg:black' --colors 'match:bg:yellow' --smart-case --no-heading --line-number %s %s %s"
+          helm-grep-ag-pipe-cmd-switches '("--colors 'match:fg:black' --colors 'match:bg:yellow'")))
+  :diminish helm-mode)
 
 (use-package helm-descbinds
   :ensure t
   :init
   (helm-descbinds-mode))
-
-(use-package helm-imenu
-  :ensure helm
-  :defer t
-  :bind
-  (("C-c j t" . helm-imenu))
-  :config
-  (setq helm-imenu-fuzzy-match t
-        ;; No insta-jumps please
-        helm-imenu-execute-action-at-once-if-one nil))
 
 (use-package helm-projectile            ; Helm frontend for Projectile
   :ensure t
@@ -1271,93 +1186,59 @@ none."
   :init
   (setq helm-projectile-fuzzy-match nil)
   :bind
-  (("C-c s p" . helm-projectile-ag)
-   :map helm-projectile-projects-map
-        ("C-t" . lunaryorn-neotree-project-root))
+  (("C-c s p" . helm-projectile-ag))
   :config
   (helm-projectile-on)
-  (setq projectile-switch-project-action #'helm-projectile)
-  (helm-add-action-to-source "Open NeoTree `C-t'"
-                             #'lunaryorn-neotree-project-root
-                             helm-source-projectile-projects 1))
+  (setq projectile-switch-project-action #'helm-projectile))
 
-;(use-package helm-gtags
-  ;:ensure t
-  ;:init
-  ;(setq helm-gtags-fuzzy-match nil
-        ;helm-gtags-direct-helm-completing t
-        ;helm-gtags-display-style 'detail
-        ;helm-gtags-ignore-case t
-        ;helm-gtags-prefix-key "\C-t"
-        ;helm-gtags-suggested-key-mapping t)
-  ;:diminish helm-gtags-mode)
-
-;; Regex search using helm
-(use-package helm-regexp
-  :ensure helm
-  :defer t
+(use-package helm-gtags
+  :ensure t
   :bind
-  (([remap occur] . helm-occur)))
-
-(use-package helm-man                   ; Man pages with Helm
-  :ensure helm
-  :defer t
-  :bind (("C-c h m" . helm-man-woman)))
-
-(use-package helm-info                  ; Info pages with Helm
-  :ensure helm
-  :bind
-  (([remap info] . helm-info-at-point)
-   ("C-c h e"    . helm-info-emacs)))
-
-;; Manage files with Helm
-(use-package helm-files
-  :ensure helm
-  :defer t
-  :bind
-  (([remap find-file] . helm-find-files)
-   ("C-c f f" . helm-for-files)
-   ("C-c f r" . helm-recentf))
+  (:map helm-gtags-mode-map
+   ("C-c k a" . helm-gtags-tags-in-this-function)
+   ("C-c k h" . helm-gtags-display-browser)
+   ("C-c k C-]" . helm-gtags-find-tag-from-here)
+   ("C-c k C-t" . helm-gtags-pop-stack)
+   ("C-c k P" . helm-gtags-parse-file)
+   ("C-c k f" . helm-gtags-find-file)
+   ("C-c k p" . helm-gtags-find-pattern)
+   ("C-c k s" . helm-gtags-find-symbol)
+   ("C-c k r" . helm-gtags-find-rtag)
+   ("C-c k t" . helm-gtags-find-tag)
+   ("C-c k <" . helm-gtags-previous-history)
+   ("C-c k >" . helm-gtags-next-history))
+  :init
+  (setq helm-gtags-fuzzy-match nil
+        helm-gtags-direct-helm-completing t
+        helm-gtags-display-style 'detail
+        helm-gtags-ignore-case t
+        helm-gtags-prefix-key "\C-ck"
+        helm-gtags-suggested-key-mapping t)
   :config
-  (setq helm-recentf-fuzzy-match t
-        helm-ff-file-name-history-use-recentf t
-        helm-ff-search-library-in-sexp t))
+  (add-hook 'dired-mode-hook 'helm-gtags-mode)
+  (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'java-mode-hook 'helm-gtags-mode)
+  (add-hook 'asm-mode-hook 'helm-gtags-mode)
+  :diminish helm-gtags-mode)
 
 ;; Search buffers with helm
 (use-package helm-swoop
   :ensure t
   :bind
-  (("C-c s s" . helm-swoop)
-   ("C-c s S" . helm-multi-swoop)
-   ("C-c s C-s" . helm-multi-swoop-all))
+  (:map helm-map
+   ("C-c h s" . helm-swoop)
+   ("C-c h S" . helm-multi-swoop)
+   ("C-c h C-s" . helm-multi-swoop-all)
+   :map isearch-mode-map
+   ("M-i" . helm-swoop-from-isearch)
+   :map helm-swoop-map
+   ("M-i" . helm-multi-swoop-all-from-helm-swoop)
+   )
   :config
   (setq helm-swoop-speed-or-color t
         helm-swoop-split-window-function #'helm-default-display-buffer))
-
-;; Use ag from helm
-(use-package helm-ag
-  :ensure t
-  :bind
-  (("C-c s a" . helm-ag)
-   ("C-c s A" . helm-do-ag))
-  :config
-  (setq helm-ag-fuzzy-match t
-        helm-ag-insert-at-point 'symbol
-        helm-ag-edit-save t))
-
-;; Browse rings and registers with Helm
-(use-package helm-ring
-  :ensure helm
-  :defer t
-  :bind
-  (([remap yank-pop] . helm-show-kill-ring)
-   ([remap insert-register] . helm-register)))
-
-;; Input unicode with helm
-;(use-package helm-unicode
-  ;:ensure t
-  ;:bind
-  ;("C-c i 8" . helm-unicode))
 
 ;; Helm frontend for company
 (use-package helm-company
@@ -1369,12 +1250,6 @@ none."
      ([remap completion-at-point] . helm-company)
    :map company-active-map
      ("C-:" . helm-company)))
-
-(use-package helm-elisp                 ; Helm commands for elisp
-  :ensure helm
-  :defer t
-  :bind (([remap apropos-command] . helm-apropos)
-         ("C-c f l" . helm-locate-library)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1462,18 +1337,8 @@ mouse-3: go to end")))))
     (c-set-style "stroustrup")
     (c-set-offset 'innamespace '0) ;; don't indent when in namespace
   )
-  (add-hook 'c-mode-hook 'helm-gtags-mode)
-  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'c-mode-common-hook 'hs-minor-mode)
   (add-hook 'c++-mode-hook 'my-c++-mode-hook))
-
-(use-package ggtags
-  :ensure t
-  :bind
-  :init
-  (add-hook 'c-mode-common-hook
-      (lambda ()
-        (when (derived-mode-p 'c-mode 'c++-mode)
-        (ggtags-mode +1)))))
 
 (use-package rtags
   :ensure t
@@ -1714,53 +1579,53 @@ mouse-3: go to end")))))
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;(use-package markdown-mode              ; Markdown
-  ;:ensure t
-  ;;; Just no, dear Markdown Mode.  Don't force that bastard Github dialect upon
-  ;;; me!
-  ;:mode ("\\.md\\'" . markdown-mode)
-  ;:config
-  ;;; Process Markdown with Pandoc, using a custom stylesheet for nice output
-  ;(let ((stylesheet (expand-file-name
-    ;(locate-user-emacs-file "etc/pandoc.css"))))
-    ;(setq markdown-command
-    ;(mapconcat #'shell-quote-argument
-               ;`("pandoc" "--toc" "--section-divs"
-                 ;"--css" ,(concat "file://" stylesheet)
-                 ;"--standalone" "-f" "markdown" "-t" "html5")
-                 ;" ")))
+(use-package markdown-mode              ; Markdown
+  :ensure t
+  ;; Just no, dear Markdown Mode.  Don't force that bastard Github dialect upon
+  ;; me!
+  :mode ("\\.md\\'" . markdown-mode)
+  :config
+  ;; Process Markdown with Pandoc, using a custom stylesheet for nice output
+  (let ((stylesheet (expand-file-name
+    (locate-user-emacs-file "etc/pandoc.css"))))
+    (setq markdown-command
+    (mapconcat #'shell-quote-argument
+               `("pandoc" "--toc" "--section-divs"
+                 "--css" ,(concat "file://" stylesheet)
+                 "--standalone" "-f" "markdown" "-t" "html5")
+                 " ")))
 
-  ;;; No filling in GFM, because line breaks are significant.
-  ;(add-hook 'gfm-mode-hook #'turn-off-auto-fill)
-  ;;; Use visual lines instead
-  ;(add-hook 'gfm-mode-hook #'visual-line-mode)
-  ;(add-hook 'gfm-mode-hook #'lunaryorn-whitespace-style-no-long-lines)
-  ;(bind-key "C-c C-s C" #'markdown-insert-gfm-code-block markdown-mode-map)
-  ;(bind-key "C-c C-s P" #'markdown-insert-gfm-code-block markdown-mode-map)
+  ;; No filling in GFM, because line breaks are significant.
+  (add-hook 'gfm-mode-hook #'turn-off-auto-fill)
+  ;; Use visual lines instead
+  (add-hook 'gfm-mode-hook #'visual-line-mode)
+  (add-hook 'gfm-mode-hook #'lunaryorn-whitespace-style-no-long-lines)
+  (bind-key "C-c C-s C" #'markdown-insert-gfm-code-block markdown-mode-map)
+  (bind-key "C-c C-s P" #'markdown-insert-gfm-code-block markdown-mode-map)
 
-  ;;; Fight my habit of constantly pressing M-q.  We should not fill in GFM
-  ;;; Mode.
-  ;(bind-key "M-q" #'ignore gfm-mode-map))
+  ;; Fight my habit of constantly pressing M-q.  We should not fill in GFM
+  ;; Mode.
+  (bind-key "M-q" #'ignore gfm-mode-map))
 
-;(use-package yaml-mode                  ; YAML
-  ;:ensure t
-  ;:defer t
-  ;:config
-  ;(add-hook 'yaml-mode-hook (lambda () (run-hooks 'prog-mode-hook))))
+(use-package yaml-mode                  ; YAML
+  :ensure t
+  :defer t
+  :config
+  (add-hook 'yaml-mode-hook (lambda () (run-hooks 'prog-mode-hook))))
 
-;(use-package json-mode                  ; JSON files
-  ;:ensure t
-  ;:defer t
-  ;:config
-  ;(add-hook 'json-mode-hook
-    ;;; Fix JSON mode indentation
-    ;(lambda () (setq-local js-indent-level 4))))
+(use-package json-mode                  ; JSON files
+  :ensure t
+  :defer t
+  :config
+  (add-hook 'json-mode-hook
+    ;; Fix JSON mode indentation
+    (lambda () (setq-local js-indent-level 4))))
 
-;(use-package json-reformat              ; Reformat JSON
-  ;:ensure t
-  ;:defer t
-  ;:bind
-  ;(("C-c x j" . json-reformat-region)))
+(use-package json-reformat              ; Reformat JSON
+  :ensure t
+  :defer t
+  :bind
+  (("C-c x j" . json-reformat-region)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1812,35 +1677,38 @@ mouse-3: go to end")))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (bind-key "C-c t d" #'toggle-debug-on-error)
 
-;(use-package elisp-slime-nav            ; Jump to definition of symbol at point
-  ;:ensure t
-  ;:init (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode)
-  ;:bind
-  ;(:map elisp-slime-nav-mode-map
-        ;("C-c h ." . elisp-slive-nav-describe-elisp-thing-at-point))
-  ;:config
-  ;(dolist (key '("C-c C-d d" "C-c C-d C-d"))
-    ;(define-key elisp-slime-nav-mode-map (kbd key) nil))
-  ;:diminish elisp-slime-nav-mode)
+(use-package elisp-slime-nav            ; Jump to definition of symbol at point
+  :ensure t
+  :init (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode)
+  :bind
+  (:map elisp-slime-nav-mode-map
+        ("C-c h ." . elisp-slive-nav-describe-elisp-thing-at-point))
+  :config
+  (dolist (key '("C-c C-d d" "C-c C-d C-d"))
+    (define-key elisp-slime-nav-mode-map (kbd key) nil))
+  :diminish elisp-slime-nav-mode)
 
-;(use-package ielm                       ; Emacs Lisp REPL
-  ;:bind
-  ;(("C-c a '" . ielm)))
+; Emacs Lisp REPL
+(use-package ielm
+  :bind
+  (("C-c a '" . ielm)))
 
-(use-package elisp-mode                 ; Emacs Lisp editing
+; Emacs Lisp editing
+(use-package elisp-mode
   :defer t
   :interpreter ("emacs" . emacs-lisp-mode)
   :bind (:map emacs-lisp-mode-map
-              ("C-c m e r" . eval-region)
-              ("C-c m e b" . eval-buffer)
-              ("C-c m e e" . eval-last-sexp)
-              ("C-c m e f" . eval-defun)))
+         ("C-c m e r" . eval-region)
+         ("C-c m e b" . eval-buffer)
+         ("C-c m e e" . eval-last-sexp)
+         ("C-c m e f" . eval-defun)))
 
-;; (use-package el-search                  ; pcase-based search for elisp
-;;   :ensure t
-;;   :bind (:map emacs-lisp-mode-map
-;;               ("C-c m s" . el-search-pattern)
-;;               ("C-c m r" . el-search-query-replace)))
+; pcase-based search for elisp
+(use-package el-search
+  :ensure t
+  :bind (:map emacs-lisp-mode-map
+         ("C-c m s" . el-search-pattern)
+         ("C-c m r" . el-search-query-replace)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1923,11 +1791,6 @@ mouse-3: go to end")))))
         "/elpa/.*\\'" ; Package files
         ;; And all other kinds of boring files
         #'ignoramus-boring-p)))
-
-;; Save position in files
-;(use-package saveplace
-  ;:init
-  ;(save-place-mode 1))
 
 ;; View read-only files
 (setq view-read-only t)
@@ -2047,20 +1910,6 @@ mouse-3: go to end")))))
   ;; headers, etc.q
   :init (add-hook 'Info-selection-hook #'niceify-info))
 
-;(use-package ansible-doc                ; Documentation lookup for Ansible
-  ;:ensure t
-  ;:defer t
-  ;:init
-  ;(add-hook 'yaml-mode-hook #'ansible-doc-mode)
-  ;:diminish ansible-doc-mode)
-
-;(use-package dash-at-point              ; Jump to Dash docset at point
-  ;:ensure t
-  ;:defer t
-  ;:bind
-  ;(("C-c h d" . dash-at-point)
-   ;("C-c h D" . dash-at-point-with-docset)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Version Control
@@ -2072,12 +1921,6 @@ mouse-3: go to end")))))
   :config
   ;; Always follow symlinks to files in VCS repos
   (setq vc-follow-symlinks t))
-
-;(use-package what-the-commit            ; Insert random commit messages
-  ;:ensure t
-  ;:bind
-  ;(("C-c i w" . what-the-commit-insert)
-   ;("C-c g w" . what-the-commit)))
 
 ;; Highlighting for diffs
 (use-package diff-hl
@@ -2097,13 +1940,14 @@ mouse-3: go to end")))))
   :bind
   (("C-c g l" . magit-log)
    ("C-c g f" . magit-file-log)
-   ("C-c g B" . magit-blame-mode)
-   ("C-c g b" . magit-branch)
+   ("C-c g b" . magit-blame-mode)
+   ("C-c g B" . magit-branch)
    ("C-c g c" . magit-checkout)
    ("C-c g d" . magit-ediff-show-working-tree)
    ("C-c g s" . magit-status)
+   ("C-c g S" . magit-stage-file)
    ("C-c g r" . magit-rebase)
-   ("C-c g t" . magit-tag))
+   ("C-c g U" . magit-unstage-file))
   :config
   (add-hook 'magit-mode-hook 'magit-load-config-extensions)
   (add-hook 'after-save-hook 'magit-after-save-refresh-status)
@@ -2114,6 +1958,30 @@ mouse-3: go to end")))))
         ;; having to reset the filter in the full log view
         magit-log-buffer-file-locked t
         magit-revision-show-gravatars nil))
+
+(use-package magit-svn
+  :ensure t
+  :after (magit)
+  :bind
+  (("C-c g V R" . magit-svn-rebase)
+   ("C-c g V c" . magit-svn-dcommit)
+   ("C-c g V r" . magit-svn-show-commit))
+  :config
+  ;; This could use some refinement
+  ;; It's also not strictly necessary as git-svn will do the rebase bit during a dcommit
+  (defun magit-svnup ()
+    "Performs the necessary dances to pull from both SVN and Git"
+    (interactive p)
+    (let ((old-branch (magit-rev-parse "--abbrev-ref")))
+      (magit-stash)
+      (magit-fetch)
+      (magit-checkout "master")
+      (magit-svn-rebase "-l")
+      (magit-checkout old-branch)
+      (magit-stash-pop))
+    )
+  (define-key global-map (kbd "C-c g S u") 'magit-svnup)
+  (add-hook 'magit-mode-hook 'magit-svn-mode))
 
 (use-package git-commit                 ; Git commit message mode
   :ensure t
@@ -2130,7 +1998,7 @@ mouse-3: go to end")))))
 (use-package git-timemachine            ; Go back in Git time
   :ensure t
   :bind
-  (("C-c g m" . git-timemachine)))
+  (("C-c g t" . git-timemachine)))
 
 ;; gitconfig mode
 (use-package gitconfig-mode
@@ -2163,77 +2031,77 @@ mouse-3: go to end")))))
 ;;   :bind
 ;;   ("C-c g g c" . github-clone))
 
-;(use-package smartparens
-  ;:ensure t
-  ;:bind
-  ;(("C-c k" . hydras/smartparens/body)
-    ;:map smartparens-strict-mode-map
-    ;("M-q" . sp-indent-defun))
-  ;:init
-  ;;; Hydra for Smartparens
-  ;(defhydra hydras/smartparens (:hint nil)
-    ;"
-;Sexps (quit with _q_)
-;^Nav^            ^Barf/Slurp^                 ^Depth^
-;^---^------------^----------^-----------------^-----^-----------------
-;_f_: forward     _→_:          slurp forward   _R_: splice
-;_b_: backward    _←_:          barf forward    _r_: raise
-;_u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
-;_d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
-;_p_: backward ↓
-;_n_: forward ↑
-;^Kill^           ^Misc^                       ^Wrap^
-;^----^-----------^----^-----------------------^----^------------------
-;_w_: copy        _j_: join                    _(_: wrap with ( )
-;_k_: kill        _s_: split                   _{_: wrap with { }
-;^^               _t_: transpose               _'_: wrap with ' '
-;^^               _c_: convolute               _\"_: wrap with \" \"
-;^^               _i_: indent defun"
-    ;("q" nil)
-    ;;; Wrapping
-    ;("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
-    ;("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
-    ;("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
-    ;("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
-    ;;; Navigation
-    ;("f" sp-forward-sexp )
-    ;("b" sp-backward-sexp)
-    ;("u" sp-backward-up-sexp)
-    ;("d" sp-down-sexp)
-    ;("p" sp-backward-down-sexp)
-    ;("n" sp-up-sexp)
-    ;;; Kill/copy
-    ;("w" sp-copy-sexp)
-    ;("k" sp-kill-sexp)
-    ;;; Misc
-    ;("t" sp-transpose-sexp)
-    ;("j" sp-join-sexp)
-    ;("s" sp-split-sexp)
-    ;("c" sp-convolute-sexp)
-    ;("i" sp-indent-defun)
-    ;;; Depth changing
-    ;("R" sp-splice-sexp)
-    ;("r" sp-splice-sexp-killing-around)
-    ;("<up>" sp-splice-sexp-killing-backward)
-    ;("<down>" sp-splice-sexp-killing-forward)
-    ;;; Barfing/slurping
-    ;("<right>" sp-forward-slurp-sexp)
-    ;("<left>" sp-forward-barf-sexp)
-    ;("C-<left>" sp-backward-barf-sexp)
-    ;("C-<right>" sp-backward-slurp-sexp))
+(use-package smartparens
+  :ensure t
+  :bind
+  (("C-c k" . hydras/smartparens/body)
+    :map smartparens-strict-mode-map
+    ("M-q" . sp-indent-defun))
+  :init
+  ;; Hydra for Smartparens
+  (defhydra hydras/smartparens (:hint nil)
+    "
+Sexps (quit with _q_)
+^Nav^            ^Barf/Slurp^                 ^Depth^
+^---^------------^----------^-----------------^-----^-----------------
+_f_: forward     _→_:          slurp forward   _R_: splice
+_b_: backward    _←_:          barf forward    _r_: raise
+_u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
+_d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
+_p_: backward ↓
+_n_: forward ↑
+^Kill^           ^Misc^                       ^Wrap^
+^----^-----------^----^-----------------------^----^------------------
+_w_: copy        _j_: join                    _(_: wrap with ( )
+_k_: kill        _s_: split                   _{_: wrap with { }
+^^               _t_: transpose               _'_: wrap with ' '
+^^               _c_: convolute               _\"_: wrap with \" \"
+^^               _i_: indent defun"
+    ("q" nil)
+    ;; Wrapping
+    ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
+    ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
+    ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
+    ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
+    ;; Navigation
+    ("f" sp-forward-sexp )
+    ("b" sp-backward-sexp)
+    ("u" sp-backward-up-sexp)
+    ("d" sp-down-sexp)
+    ("p" sp-backward-down-sexp)
+    ("n" sp-up-sexp)
+    ;; Kill/copy
+    ("w" sp-copy-sexp)
+    ("k" sp-kill-sexp)
+    ;; Misc
+    ("t" sp-transpose-sexp)
+    ("j" sp-join-sexp)
+    ("s" sp-split-sexp)
+    ("c" sp-convolute-sexp)
+    ("i" sp-indent-defun)
+    ;; Depth changing
+    ("R" sp-splice-sexp)
+    ("r" sp-splice-sexp-killing-around)
+    ("<up>" sp-splice-sexp-killing-backward)
+    ("<down>" sp-splice-sexp-killing-forward)
+    ;; Barfing/slurping
+    ("<right>" sp-forward-slurp-sexp)
+    ("<left>" sp-forward-barf-sexp)
+    ("C-<left>" sp-backward-barf-sexp)
+    ("C-<right>" sp-backward-slurp-sexp))
 
-  ;(smartparens-global-mode)
-  ;(show-smartparens-global-mode)
+  (smartparens-global-mode)
+  (show-smartparens-global-mode)
 
-  ;(dolist (hook '(inferior-emacs-lisp-mode-hook
-                  ;emacs-lisp-mode-hook))
-    ;(add-hook hook #'smartparens-strict-mode))
-  ;:config
-  ;(require 'smartparens-config)
-  ;(setq sp-autoskip-closing-pair 'always
-        ;;; Don't kill entire symbol on C-k
-        ;sp-hybrid-kill-entire-symbol nil)
-  ;:diminish smartparens-mode)
+  (dolist (hook '(inferior-emacs-lisp-mode-hook
+                  emacs-lisp-mode-hook))
+    (add-hook hook #'smartparens-strict-mode))
+  :config
+  (require 'smartparens-config)
+  (setq sp-autoskip-closing-pair 'always
+        ;; Don't kill entire symbol on C-k
+        sp-hybrid-kill-entire-symbol nil)
+  :diminish smartparens-mode)
 
 (use-package highlight-numbers
   :ensure t
@@ -2248,23 +2116,23 @@ mouse-3: go to end")))))
   (dolist (hook '(text-mode-hook prog-mode-hook))
     (add-hook hook #'rainbow-delimiters-mode)))
 
-;; Highlight symbols
-;(use-package highlight-symbol
-  ;:ensure t
-  ;:defer t
-  ;:bind
-  ;(("C-c s %" . highlight-symbol-query-replace)
-   ;("C-c s n" . highlight-symbol-next-in-defun)
-   ;("C-c s p" . highlight-symbol-prev-in-defun))
-  ;;; Navigate occurrences of the symbol under point with M-n and M-p, and
-  ;;; highlight symbol occurrences
-  ;:init
-  ;(dolist (fn '(highlight-symbol-nav-mode highlight-symbol-mode))
-    ;(add-hook 'prog-mode-hook fn))
-  ;:config
-  ;(setq highlight-symbol-idle-delay 0.4     ; Highlight almost immediately
-        ;highlight-symbol-on-navigation-p t) ; Highlight immediately after navigation
-  ;:diminish highlight-symbol-mode)
+; Highlight symbols
+(use-package highlight-symbol
+  :ensure t
+  :defer t
+  :bind
+  (("C-c s %" . highlight-symbol-query-replace)
+   ("C-c s n" . highlight-symbol-next-in-defun)
+   ("C-c s p" . highlight-symbol-prev-in-defun))
+  ;; Navigate occurrences of the symbol under point with M-n and M-p, and
+  ;; highlight symbol occurrences
+  :init
+  (dolist (fn '(highlight-symbol-nav-mode highlight-symbol-mode))
+    (add-hook 'prog-mode-hook fn))
+  :config
+  (setq highlight-symbol-idle-delay 0.4     ; Highlight almost immediately
+        highlight-symbol-on-navigation-p t) ; Highlight immediately after navigation
+  :diminish highlight-symbol-mode)
 
 ;; Highlight TODOs in buffers
 (use-package hl-todo
@@ -2402,27 +2270,6 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
   :init
   (add-hook 'prog-mode-hook #'goto-address-prog-mode)
   (add-hook 'text-mode-hook #'goto-address-mode))
-
-(use-package eww                        ; Emacs' built-in web browser
-  :bind
-  (("C-c a w b" . eww-list-bookmarks)
-   ("C-c a w w" . eww)
-   ("C-c a w u" . eww-browse-url)))
-
-(use-package sx                         ; StackExchange client for Emacs
-  :ensure t
-  :bind
-  (("C-c a S a" . sx-ask)
-   ("C-c a S s" . sx-tab-all-questions)
-   ("C-c a S q" . sx-tab-all-questions)
-   ("C-c a S f" . sx-tab-all-questions)
-   ("C-c a S n" . sx-tab-newest)))
-
-(use-package sx-question-mode           ; Show Stack
-  :ensure sx
-  :defer t
-  ;; Display questions in the same window
-  :config (setq sx-question-mode-display-buffer-function #'switch-to-buffer))
 
 ;; Backups
 (defvar backup-directory "~/.emacs.d/backups/")
