@@ -326,14 +326,14 @@ none."
             (user-error "Library %s has no URL header" library)))))))
 
 ;;;; Highlights and fontification
-;(defun lunaryorn-whitespace-style-no-long-lines ()
-  ;"Configure `whitespace-mode' for Org.
-;Disable the highlighting of overlong lines."
-  ;(setq-local whitespace-style (-difference whitespace-style '(lines lines-tail))))
+(defun lunaryorn-whitespace-style-no-long-lines ()
+  "Configure `whitespace-mode' for Org.
+Disable the highlighting of overlong lines."
+  (setq-local whitespace-style (-difference whitespace-style '(lines lines-tail))))
 
-;(defun lunaryorn-whitespace-mode-local ()
-  ;"Enable `whitespace-mode' after local variables where set up."
-  ;(add-hook 'hack-local-variables-hook #'whitespace-mode nil 'local))
+(defun lunaryorn-whitespace-mode-local ()
+  "Enable `whitespace-mode' after local variables where set up."
+  (add-hook 'hack-local-variables-hook #'whitespace-mode nil 'local))
 
 (defun reftex-find-ams-environment-caption (environment)
   "Find the caption of an AMS ENVIRONMENT."
@@ -401,7 +401,6 @@ none."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Keybindings!!
-;; TODO: this is a base from lunaryorn's config
 (use-package which-key
   :ensure t
   :init
@@ -446,12 +445,12 @@ none."
     "C-c c" "compile-and-comments"
     "C-c e" "errors"
     "C-c f" "files"
-    "C-c f v" "variables"
+    "C-c v" "variables"
     "C-c g" "git"
     "C-c h" "helm"
     "C-c i" "insert"
     "C-c j" "jump"
-    "C-c k" "gtags"
+    "C-c k" "smartparens"
     "C-c l" "language/spelling"
     "C-c m" "major mode"
     "C-c o" "cursors"
@@ -462,13 +461,11 @@ none."
     "C-c r" "rtags"
     "C-c s" "search"
     "C-c t" "toggle"
+    "C-c u" "gtags"
     "C-c w" "windows/frames"
     "C-c x" "text")
   ;(which-key-declare-prefixes-for-mode 'org-mode
     ;;; TODO:
-    ;)
-  ;(which-key-declare-prefixes-for-mode 'cc-mode
-    ;;; TODO: rtags mostly
     ;)
   ;(which-key-declare-prefixes-for-mode 'python-mode
     ;;; TODO:
@@ -634,7 +631,7 @@ none."
 (use-package expand-region
   :ensure t
   :bind
-  ("C-c v" . er/expand-region))
+  ("C-c ," . er/expand-region))
 
 ;; Buffers, Windows, & Frames
 (setq frame-resize-pixelwise t
@@ -810,18 +807,16 @@ none."
   :init
   (setq reb-re-syntax 'string))
 
-;;; Terminal emulation and shells
-(use-package shell                      ; Dumb shell in Emacs
+; Terminal emulator in Emacs
+(use-package term
   :bind
-  ("C-c a t" . shell))
-
-(use-package term                       ; Terminal emulator in Emacs
-  :bind
-  ("C-c a T" . ansi-term))
+  ("C-c a t" . ansi-term))
 
 ;; eshell
 (use-package eshell
   ;; built-in
+  :bind
+  ("C-c a T" . eshell)
   :init
   ;; create a new shell even if there is one already
   (defun new-eshell ()
@@ -995,25 +990,25 @@ none."
    ("C-c x a (" . lunaryorn/align-repeat-left-paren)
    ("C-c x a )" . lunaryorn/align-repeat-right-paren)))
 
-;(use-package multiple-cursors           ; Edit text with multiple cursors
-  ;:ensure t
-  ;:bind
-  ;(("C-c o <SPC>" . mc/vertical-align-with-space)
-   ;("C-c o a"     . mc/vertical-align)
-   ;("C-c o e"     . mc/mark-more-like-this-extended)
-   ;("C-c o h"     . mc/mark-all-like-this-dwim)
-   ;("C-c o l"     . mc/edit-lines)
-   ;("C-c o n"     . mc/mark-next-like-this)
-   ;("C-c o p"     . mc/mark-previous-like-this)
-   ;("C-c o r"     . vr/mc-mark)
-   ;("C-c o C-a"   . mc/edit-beginnings-of-lines)
-   ;("C-c o C-e"   . mc/edit-ends-of-lines)
-   ;("C-c o C-s"   . mc/mark-all-in-region))
-  ;:config
-  ;(setq mc/mode-line
-        ;;; Simplify the MC mode line indicator
-        ;'(:propertize (:eval (concat " " (number-to-string (mc/num-cursors))))
-                      ;face font-lock-warning-face)))
+(use-package multiple-cursors           ; Edit text with multiple cursors
+  :ensure t
+  :bind
+  (("C-c o <SPC>" . mc/vertical-align-with-space)
+   ("C-c o a"     . mc/vertical-align)
+   ("C-c o e"     . mc/mark-more-like-this-extended)
+   ("C-c o h"     . mc/mark-all-like-this-dwim)
+   ("C-c o l"     . mc/edit-lines)
+   ("C-c o n"     . mc/mark-next-like-this)
+   ("C-c o p"     . mc/mark-previous-like-this)
+   ("C-c o r"     . vr/mc-mark)
+   ("C-c o C-a"   . mc/edit-beginnings-of-lines)
+   ("C-c o C-e"   . mc/edit-ends-of-lines)
+   ("C-c o C-s"   . mc/mark-all-in-region))
+  :config
+  (setq mc/mode-line
+        ;; Simplify the MC mode line indicator
+        '(:propertize (:eval (concat " " (number-to-string (mc/num-cursors))))
+                      face font-lock-warning-face)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1046,13 +1041,13 @@ none."
   (company-statistics-mode))
 
 ;;; Completion for Math symbols
-;(use-package company-math
-  ;:ensure t
-  ;:after company
-  ;:config
-  ;;; Add backends for math characters
-  ;(add-to-list 'company-backends 'company-math-symbols-unicode)
-  ;(add-to-list 'company-backends 'company-math-symbols-latex))
+(use-package company-math
+  :ensure t
+  :after company
+  :config
+  ;; Add backends for math characters
+  (add-to-list 'company-backends 'company-math-symbols-unicode)
+  (add-to-list 'company-backends 'company-math-symbols-latex))
 
 (use-package company-anaconda           ; Python backend for Company
   :ensure t
@@ -1193,20 +1188,6 @@ none."
 
 (use-package helm-gtags
   :ensure t
-  :bind
-  (:map helm-gtags-mode-map
-   ("C-c k a" . helm-gtags-tags-in-this-function)
-   ("C-c k h" . helm-gtags-display-browser)
-   ("C-c k C-]" . helm-gtags-find-tag-from-here)
-   ("C-c k C-t" . helm-gtags-pop-stack)
-   ("C-c k P" . helm-gtags-parse-file)
-   ("C-c k f" . helm-gtags-find-file)
-   ("C-c k p" . helm-gtags-find-pattern)
-   ("C-c k s" . helm-gtags-find-symbol)
-   ("C-c k r" . helm-gtags-find-rtag)
-   ("C-c k t" . helm-gtags-find-tag)
-   ("C-c k <" . helm-gtags-previous-history)
-   ("C-c k >" . helm-gtags-next-history))
   :init
   (setq helm-gtags-fuzzy-match nil
         helm-gtags-direct-helm-completing t
@@ -1214,13 +1195,24 @@ none."
         helm-gtags-ignore-case t
         helm-gtags-prefix-key "\C-ck"
         helm-gtags-suggested-key-mapping t)
-  :config
-  (add-hook 'dired-mode-hook 'helm-gtags-mode)
-  (add-hook 'eshell-mode-hook 'helm-gtags-mode)
-  (add-hook 'c-mode-hook 'helm-gtags-mode)
-  (add-hook 'c++-mode-hook 'helm-gtags-mode)
-  (add-hook 'java-mode-hook 'helm-gtags-mode)
-  (add-hook 'asm-mode-hook 'helm-gtags-mode)
+  (add-hook 'dired-mode-hook    #'helm-gtags-mode)
+  (add-hook 'eshell-mode-hook   #'helm-gtags-mode)
+  (add-hook 'c-mode-common-hook #'helm-gtags-mode)
+  (add-hook 'java-mode-hook     #'helm-gtags-mode)
+  (add-hook 'asm-mode-hook      #'helm-gtags-mode)
+  (with-eval-after-load 'helm-gtags
+   (define-key helm-gtags-mode-map (kbd "C-c u a") 'helm-gtags-tags-in-this-function)
+   (define-key helm-gtags-mode-map (kbd "C-c u h") 'helm-gtags-display-browser)
+   (define-key helm-gtags-mode-map (kbd "C-c u C-]") 'helm-gtags-find-tag-from-here)
+   (define-key helm-gtags-mode-map (kbd "C-c u C-t") 'helm-gtags-pop-stack)
+   (define-key helm-gtags-mode-map (kbd "C-c u P") 'helm-gtags-parse-file)
+   (define-key helm-gtags-mode-map (kbd "C-c u f") 'helm-gtags-find-file)
+   (define-key helm-gtags-mode-map (kbd "C-c u p") 'helm-gtags-find-pattern)
+   (define-key helm-gtags-mode-map (kbd "C-c u s") 'helm-gtags-find-symbol)
+   (define-key helm-gtags-mode-map (kbd "C-c u r") 'helm-gtags-find-rtag)
+   (define-key helm-gtags-mode-map (kbd "C-c u t") 'helm-gtags-find-tag)
+   (define-key helm-gtags-mode-map (kbd "C-c u <") 'helm-gtags-previous-history)
+   (define-key helm-gtags-mode-map (kbd "C-c u >") 'helm-gtags-next-history))
   :diminish helm-gtags-mode)
 
 ;; Search buffers with helm
@@ -1262,15 +1254,9 @@ none."
   ;; built-in
   :init
   ;; Hook functions
-  (defun font-lock-comment-annotations ()
-  "Highlight a bunch of common comment annotations."
-  (font-lock-add-keywords
-    nil '(("\\<\\(\\(FIX\\(ME\\)?\\|TODO\\|OPTIMIZE\\|HACK\\|REFACTOR\\):\\)"
-           1 font-lock-warning-face t))))
   (set (make-local-variable 'comment-auto-fill-only-comments) t)
   (setq font-lock-maximum-decoration 2)
   :config
-  (add-hook 'prog-mode-hook #'font-lock-comment-annotations)
   :bind
   (("C-c t p" . prettify-symbols-mode)))
 
@@ -1317,6 +1303,9 @@ mouse-3: go to end")))))
         flycheck-scalastylerc "scalastyle_config.xml")
   :diminish flycheck-mode)
 
+(use-package cmake-mode
+  :ensure t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Programming - C/C++
@@ -1337,8 +1326,16 @@ mouse-3: go to end")))))
     (c-set-style "stroustrup")
     (c-set-offset 'innamespace '0) ;; don't indent when in namespace
   )
-  (add-hook 'c-mode-common-hook 'hs-minor-mode)
-  (add-hook 'c++-mode-hook 'my-c++-mode-hook))
+  (add-hook 'c-mode-common-hook #'hs-minor-mode)
+  (add-hook 'c++-mode-hook #'my-c++-mode-hook))
+
+(use-package modern-cpp-font-lock
+  :ensure t
+  :defer t
+  :init
+  (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
+  :diminish
+  modern-c++-font-lock-mode)
 
 (use-package rtags
   :ensure t
@@ -1395,182 +1392,208 @@ mouse-3: go to end")))))
   (add-hook 'c-mode-common-hook #'my-rtags-cc-mode-hook)
   (setq rtags-tramp-enabled t))
 
-;(use-package irony
-;  :ensure t
-;  :init
-;  (defun my-irony-mode-hook ()
-;    (define-key irony-mode-map [remap completion-at-point] #'irony-completion-at-point-async)
-;    (define-key irony-mode-map [remap complete-symbol] #'irony-completion-at-point-async))
-;  (add-hook 'irony-mode-hook #'my-irony-mode-hook)
-; (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
-; (add-hook 'c-mode-hook (lambda () (setq irony-additional-clang-options '("-std=c11"))))
-; (add-hook 'c++-mode-hook (lambda () (setq irony-addition-clang-options '("-std=c++11")))))
+;; (use-package irony
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (defun my-irony-mode-hook ()
+;;     (define-key irony-mode-map [remap completion-at-point] #'irony-completion-at-point-async)
+;;     (define-key irony-mode-map [remap complete-symbol] #'irony-completion-at-point-async))
+;;   (add-hook 'c-mode-common-hook 'irony-mode)
+;;   (add-hook 'irony-mode-hook #'my-irony-mode-hook)
+;;   (add-hook 'irony-mode-hook #'irony-cdb-autosetup-compile-options)
+;;   (add-hook 'c-mode-hook (lambda () (setq irony-additional-clang-options '("-std=c11"))))
+;;   (add-hook 'c++-mode-hook (lambda () (setq irony-addition-clang-options '("-std=c++11")))))
 
-;(use-package cmake-ide
-;  :ensure t
-;  :init
-;)
+;; (use-package company-irony
+;;   :ensure t
+;;   :defer t
+;;   :after (irony)
+;;   :init
+;;   (require 'company)
+;;   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+;;   (setq company-backends (delete 'company-semantic company-backends))
+;;   (with-eval-after-load 'company
+;;     '(push 'company-irony company-backends))
+;;   (setq company-idle-delay 0)
+;;   (define-key c-mode-map [(tab)] 'company-complete)
+;;   (define-key c++-mode-map [(tab)] 'company-complete))
+
+;; (use-package company-irony-c-headers
+;;   :ensure t
+;;   :defer t
+;;   :after (irony company-irony)
+;;   :init
+;;   (with-eval-after-load 'company
+;;     '(push 'company-backends company-irony-c-headers)))
+
+(use-package cmake-ide
+ :ensure t
+  :defer t
+  :init
+  (add-hook 'c-mode-common-hook #'cmake-ide-setup))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
 ;;;; Programming - LaTeX
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;(use-package table                      ; Edit tables in text files
-  ;:defer t
-  ;:init
-  ;(add-hook 'text-mode-hook #'table-recognize))
 
-;(use-package tildify                    ; Insert non-breaking spaces on the fly
-  ;:defer t
-  ;:bind (("C-c x t" . tildify-region)
-  ;("C-c t ~" . tildify-mode))
-  ;:config
-  ;;; Use the right space for LaTeX
-  ;(add-hook 'latex-mode-hook
-    ;(lambda () (setq-local tildify-space-string "~"))))
+(use-package table                      ; Edit tables in text files
+  :defer t
+  :init
+  (add-hook 'text-mode-hook #'table-recognize))
 
-;(use-package typo                       ; Automatically use typographic quotes
-  ;:ensure t
-  ;:bind (("C-c t t" . typo-mode)
-  ;("C-c l L" . typo-change-language))
-  ;:init
-  ;(typo-global-mode)
-  ;(add-hook 'text-mode-hook #'typo-mode)
-  ;:config
-  ;;; TODO: Automatically set from ispell dictionary in
-  ;;; `adict-change-dictionary-hook', to update the typo language whenever the
-  ;;; spelling language changed
-  ;(setq-default typo-language "English")
-  ;:diminish typo-mode)
+(use-package tildify                    ; Insert non-breaking spaces on the fly
+  :defer t
+  :bind (("C-c x t" . tildify-region)
+  ("C-c t ~" . tildify-mode))
+  :config
+  ;; Use the right space for LaTeX
+  (add-hook 'latex-mode-hook
+    (lambda () (setq-local tildify-space-string "~"))))
 
-;;;; LaTeX with AUCTeX
-;(use-package tex-site                   ; AUCTeX initialization
-  ;:ensure auctex)
+(use-package typo                       ; Automatically use typographic quotes
+  :ensure t
+  :bind (("C-c t t" . typo-mode)
+  ("C-c l L" . typo-change-language))
+  :init
+  (typo-global-mode)
+  (add-hook 'text-mode-hook #'typo-mode)
+  :config
+  ;; TODO: Automatically set from ispell dictionary in
+  ;; `adict-change-dictionary-hook', to update the typo language whenever the
+  ;; spelling language changed
+  (setq-default typo-language "English")
+  :diminish typo-mode)
 
-;(use-package tex                        ; TeX editing/processing
-  ;:ensure auctex
-  ;:defer t
-  ;:config
-  ;(setq TeX-parse-self t                ; Parse documents to provide completion
-                                        ;; for packages, etc.
-        ;TeX-auto-save t                 ; Automatically save style information
-        ;TeX-electric-sub-and-superscript t ; Automatically insert braces after
-                                           ;; sub- and superscripts in math mode
-        ;TeX-electric-math '("\\(" "\\)")
-        ;;; Don't insert magic quotes right away.
-        ;TeX-quote-after-quote t
-        ;;; Don't ask for confirmation when cleaning
-        ;TeX-clean-confirm nil
-        ;;; Provide forward and inverse search with SyncTeX
-        ;TeX-source-correlate-mode t
-        ;TeX-source-correlate-method 'synctex)
-        ;(setq-default TeX-master nil          ; Ask for the master file
-                      ;TeX-engine 'luatex      ; Use a modern engine
-                      ;;; Redundant in 11.88, but keep for older AUCTeX
-                      ;TeX-PDF-mode t)
+;;; LaTeX with AUCTeX
+(use-package tex-site                   ; AUCTeX initialization
+  :ensure auctex)
 
-  ;;; Move to chktex
-  ;(setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s"))
+(use-package tex                        ; TeX editing/processing
+  :ensure auctex
+  :defer t
+  :config
+  (setq TeX-parse-self t                ; Parse documents to provide completion
+                                        ; for packages, etc.
+        TeX-auto-save t                 ; Automatically save style information
+        TeX-electric-sub-and-superscript t ; Automatically insert braces after
+                                           ; sub- and superscripts in math mode
+        TeX-electric-math '("\\(" "\\)")
+        ;; Don't insert magic quotes right away.
+        TeX-quote-after-quote t
+        ;; Don't ask for confirmation when cleaning
+        TeX-clean-confirm nil
+        ;; Provide forward and inverse search with SyncTeX
+        TeX-source-correlate-mode t
+        TeX-source-correlate-method 'synctex)
+        (setq-default TeX-master nil          ; Ask for the master file
+                      TeX-engine 'luatex      ; Use a modern engine
+                      ;; Redundant in 11.88, but keep for older AUCTeX
+                      TeX-PDF-mode t)
 
-;(use-package tex-buf                    ; TeX buffer management
-  ;:ensure auctex
-  ;:defer t
-  ;;; Don't ask for confirmation when saving before processing
-  ;:config
-  ;(setq TeX-save-query nil))
+  ;; Move to chktex
+  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s"))
 
-;(use-package tex-style                  ; TeX style
-  ;:ensure auctex
-  ;:defer t
-  ;:config
-  ;;; Enable support for csquotes
-  ;(setq LaTeX-csquotes-close-quote "}"
-        ;LaTeX-csquotes-open-quote "\\enquote{"))
+(use-package tex-buf                    ; TeX buffer management
+  :ensure auctex
+  :defer t
+  ;; Don't ask for confirmation when saving before processing
+  :config
+  (setq TeX-save-query nil))
 
-;(use-package tex-fold                   ; TeX folding
-  ;:ensure auctex
-  ;:defer t
-  ;:init
-  ;(add-hook 'TeX-mode-hook #'TeX-fold-mode))
+(use-package tex-style                  ; TeX style
+  :ensure auctex
+  :defer t
+  :config
+  ;; Enable support for csquotes
+  (setq LaTeX-csquotes-close-quote "}"
+        LaTeX-csquotes-open-quote "\\enquote{"))
 
-;(use-package tex-mode                   ; TeX mode
-  ;:ensure auctex
-  ;:defer t
-  ;:config
-  ;(font-lock-add-keywords 'latex-mode
-                          ;`((,(rx "\\"
-                                  ;symbol-start
-                                  ;"fx" (1+ (or (syntax word) (syntax symbol)))
-                                  ;symbol-end)
-                             ;. font-lock-warning-face))))
+(use-package tex-fold                   ; TeX folding
+  :ensure auctex
+  :defer t
+  :init
+  (add-hook 'TeX-mode-hook #'TeX-fold-mode))
 
-;(use-package latex                      ; LaTeX editing
-  ;:ensure auctex
-  ;:defer t
-  ;:config
-  ;;; Teach TeX folding about KOMA script sections
-  ;(setq TeX-outline-extra `((,(rx (0+ space) "\\section*{") 2)
-                            ;(,(rx (0+ space) "\\subsection*{") 3)
-                            ;(,(rx (0+ space) "\\subsubsection*{") 4)
-                            ;(,(rx (0+ space) "\\minisec{") 5))
-        ;;; No language-specific hyphens please
-        ;LaTeX-babel-hyphen nil)
+(use-package tex-mode                   ; TeX mode
+  :ensure auctex
+  :defer t
+  :config
+  (font-lock-add-keywords 'latex-mode
+                          `((,(rx "\\"
+                                  symbol-start
+                                  "fx" (1+ (or (syntax word) (syntax symbol)))
+                                  symbol-end)
+                             . font-lock-warning-face))))
 
-  ;(add-hook 'LaTeX-mode-hook #'LaTeX-math-mode))    ; Easy math input
+(use-package latex                      ; LaTeX editing
+  :ensure auctex
+  :defer t
+  :config
+  ;; Teach TeX folding about KOMA script sections
+  (setq TeX-outline-extra `((,(rx (0+ space) "\\section*{") 2)
+                            (,(rx (0+ space) "\\subsection*{") 3)
+                            (,(rx (0+ space) "\\subsubsection*{") 4)
+                            (,(rx (0+ space) "\\minisec{") 5))
+        ;; No language-specific hyphens please
+        LaTeX-babel-hyphen nil)
 
-;(use-package auctex-latexmk             ; latexmk command for AUCTeX
-  ;:ensure t
-  ;:defer t
-  ;:after latex
-  ;:config (auctex-latexmk-setup))
+  (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode))    ; Easy math input
 
-;(use-package bibtex                     ; BibTeX editing
-  ;:defer t
-  ;:config
-  ;;; Run prog mode hooks for bibtex
-  ;(add-hook 'bibtex-mode-hook (lambda () (run-hooks 'prog-mode-hook)))
+(use-package auctex-latexmk             ; latexmk command for AUCTeX
+  :ensure t
+  :defer t
+  :after latex
+  :config (auctex-latexmk-setup))
 
-  ;;; Use a modern BibTeX dialect
-  ;(bibtex-set-dialect 'biblatex))
+(use-package bibtex                     ; BibTeX editing
+  :defer t
+  :config
+  ;; Run prog mode hooks for bibtex
+  (add-hook 'bibtex-mode-hook (lambda () (run-hooks 'prog-mode-hook)))
 
-;(use-package reftex                     ; TeX/BibTeX cross-reference management
-  ;:defer t
-  ;:init (add-hook 'LaTeX-mode-hook #'reftex-mode)
-  ;:config
-  ;;; Plug into AUCTeX
-  ;(setq reftex-plug-into-AUCTeX t
-        ;;; Automatically derive labels, and prompt for confirmation
-        ;reftex-insert-label-flags '(t t)
-        ;reftex-label-alist
-        ;'(
-          ;;; Additional label definitions for RefTeX.
-          ;("definition" ?d "def:" "~\\ref{%s}"
-           ;lunaryorn-reftex-find-ams-environment-caption
-          ;("definition" "def.") -3)
-          ;("theorem" ?h "thm:" "~\\ref{%s}"
-           ;lunaryorn-reftex-find-ams-environment-caption
-          ;("theorem" "th.") -3)
-          ;("example" ?x "ex:" "~\\ref{%s}"
-           ;lunaryorn-reftex-find-ams-environment-caption
-          ;("example" "ex") -3)
-          ;;; Algorithms package
-          ;("algorithm" ?a "alg:" "~\\ref{%s}"
-           ;"\\\\caption[[{]" ("algorithm" "alg") -3)))
-  ;;; Provide basic RefTeX support for biblatex
-  ;(unless (assq 'biblatex reftex-cite-format-builtin)
-    ;(add-to-list 'reftex-cite-format-builtin
-                 ;'(biblatex "The biblatex package"
-                            ;((?\C-m . "\\cite[]{%l}")
-                            ;(?t . "\\textcite{%l}")
-                            ;(?a . "\\autocite[]{%l}")
-                            ;(?p . "\\parencite{%l}")
-                            ;(?f . "\\footcite[][]{%l}")
-                            ;(?F . "\\fullcite[]{%l}")
-                            ;(?x . "[]{%l}")
-                            ;(?X . "{%l}"))))
-    ;(setq reftex-cite-format 'biblatex))
-  ;:diminish reftex-mode)
+  ;; Use a modern BibTeX dialect
+  (bibtex-set-dialect 'biblatex))
+
+(use-package reftex                     ; TeX/BibTeX cross-reference management
+  :defer t
+  :init (add-hook 'LaTeX-mode-hook #'reftex-mode)
+  :config
+  ;; Plug into AUCTeX
+  (setq reftex-plug-into-AUCTeX t
+        ;; Automatically derive labels, and prompt for confirmation
+        reftex-insert-label-flags '(t t)
+        reftex-label-alist
+        '(
+          ;; Additional label definitions for RefTeX.
+          ("definition" ?d "def:" "~\\ref{%s}"
+           lunaryorn-reftex-find-ams-environment-caption
+          ("definition" "def.") -3)
+          ("theorem" ?h "thm:" "~\\ref{%s}"
+           lunaryorn-reftex-find-ams-environment-caption
+          ("theorem" "th.") -3)
+          ("example" ?x "ex:" "~\\ref{%s}"
+           lunaryorn-reftex-find-ams-environment-caption
+          ("example" "ex") -3)
+          ;; Algorithms package
+          ("algorithm" ?a "alg:" "~\\ref{%s}"
+           "\\\\caption[[{]" ("algorithm" "alg") -3)))
+  ;; Provide basic RefTeX support for biblatex
+  (unless (assq 'biblatex reftex-cite-format-builtin)
+    (add-to-list 'reftex-cite-format-builtin
+                 '(biblatex "The biblatex package"
+                            ((?\C-m . "\\cite[]{%l}")
+                            (?t . "\\textcite{%l}")
+                            (?a . "\\autocite[]{%l}")
+                            (?p . "\\parencite{%l}")
+                            (?f . "\\footcite[][]{%l}")
+                            (?F . "\\fullcite[]{%l}")
+                            (?x . "[]{%l}")
+                            (?X . "{%l}"))))
+    (setq reftex-cite-format 'biblatex))
+  :diminish reftex-mode)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1723,12 +1746,6 @@ mouse-3: go to end")))))
    ("C-c f /" . revert-buffer))
 )
 
-;; Find files at point
-(use-package ffap
-  :defer t
-  :config
-  (setq ffap-machine-p-known 'reject))
-
 ;; Server for emacsclient
 (use-package server
   :defer t
@@ -1827,7 +1844,6 @@ mouse-3: go to end")))))
 (use-package files
   :commands (recompile-packages)
   :bind (("C-c f D" . delete-file-and-buffer)
-         ("C-c f i" . open-in-intellij)
          ("C-c f o" . launch-dwim)
          ("C-c f R" . rename-file-and-buffer)
          ("C-c f w" . copy-filename-as-kill)
@@ -1835,9 +1851,9 @@ mouse-3: go to end")))))
          ("C-c f ." . browse-feature-url)))
 
 ;; Additional bindings for built-ins
-(bind-key "C-c f v d" #'add-dir-local-variable)
-(bind-key "C-c f v d" #'add-file-local-variable)
-(bind-key "C-c f v d" #'add-file-local-variable-prop-line)
+(bind-key "C-c v d" #'add-dir-local-variable)
+(bind-key "C-c v f" #'add-file-local-variable)
+(bind-key "C-c v l" #'add-file-local-variable-prop-line)
 
 ;; Page navigation
 (use-package page
@@ -2186,10 +2202,12 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
 ;; windmove
 (use-package windmove
   :bind
+  ;; not sure these are useful
   (("C-c w <left>"  . windmove-left)
    ("C-c w <right>" . windmove-right)
    ("C-c w <up>"    . windmove-up)
    ("C-c w <down>"  . windmove-down)))
+(windmove-default-keybindings)
 
 ;; Fast window switching
 (use-package ace-window
@@ -2254,8 +2272,8 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
 (global-set-key [remap move-beginning-of-line]
         'smarter-move-beginning-of-line)
 (global-set-key (kbd "C-k") 'close-and-kill-this-pane)
-(define-key prog-mode-map (kbd "C-c c") 'comment-region)
-(define-key prog-mode-map (kbd "C-c u") 'uncomment-region)
+(define-key prog-mode-map (kbd "C-c c c") 'comment-region)
+(define-key prog-mode-map (kbd "C-c c u") 'uncomment-region)
 
 ;;; Net & Web
 (use-package browse-url                 ; Browse URLs
@@ -2326,7 +2344,6 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
 (add-hook 'prog-mode-hook '(lambda ()
                (interactive)
                (setq show-trailing-whitespace 1)))
-(define-key prog-mode-map (kbd "C-c w") 'whitespace-mode)
 
 ;;; Diff mode
 (add-hook 'diff-mode-hook (lambda ()
@@ -2354,7 +2371,6 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
       dired-recursive-deletes 'top     ; only ask for the top directory
       dired-listing-switches "-lha")
 (add-hook 'dired-mode-hook 'auto-revert-mode)
-(add-hook 'dired-mode-hook 'helm-gtags-mode)
 
 ;;; GDB settings
 (setq gdb-many-windows t
@@ -2399,10 +2415,10 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
                                    )))
 
 ;; Set the theme
-(use-package gruvbox-theme
+(use-package ample-theme
   :ensure t
   :init
-  (load-theme 'gruvbox t)
+  (load-theme 'ample t)
   (add-hook 'window-setup-hook 'clear-background-term))
 
 (provide 'init)
