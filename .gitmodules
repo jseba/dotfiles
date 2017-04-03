@@ -1,0 +1,3 @@
+[submodule "nvim/bundle/YouCompleteMe"]
+	path = nvim/bundle/YouCompleteMe
+	url = https://github.com/Valloric/YouCompleteMe
