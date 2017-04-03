@@ -577,9 +577,9 @@ Disable the highlighting of overlong lines."
   (("C-c t s" . flyspell-mode)
    ("C-c l b" . flyspell-buffer))
   :init
-  (progn (dolist (hook '(text-mode-hook message-mode-hook))
+  (dolist (hook '(text-mode-hook message-mode-hook))
     (add-hook hook 'turn-on-flyspell))
-    (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
   :config
     (progn
       (setq flyspell-use-meta-tab nil
@@ -1179,7 +1179,7 @@ Disable the highlighting of overlong lines."
   :ensure t
   :after projectile
   :init
-  (setq helm-projectile-fuzzy-match nil)
+  (setq helm-projectile-fuzzy-match t)
   :bind
   (("C-c s p" . helm-projectile-ag))
   :config
@@ -1189,11 +1189,11 @@ Disable the highlighting of overlong lines."
 (use-package helm-gtags
   :ensure t
   :init
-  (setq helm-gtags-fuzzy-match nil
+  (setq helm-gtags-fuzzy-match t
         helm-gtags-direct-helm-completing t
         helm-gtags-display-style 'detail
         helm-gtags-ignore-case t
-        helm-gtags-prefix-key "\C-ck"
+        helm-gtags-prefix-key "\C-cu"
         helm-gtags-suggested-key-mapping t)
   (add-hook 'dired-mode-hook    #'helm-gtags-mode)
   (add-hook 'eshell-mode-hook   #'helm-gtags-mode)
@@ -1996,7 +1996,7 @@ mouse-3: go to end")))))
       (magit-checkout old-branch)
       (magit-stash-pop))
     )
-  (define-key global-map (kbd "C-c g S u") 'magit-svnup)
+  (define-key global-map (kbd "C-c g V u") 'magit-svnup)
   (add-hook 'magit-mode-hook 'magit-svn-mode))
 
 (use-package git-commit                 ; Git commit message mode
