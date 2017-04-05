@@ -106,7 +106,7 @@ let mapleader=' '
 inoremap kj <ESC>
 
 nmap <silent> ,/ :set invhlsearch<CR>
-nmap <silent> <C-q> :Bclose<CR>
+nmap <silent> <Leader>o :Bclose<CR>
 
 nnoremap ; :
 nnoremap K <nop>
@@ -138,7 +138,6 @@ vnoremap < <gv
 
 " Color scheme
 set background=dark
-colorscheme gruvbox
 if !has('gui_running') && !($TERM == "linux" || $TERM == "putty-256color" || $OLDTERM == "putty-256color")
     set t_Co=256
     set t_so=[7m
@@ -151,10 +150,12 @@ if !has('gui_running') && !($TERM == "linux" || $TERM == "putty-256color" || $OL
     let g:base16colorspace = 1
     let g:gruvbox_contrast_dark = 'hard'
     let g:gruvbox_italicize_comments = 1
-    if has('nvim')
-        set termguicolors
+    if !has('nvim')
+        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+        let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
     endif
-    hi Normal guibg=none
+    set termguicolors
+    "hi Normal guibg=none
 endif
 if has('gui_running')
     set guifont=Source\ Code\ Pro\ 9
@@ -167,6 +168,7 @@ if has('gui_running')
     set guioptions-=L
     set guioptions+=c
 endif
+colorscheme gruvbox
 
 " Airline setup
 set laststatus=2
@@ -290,10 +292,6 @@ noremap <Leader>rC :call rtags#FindSuperClasses()<CR>
 noremap <Leader>rc :call rtags#FindSubClasses()<CR>
 noremap <Leader>rd :call rtags#Diagnostics()<CR>
 
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-
 " FZF
 " Augment Ag command with fzf#vim#with_preview
 au VimEnter * command! -bang -nargs=* Ag
@@ -337,6 +335,7 @@ let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_disable_for_files_larger_than_kb = 2000
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 
 " Neomake
 let g:neomake_cpp_enabled_makers = ['clangcheck']
