@@ -201,6 +201,7 @@ colorscheme gruvbox
 " Airline setup
 set laststatus=2
 let g:airline_theme = 'badwolf'
+let g:airline_extensions = ['netrw', 'tabline', 'whitespace', 'ycm']
 if !has('gui_running') && ($TERM == "linux" || $TERM == "putty-256color" || $OLDTERM == "putty-256color")
     " Disable powerline symbols when it seems unlikely we'll have them
     let g:airline_left_sep = ''
