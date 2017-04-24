@@ -1,12 +1,40 @@
 set nocompatible
 scriptencoding utf-8
 
+let s:plug_file = '~/.vim/autoload/plug.vim'
+if empty(glob(s:plug_file))
+    silent execute '!curl -fLo ' . s:plug_file . ' --create-dirs '.
+        \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    autocmd VimEnter * PlugInstall --sync | source '~/.vimrc'
+endif
+
 " Bundles
-filetype off
-let g:pathogen_disabled=['incsearch.vim', 'incsearch-fuzzy.vim', 'incsearch-easymotion.vim']
-runtime bundle/vim-pathogen/autoload/pathogen.vim
-execute pathogen#infect('~/.vim/bundle/{}', '~/.local/vim/{}')
-execute pathogen#helptags()
+call plug#begin('~/.vim/plugged')
+
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+Plug 'sheerun/vim-polyglot'
+Plug 'junegunn/fzf.vim'
+Plug 'lyuts/vim-rtags'
+Plug 'scrooloose/nerdcommenter'
+Plug 'joshdick/onedark.vim'
+Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
+Plug 'morhetz/gruvbox'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'jacoborus/tender.vim'
+Plug 'tomasr/molokai'
+Plug 'nanotech/jellybeans.vim'
+Plug 'luochen1990/rainbow'
+Plug 'will133/vim-dirdiff'
+
+" Local plugins
+if filereadable("~/.local/vim/plugs.vim")
+    so ~/.local/vim/plugs.vim
+endif
+
+" Manually managed
+Plug 'Valloric/YouCompleteMe', { 'for': ['cpp', 'c', 'python', 'go', 'js', 'rs'] }
+call plug#end()
 
 " General settings
 syntax on
@@ -48,9 +76,9 @@ set nojoinspaces
 set splitright
 set splitbelow
 set backup
-set backupdir=$HOME/.local/share/nvim/backups
+set backupdir=$HOME/.local/share/vim/backups
 set undofile
-set undodir=$HOME/.local/share/nvim/undo
+set undodir=$HOME/.local/share/vim/undo
 set viminfo^=%
 set formatoptions+=j
 
@@ -118,7 +146,7 @@ nnoremap <Leader>ss :split<CR>
 nnoremap <Leader>hh :resize 60<CR>
 nnoremap <Leader>y "+y
 nnoremap <Leader>p "+p
-nnoremap <Leader>ve :edit $HOME/.config/nvim/init.vim<CR>
+nnoremap <Leader>ve :edit ~/.vimrc<CR>
 
 map <Leader>pp :setlocal paste!<CR>
 map <Leader>ss :setlocal spell!<CR>
@@ -151,10 +179,10 @@ if !has('gui_running') && !($TERM == "linux" || $TERM == "putty-256color" || $OL
     let g:gruvbox_contrast_dark = 'hard'
     let g:gruvbox_italicize_comments = 1
     if !has('nvim')
-        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-        let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+        "let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+        "let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
     endif
-    set termguicolors
+    "set termguicolors
     "hi Normal guibg=none
 endif
 if has('gui_running')
@@ -230,7 +258,7 @@ let g:alternateNoDefaultAlternate = 1
 let g:ag_working_path_mode = 'r'
 
 " Incsearch
-if index(g:pathogen_disabled, 'incsearch') >= 0
+if !has('nvim')
     noremap <silent><expr> /  incsearch#go(<SID>incsearch_config())
     noremap <silent><expr> ?  incsearch#go(<SID>incsearch_config({'command': '?'}))
     noremap <silent><expr> g/ incsearch#go(<SID>incsearch_config({'is_stay': 1}))
@@ -337,12 +365,9 @@ let g:ycm_confirm_extra_conf = 0
 let g:ycm_disable_for_files_larger_than_kb = 2000
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 
-" Neomake
-let g:neomake_cpp_enabled_makers = ['clangcheck']
-
 " Neovim specific settings
 if has('nvim')
-    set inccommand=nosplit
+    "set inccommand=nosplit
     tnoremap <C-g> <C-\><C-n>
     tnoremap <C-j> <C-\><C-n><C-w>j
     tnoremap <C-k> <C-\><C-n><C-w>k
@@ -352,8 +377,8 @@ endif
 
 
 " Read local machine settings
-if filereadable($HOME . "/.local/nvim/init.vim")
-    so $HOME/.local/nvim/init.vim
+if filereadable("~/.local/vim/vimrc")
+    so "~/.local/vim/vimrc"
 endif
 
 " Read project specific settings from cwd
