@@ -315,7 +315,6 @@ if !has('nvim')
     noremap <silent><expr> /  incsearch#go(<SID>incsearch_config())
     noremap <silent><expr> ?  incsearch#go(<SID>incsearch_config({'command': '?'}))
     noremap <silent><expr> g/ incsearch#go(<SID>incsearch_config({'is_stay': 1}))
-    noremap <silent><expr> <Space>/ incsearch#go(<SID>config_easyfuzzymotion())
 
     function! s:incsearch_config(...) abort
         return incsearch#util#deepextend(deepcopy({
