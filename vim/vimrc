@@ -11,24 +11,51 @@ endif
 " Bundles
 call plug#begin('~/.vim/plugged')
 
-Plug 'airblade/vim-gitgutter'
+" VCS
 Plug 'tpope/vim-fugitive'
+Plug 'gregsexton/gitv'
+"Plug 'airblade/vim-gitgutter'
+Plug 'mhinz/vim-signify'
+
+" Languages
 Plug 'sheerun/vim-polyglot'
-Plug 'junegunn/fzf.vim'
 Plug 'lyuts/vim-rtags'
+"Plug 'Valloric/YouCompleteMe', { 'for': ['cpp', 'c', 'python', 'go', 'js', 'rs'] }
+
+" Editing
+Plug 'luochen1990/rainbow'
 Plug 'scrooloose/nerdcommenter'
-Plug 'joshdick/onedark.vim'
+Plug 'will133/vim-dirdiff'
+Plug 'easymotion/vim-easymotion'
+Plug 'osyo-manga/vim-over'
+Plug 'junegunn/limelight.vim'
+
+" Interface
+Plug 'junegunn/fzf.vim'
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
-Plug 'morhetz/gruvbox'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'haya14busa/incsearch.vim' | Plug 'haya14busa/incsearch-fuzzy.vim' | Plug 'haya14busa/incsearch-easymotion.vim'
+Plug 'vim-scripts/ZoomWin'
+Plug 'henrik/vim-indexed-search'
+Plug 'moll/vim-bbye'
+Plug 'sjl/vitality.vim'
+Plug 'tpope/vim-vinegar'
+Plug 'tpope/vim-eunuch'
+
+" Colorschemes
+Plug 'jonathanfilip/vim-lucius'
+Plug 'joshdick/onedark.vim'
+Plug 'morhetz/gruvbox'
 Plug 'jacoborus/tender.vim'
 Plug 'tomasr/molokai'
 Plug 'nanotech/jellybeans.vim'
-Plug 'luochen1990/rainbow'
-Plug 'will133/vim-dirdiff'
-Plug 'easymotion/vim-easymotion'
-Plug 'haya14busa/incsearch.vim' | Plug 'haya14busa/incsearch-fuzzy.vim' | Plug 'haya14busa/incsearch-easymotion.vim'
-Plug 'Valloric/YouCompleteMe', { 'for': ['cpp', 'c', 'python', 'go', 'js', 'rs'] }
+Plug 'junegunn/seoul256.vim'
+Plug 'jpo/vim-railscasts-theme'
+Plug 'dracula/vim'
+Plug 'lokaltog/vim-distinguished'
+Plug 'nlknguyen/papercolor-theme'
+Plug 'vim-scripts/Wombat'
+Plug 'w0ng/vim-hybrid'
 
 " Local plugins
 if filereadable("~/.local/vim/plugs.vim")
@@ -178,6 +205,11 @@ if !has('gui_running')
             let g:gruvbox_italicize_comments = 1
             let g:onedark_terminal_italics = 1
             call toggletheme#maptruecolors("<F12>")
+
+            if !has('nvim')
+                let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+                let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+            endif
         else
             let g:base16_termtrans = 1
             let g:base16_underline = 1
@@ -194,8 +226,6 @@ if !has('gui_running')
             set t_se=[27m
             set t_ZH=[3m
             set t_ZR=[23m
-            let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-            let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
         endif
         "hi Normal guibg=none
     else
@@ -269,6 +299,8 @@ nnoremap <silent> <Leader>gg :SignifyToggle<CR>
 
 " Polyglot
 let g:cpp_class_scope_highlight = 1
+let g:cpp_member_variable_highlight = 1
+let g:cpp_experimental_simple_template_highlight = 1
 
 " AlternateFiles
 let g:alternateNoDefaultAlternate = 1
