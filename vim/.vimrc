@@ -118,6 +118,7 @@ set undofile
 set undodir=$HOME/.local/share/vim/undo
 set viminfo^=%
 set formatoptions+=j
+set lazyredraw
 
 " Automatically set the cursor to first line
 " when editing a git commit message
@@ -302,7 +303,7 @@ nnoremap <silent> <Leader>gg :SignifyToggle<CR>
 " Polyglot
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
-let g:cpp_experimental_simple_template_highlight = 1
+"let g:cpp_experimental_simple_template_highlight = 1
 
 " AlternateFiles
 let g:alternateNoDefaultAlternate = 1
