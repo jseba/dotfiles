@@ -166,6 +166,9 @@ command! Bclose call <SID>BufcloseCloseIt()
 " Automatically enter insert mode when focussing a terminal buffer
 au BufWinEnter, WinEnter term://* startinsert
 
+" disable paren matching in TeX, it's really slow
+au FileType tex :NoMatchParen
+
 " Keybindings
 let mapleader=' '
 
@@ -304,6 +307,7 @@ nnoremap <silent> <Leader>gg :SignifyToggle<CR>
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 "let g:cpp_experimental_simple_template_highlight = 1
+let g:polyglot_disabled = [ 'latex' ]
 
 " AlternateFiles
 let g:alternateNoDefaultAlternate = 1
