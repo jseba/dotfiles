@@ -10,3 +10,9 @@ export EDITOR=vim
 if [ -d $HOME/bin ] ; then
     export PATH=$PATH:$HOME/bin
 fi
+
+if [ $TERM != "tmux-256color" ]; then
+    export OLDTERM=$TERM
+fi
+
+export TERM="tmux-256color"
