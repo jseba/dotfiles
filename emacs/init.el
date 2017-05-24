@@ -8,11 +8,6 @@
 ;;;
 ;;;   Currently setup primarily for a C++ workflow
 ;;;
-;;;   Keybinding policy:
-;;;     * C-x: primary, system level commands (mostly just overrides with better subsystems)
-;;;     * C-c: secondary, user level commands (most packages have bindings here)
-;;;     * C-.: tertiary commands (mostly temporary/testing)
-;;;
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -46,7 +41,6 @@
 ;; Setup package manager and use-package
 (require 'package)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-;; TODO: make it easy to prefer stable vs latest melpa
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 ;(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
 (setq package-enable-at-startup nil)
@@ -401,77 +395,6 @@ Disable the highlighting of overlong lines."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Keybindings!!
-(use-package which-key
-  :ensure t
-  :init
-  (which-key-mode)
-  :config
-  (setq which-key-idle-delay 0.4
-        which-key-sort-order 'which-key-prefix-then-key-order
-        which-key-popup-type 'side-window
-        which-key-side-window-location 'bottom
-        which-key-side-window-max-height 0.15
-        which-key-key-replacement-alist
-          '(("<\\([[:alnum:]-]+\\)>" . "\\1")
-            ("up"                    . "↑")
-            ("right"                 . "→")
-            ("down"                  . "↓")
-            ("left"                  . "←")
-            ("DEL"                   . "⌫")
-            ("deletechar"            . "⌦")
-            ("RET"                   . "⏎"))
-        which-key-description-replacement-alist
-          '(("Prefix Command" . "prefix")
-            ;; Lambdas
-            ("\\`\\?\\?\\'"   . "λ")
-            ;; Prettify hydra entry points
-            ("/body\\'"       . "|=")
-            ;; Drop/shorten package prefixes
-            ("\\`lunaryorn-"  . "")
-            ("projectile-"    . "proj-")
-            ("helm-"          . "h-")
-            ("magit-"         . "ma-")))
-  (which-key-declare-prefixes
-    ;; Prefixes for global prefixes and minor modes
-    "C-c @" "outline"
-    "C-c !" "flycheck"
-    "C-c 8" "typo"
-    "C-c 8 -" "typo/dashes"
-    "C-c 8 <" "typo/left-brackets"
-    "C-c 8 >" "typo/right-brackets"
-    ;; Prefixes for my personal bindings
-    "C-c a" "applications"
-    "C-c b" "buffers"
-    "C-c c" "compile-and-comments"
-    "C-c e" "errors"
-    "C-c f" "files"
-    "C-c v" "variables"
-    "C-c g" "git"
-    "C-c h" "helm"
-    "C-c i" "insert"
-    "C-c j" "jump"
-    "C-c k" "smartparens"
-    "C-c l" "language/spelling"
-    "C-c m" "major mode"
-    "C-c o" "cursors"
-    "C-c p" "projects"
-    "C-c p s" "projects/search"
-    "C-c p x" "projects/execute"
-    "C-c p 4" "projects/other-window"
-    "C-c r" "rtags"
-    "C-c s" "search"
-    "C-c t" "toggle"
-    "C-c u" "gtags"
-    "C-c w" "windows/frames"
-    "C-c x" "text")
-  ;(which-key-declare-prefixes-for-mode 'org-mode
-    ;;; TODO:
-    ;)
-  ;(which-key-declare-prefixes-for-mode 'python-mode
-    ;;; TODO:
-    ;)
-  :diminish which-key-mode)
-
 (bind-key "C-c x i" #'indent-region)
 (bind-key [remap just-one-space] #'cycle-spacing)
 
@@ -755,7 +678,7 @@ Disable the highlighting of overlong lines."
   (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects)
   :diminish projectile-mode)
 
-;; Use avy for quick navigation to things
+;; avy for quick navigation to things
 (use-package avy
   :ensure t
   :bind
@@ -918,7 +841,8 @@ Disable the highlighting of overlong lines."
   :init
   (add-hook 'prog-mode-hook #'auto-fill-comments-mode))
 
-(use-package delsel                     ; Delete the selection instead of insert
+; Delete the selection instead of insert
+(use-package delsel
   :defer t
   :init
   (delete-selection-mode))
@@ -947,31 +871,36 @@ Disable the highlighting of overlong lines."
   (add-hook hook #'whitespace-cleanup-mode))
   :diminish whitespace-cleanup-mode)
 
-(use-package subword                    ; Subword/superword editing
+; Subword/superword editing
+(use-package subword
   :defer t
   :init
   (subword-mode 1)
   :diminish subword-mode)
 
-(use-package adaptive-wrap              ; Choose wrap prefix automatically
+; Choose wrap prefix automatically
+(use-package adaptive-wrap
   :ensure t
   :defer t
   :init
   (add-hook 'visual-line-mode-hook #'adaptive-wrap-prefix-mode))
 
-(use-package visual-fill-column         ; Fill column wrapping for Visual Line Mode
+; Fill column wrapping for Visual Line Mode
+(use-package visual-fill-column
   :ensure t
   :defer t
   :init
   (add-hook 'visual-line-mode-hook #'visual-fill-column-mode))
 
-(use-package zop-to-char                ; Better zapping
+; Better zapping
+(use-package zop-to-char
   :ensure t
   :bind
   (("M-z" . zop-to-char)
    ("M-Z" . zop-up-to-char)))
 
-(use-package align                      ; Align text in buffers
+; Align text in buffers
+(use-package align
   :bind
   (("C-c x a a" . align)
    ("C-c x a c" . align-current)))
@@ -989,26 +918,6 @@ Disable the highlighting of overlong lines."
    ("C-c x a |" . lunaryorn/align-repeat-bar)
    ("C-c x a (" . lunaryorn/align-repeat-left-paren)
    ("C-c x a )" . lunaryorn/align-repeat-right-paren)))
-
-(use-package multiple-cursors           ; Edit text with multiple cursors
-  :ensure t
-  :bind
-  (("C-c o <SPC>" . mc/vertical-align-with-space)
-   ("C-c o a"     . mc/vertical-align)
-   ("C-c o e"     . mc/mark-more-like-this-extended)
-   ("C-c o h"     . mc/mark-all-like-this-dwim)
-   ("C-c o l"     . mc/edit-lines)
-   ("C-c o n"     . mc/mark-next-like-this)
-   ("C-c o p"     . mc/mark-previous-like-this)
-   ("C-c o r"     . vr/mc-mark)
-   ("C-c o C-a"   . mc/edit-beginnings-of-lines)
-   ("C-c o C-e"   . mc/edit-ends-of-lines)
-   ("C-c o C-s"   . mc/mark-all-in-region))
-  :config
-  (setq mc/mode-line
-        ;; Simplify the MC mode line indicator
-        '(:propertize (:eval (concat " " (number-to-string (mc/num-cursors))))
-                      face font-lock-warning-face)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1049,7 +958,8 @@ Disable the highlighting of overlong lines."
   (add-to-list 'company-backends 'company-math-symbols-unicode)
   (add-to-list 'company-backends 'company-math-symbols-latex))
 
-(use-package company-anaconda           ; Python backend for Company
+; Python backend for Company
+(use-package company-anaconda
   :ensure t
    :after company
   :config (add-to-list 'company-backends 'company-anaconda))
@@ -1277,7 +1187,7 @@ mouse-2: toggle rest visibility\n\
 mouse-3: go to end")))))
 
 ;; Use flycheck for as-you-type syntax checking
-(use-package flycheck                   ; On-the-fly syntax checking
+(use-package flycheck
   :ensure t
   :bind
   (("C-c e" . hydras/flycheck-errors/body)
@@ -1337,60 +1247,60 @@ mouse-3: go to end")))))
   :diminish
   modern-c++-font-lock-mode)
 
-(use-package rtags
-  :ensure t
-  :defer t
-  :init
-  (require 'company)
-  (require 'flycheck)
-
-  (use-package flycheck-rtags
-    :config
-    (defun my-flycheck-rtags-hook ()
-      (flycheck-select-checker 'rtags)
-      (setq-local flycheck-highlighting-mode nil)
-      (setq-local flycheck-check-syntax-automatically nil))
-    (setq rtags-autostart-diagnostics t
-          flycheck-disabled-checkers '(c/c++-clang c/c++-gcc))
-    (add-hook 'c-mode-common-hook #'my-flycheck-rtags-hook))
-  (use-package company-rtags
-    :bind
-    (:map c-mode-base-map
-          ("<C-tab>" . company-complete))
-    :config
-    (defun my-company-rtags-hook ()
-    (setq company-rtags-begin-after-member-access t
-          rtags-autostart-diagnostics t
-          rtags-completions-enabled t
-          company-backends (delete 'company-clang company-backends)))
-    (push 'company-rtags company-backends)
-  (add-hook 'c-mode-common-hook #'my-company-rtags-hook))
-
-  (defun my-rtags-cc-mode-hook ()
-    (bind-key "C-c r q" #'rtags-restart-process c-mode-base-map)
-    (bind-key "C-c r f" #'rtags-find-symbol-at-point c-mode-base-map)
-    (bind-key "C-c r F" #'rtags-find-symbol c-mode-base-map)
-    (bind-key "C-c r r" #'rtags-find-references c-mode-base-map)
-    (bind-key "C-c r d" #'rtags-diagnostics c-mode-base-map)
-    (bind-key "C-c r v" #'rtags-find-virtuals-at-point c-mode-base-map)
-    (bind-key "C-c r m" #'rtags-fix-fixit-at-point c-mode-base-map)
-    (bind-key "C-c r ]" #'rtags-location-stack-back c-mode-base-map)
-    (bind-key "C-c r [" #'rtags-location-stack-forward c-mode-base-map)
-    (bind-key "C-c r n" #'rtags-next-match c-mode-base-map)
-    (bind-key "C-c r p" #'rtags-previous-match c-mode-base-map)
-    (bind-key "C-c r P" #'rtags-preprocess-file c-mode-base-map)
-    (bind-key "C-c r s" #'rtags-print-symbol-info c-mode-base-map)
-    (bind-key "C-c r t" #'rtags-symbol-type c-mode-base-map)
-    (bind-key "C-c r D" #'rtags-print-dependencies c-mode-base-map)
-    (bind-key "C-c r e" #'rtags-print-enum-value-at-point c-mode-base-map)
-    (bind-key "C-c r Q" #'rtags-quit-rdm c-mode-base-map)
-    (bind-key "C-c r R" #'rtags-rename-symbol c-mode-base-map)
-    (bind-key "C-c r b" #'rtags-show-rtags-buffer c-mode-base-map)
-    (bind-key "C-c r I" #'rtags-include-file c-mode-base-map)
-    (bind-key "C-c r i" #'rtags-get-include-file-for-symbol c-mode-base-map))
-  (add-hook 'c-mode-common-hook #'rtags-start-process-unless-running)
-  (add-hook 'c-mode-common-hook #'my-rtags-cc-mode-hook)
-  (setq rtags-tramp-enabled t))
+;; (use-package rtags
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (require 'company)
+;;   (require 'flycheck)
+;;
+;;   (use-package flycheck-rtags
+;;     :config
+;;     (defun my-flycheck-rtags-hook ()
+;;       (flycheck-select-checker 'rtags)
+;;       (setq-local flycheck-highlighting-mode nil)
+;;       (setq-local flycheck-check-syntax-automatically nil))
+;;     (setq rtags-autostart-diagnostics t
+;;           flycheck-disabled-checkers '(c/c++-clang c/c++-gcc))
+;;     (add-hook 'c-mode-common-hook #'my-flycheck-rtags-hook))
+;;   (use-package company-rtags
+;;     :bind
+;;     (:map c-mode-base-map
+;;           ("<C-tab>" . company-complete))
+;;     :config
+;;     (defun my-company-rtags-hook ()
+;;     (setq company-rtags-begin-after-member-access t
+;;           rtags-autostart-diagnostics t
+;;           rtags-completions-enabled t
+;;           company-backends (delete 'company-clang company-backends)))
+;;     (push 'company-rtags company-backends)
+;;   (add-hook 'c-mode-common-hook #'my-company-rtags-hook))
+;;
+;;   (defun my-rtags-cc-mode-hook ()
+;;     (bind-key "C-c r q" #'rtags-restart-process c-mode-base-map)
+;;     (bind-key "C-c r f" #'rtags-find-symbol-at-point c-mode-base-map)
+;;     (bind-key "C-c r F" #'rtags-find-symbol c-mode-base-map)
+;;     (bind-key "C-c r r" #'rtags-find-references c-mode-base-map)
+;;     (bind-key "C-c r d" #'rtags-diagnostics c-mode-base-map)
+;;     (bind-key "C-c r v" #'rtags-find-virtuals-at-point c-mode-base-map)
+;;     (bind-key "C-c r m" #'rtags-fix-fixit-at-point c-mode-base-map)
+;;     (bind-key "C-c r ]" #'rtags-location-stack-back c-mode-base-map)
+;;     (bind-key "C-c r [" #'rtags-location-stack-forward c-mode-base-map)
+;;     (bind-key "C-c r n" #'rtags-next-match c-mode-base-map)
+;;     (bind-key "C-c r p" #'rtags-previous-match c-mode-base-map)
+;;     (bind-key "C-c r P" #'rtags-preprocess-file c-mode-base-map)
+;;     (bind-key "C-c r s" #'rtags-print-symbol-info c-mode-base-map)
+;;     (bind-key "C-c r t" #'rtags-symbol-type c-mode-base-map)
+;;     (bind-key "C-c r D" #'rtags-print-dependencies c-mode-base-map)
+;;     (bind-key "C-c r e" #'rtags-print-enum-value-at-point c-mode-base-map)
+;;     (bind-key "C-c r Q" #'rtags-quit-rdm c-mode-base-map)
+;;     (bind-key "C-c r R" #'rtags-rename-symbol c-mode-base-map)
+;;     (bind-key "C-c r b" #'rtags-show-rtags-buffer c-mode-base-map)
+;;     (bind-key "C-c r I" #'rtags-include-file c-mode-base-map)
+;;     (bind-key "C-c r i" #'rtags-get-include-file-for-symbol c-mode-base-map))
+;;   (add-hook 'c-mode-common-hook #'rtags-start-process-unless-running)
+;;   (add-hook 'c-mode-common-hook #'my-rtags-cc-mode-hook)
+;;   (setq rtags-tramp-enabled t))
 
 ;; (use-package irony
 ;;   :ensure t
@@ -1427,11 +1337,11 @@ mouse-3: go to end")))))
 ;;   (with-eval-after-load 'company
 ;;     '(push 'company-backends company-irony-c-headers)))
 
-(use-package cmake-ide
- :ensure t
-  :defer t
-  :init
-  (add-hook 'c-mode-common-hook #'cmake-ide-setup))
+;; (use-package cmake-ide
+;;  :ensure t
+;;   :defer t
+;;   :init
+;;   (add-hook 'c-mode-common-hook #'cmake-ide-setup))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -1439,12 +1349,14 @@ mouse-3: go to end")))))
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package table                      ; Edit tables in text files
+; Edit tables in text files
+(use-package table
   :defer t
   :init
   (add-hook 'text-mode-hook #'table-recognize))
 
-(use-package tildify                    ; Insert non-breaking spaces on the fly
+; Insert non-breaking spaces on the fly
+(use-package tildify
   :defer t
   :bind (("C-c x t" . tildify-region)
   ("C-c t ~" . tildify-mode))
@@ -1453,7 +1365,8 @@ mouse-3: go to end")))))
   (add-hook 'latex-mode-hook
     (lambda () (setq-local tildify-space-string "~"))))
 
-(use-package typo                       ; Automatically use typographic quotes
+; Automatically use typographic quotes
+(use-package typo
   :ensure t
   :bind (("C-c t t" . typo-mode)
   ("C-c l L" . typo-change-language))
@@ -1468,12 +1381,12 @@ mouse-3: go to end")))))
   :diminish typo-mode)
 
 ;;; LaTeX with AUCTeX
-(use-package tex-site                   ; AUCTeX initialization
-  :ensure auctex)
-
-(use-package tex                        ; TeX editing/processing
-  :ensure auctex
+(use-package auctex
+  :ensure t
   :defer t
+  :init
+  (add-hook 'TeX-mode-hook #'TeX-fold-mode)
+  (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)   ; Easy math input
   :config
   (setq TeX-parse-self t                ; Parse documents to provide completion
                                         ; for packages, etc.
@@ -1485,70 +1398,40 @@ mouse-3: go to end")))))
         TeX-quote-after-quote t
         ;; Don't ask for confirmation when cleaning
         TeX-clean-confirm nil
+        ;; Don't ask for confirmation when saving before processing
+        TeX-save-query nil
+        ;; Enable support for csquotes
+        LaTeX-csquotes-close-quote "}"
+        LaTeX-csquotes-open-quote "\\enquote{"
         ;; Provide forward and inverse search with SyncTeX
         TeX-source-correlate-mode t
-        TeX-source-correlate-method 'synctex)
-        (setq-default TeX-master nil          ; Ask for the master file
-                      TeX-engine 'luatex      ; Use a modern engine
-                      ;; Redundant in 11.88, but keep for older AUCTeX
-                      TeX-PDF-mode t)
-
-  ;; Move to chktex
-  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s"))
-
-(use-package tex-buf                    ; TeX buffer management
-  :ensure auctex
-  :defer t
-  ;; Don't ask for confirmation when saving before processing
-  :config
-  (setq TeX-save-query nil))
-
-(use-package tex-style                  ; TeX style
-  :ensure auctex
-  :defer t
-  :config
-  ;; Enable support for csquotes
-  (setq LaTeX-csquotes-close-quote "}"
-        LaTeX-csquotes-open-quote "\\enquote{"))
-
-(use-package tex-fold                   ; TeX folding
-  :ensure auctex
-  :defer t
-  :init
-  (add-hook 'TeX-mode-hook #'TeX-fold-mode))
-
-(use-package tex-mode                   ; TeX mode
-  :ensure auctex
-  :defer t
-  :config
-  (font-lock-add-keywords 'latex-mode
-                          `((,(rx "\\"
-                                  symbol-start
-                                  "fx" (1+ (or (syntax word) (syntax symbol)))
-                                  symbol-end)
-                             . font-lock-warning-face))))
-
-(use-package latex                      ; LaTeX editing
-  :ensure auctex
-  :defer t
-  :config
-  ;; Teach TeX folding about KOMA script sections
-  (setq TeX-outline-extra `((,(rx (0+ space) "\\section*{") 2)
+        TeX-source-correlate-method 'synctex
+        ;; Teach TeX folding about KOMA script sections
+        TeX-outline-extra `((,(rx (0+ space) "\\section*{") 2)
                             (,(rx (0+ space) "\\subsection*{") 3)
                             (,(rx (0+ space) "\\subsubsection*{") 4)
                             (,(rx (0+ space) "\\minisec{") 5))
         ;; No language-specific hyphens please
         LaTeX-babel-hyphen nil)
 
-  (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode))    ; Easy math input
+  (setq-default TeX-master nil          ; Ask for the master file
+                TeX-engine 'luatex      ; Use a modern engine
+                ;; Redundant in 11.88, but keep for older AUCTeX
+                TeX-PDF-mode t)
 
-(use-package auctex-latexmk             ; latexmk command for AUCTeX
-  :ensure t
-  :defer t
-  :after latex
-  :config (auctex-latexmk-setup))
+  (font-lock-add-keywords 'latex-mode
+                          `((,(rx "\\"
+                                  symbol-start
+                                  "fx" (1+ (or (syntax word) (syntax symbol)))
+                                  symbol-end)
+                             . font-lock-warning-face)))
+  (auctex-latexmk-setup)
 
-(use-package bibtex                     ; BibTeX editing
+  ;; Move to chktex
+  (setcar (cdr (assoc "Check" TeX-command-list)) "chktex -v6 %s"))
+
+; BibTeX editing
+(use-package bibtex
   :defer t
   :config
   ;; Run prog mode hooks for bibtex
@@ -1557,7 +1440,8 @@ mouse-3: go to end")))))
   ;; Use a modern BibTeX dialect
   (bibtex-set-dialect 'biblatex))
 
-(use-package reftex                     ; TeX/BibTeX cross-reference management
+; TeX/BibTeX cross-reference management
+(use-package reftex
   :defer t
   :init (add-hook 'LaTeX-mode-hook #'reftex-mode)
   :config
@@ -1602,10 +1486,10 @@ mouse-3: go to end")))))
 ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package markdown-mode              ; Markdown
+; Markdown
+(use-package markdown-mode
   :ensure t
-  ;; Just no, dear Markdown Mode.  Don't force that bastard Github dialect upon
-  ;; me!
+  ;; Just no, dear Markdown Mode.  Don't force that bastard Github dialect me!
   :mode ("\\.md\\'" . markdown-mode)
   :config
   ;; Process Markdown with Pandoc, using a custom stylesheet for nice output
@@ -1626,17 +1510,18 @@ mouse-3: go to end")))))
   (bind-key "C-c C-s C" #'markdown-insert-gfm-code-block markdown-mode-map)
   (bind-key "C-c C-s P" #'markdown-insert-gfm-code-block markdown-mode-map)
 
-  ;; Fight my habit of constantly pressing M-q.  We should not fill in GFM
-  ;; Mode.
+  ;; Fight my habit of constantly pressing M-q.  We should not fill in GFM Mode.
   (bind-key "M-q" #'ignore gfm-mode-map))
 
-(use-package yaml-mode                  ; YAML
+; YAML
+(use-package yaml-mode
   :ensure t
   :defer t
   :config
   (add-hook 'yaml-mode-hook (lambda () (run-hooks 'prog-mode-hook))))
 
-(use-package json-mode                  ; JSON files
+; JSON files
+(use-package json-mode
   :ensure t
   :defer t
   :config
@@ -1644,7 +1529,8 @@ mouse-3: go to end")))))
     ;; Fix JSON mode indentation
     (lambda () (setq-local js-indent-level 4))))
 
-(use-package json-reformat              ; Reformat JSON
+; Reformat JSON
+(use-package json-reformat
   :ensure t
   :defer t
   :bind
@@ -1656,7 +1542,8 @@ mouse-3: go to end")))))
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package python                     ; Python editing
+; Python editing
+(use-package python
   :defer t
   :config
   ;; PEP 8 compliant filling rules, 79 chars maximum
@@ -1679,15 +1566,18 @@ mouse-3: go to end")))))
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; Databases
-(use-package sql                        ; SQL editing and REPL
+; SQL editing and REPL
+(use-package sql
+  :defer t
   :bind
   (("C-c a s" . sql-connect)
    :map sql-mode-map
         ("C-c m p" . sql-set-product)))
 
-(use-package sqlup-mode                 ; Upcase SQL keywords
+; Upcase SQL keywords
+(use-package sqlup-mode
   :ensure t
+  :defer t
   :bind
   (:map sql-mode-map
         ("C-c m u" . sqlup-capitalize-keywords-in-region))
@@ -1700,7 +1590,8 @@ mouse-3: go to end")))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (bind-key "C-c t d" #'toggle-debug-on-error)
 
-(use-package elisp-slime-nav            ; Jump to definition of symbol at point
+; Jump to definition of symbol at point
+(use-package elisp-slime-nav
   :ensure t
   :init (add-hook 'emacs-lisp-mode-hook #'elisp-slime-nav-mode)
   :bind
@@ -1866,14 +1757,6 @@ mouse-3: go to end")))))
     ("[" backward-page "backward")
     ("]" forward-page  "forward")))
 
-;; Page outlines
-;(use-package outline
-  ;:defer t
-  ;:init
-  ;(dolist (hook '(text-mode-hook prog-mode-hook))
-    ;(add-hook hook #'outline-minor-mode))
-  ;:diminish outline-minor-mode)
-
 ;; Line numbers in margin
 (use-package nlinum
   :ensure t
@@ -1900,8 +1783,8 @@ mouse-3: go to end")))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (bind-key "C-c h b" #'describe-personal-keybindings)
 
-;;; Online Help
-(use-package find-func                  ; Find function/variable definitions
+; Find function/variable definitions
+(use-package find-func
   :bind
   (("C-c h F"   . find-function)
    ("C-c h 4 F" . find-function-other-window)
@@ -1909,16 +1792,17 @@ mouse-3: go to end")))))
    ("C-c h V"   . find-variable)
    ("C-c h 4 V" . find-variable-other-window)))
 
-(use-package info                       ; Info manual viewer
+; Info manual viewer
+(use-package info
   :defer t
   :config
   ;; Fix the stupid `Info-quoted' face.  Courier is an abysmal face, so go back
   ;; to the default face.
-  ;;(set-face-attribute 'Info-quoted nil :family 'unspecified
-  ;;                    :inherit font-lock-type-face))
-  )
+  (set-face-attribute 'Info-quoted nil :family 'unspecified
+                      :inherit font-lock-type-face))
 
-(use-package niceify-info               ; Prettify Info rendering
+; Prettify Info rendering
+(use-package niceify-info
   :disabled t
   :ensure t
   ;; Adds emphasis to text between * and _, tries to fontify Emacs Lisp code,
@@ -1975,6 +1859,7 @@ mouse-3: go to end")))))
         magit-log-buffer-file-locked t
         magit-revision-show-gravatars nil))
 
+;; Magit SVN bindings
 (use-package magit-svn
   :ensure t
   :after (magit)
@@ -1983,20 +1868,6 @@ mouse-3: go to end")))))
    ("C-c g V c" . magit-svn-dcommit)
    ("C-c g V r" . magit-svn-show-commit))
   :config
-  ;; This could use some refinement
-  ;; It's also not strictly necessary as git-svn will do the rebase bit during a dcommit
-  (defun magit-svnup ()
-    "Performs the necessary dances to pull from both SVN and Git"
-    (interactive p)
-    (let ((old-branch (magit-rev-parse "--abbrev-ref")))
-      (magit-stash)
-      (magit-fetch)
-      (magit-checkout "master")
-      (magit-svn-rebase "-l")
-      (magit-checkout old-branch)
-      (magit-stash-pop))
-    )
-  (define-key global-map (kbd "C-c g V u") 'magit-svnup)
   (add-hook 'magit-mode-hook 'magit-svn-mode))
 
 (use-package git-commit                 ; Git commit message mode
@@ -2007,11 +1878,13 @@ mouse-3: go to end")))))
   (remove-hook 'git-commit-finish-query-functions
                #'git-commit-check-style-conventions))
 
-(use-package gitattributes-mode         ; Git attributes mode
+;; Git attributes mode
+(use-package gitattributes-mode
   :ensure t
   :defer t)
 
-(use-package git-timemachine            ; Go back in Git time
+;; Go back in Git time
+(use-package git-timemachine
   :ensure t
   :bind
   (("C-c g t" . git-timemachine)))
@@ -2023,29 +1896,6 @@ mouse-3: go to end")))))
 ;; gitignore mode
 (use-package gitignore-mode
   :ensure t)
-
-;(use-package gh                         ; Github API library
-  ;:defer t
-  ;;; Change the default profile.  The profile itself is set up via customize,
-  ;;; and includes auth data, to prevent it from storing tokens in Git config
-  ;:config (setq gh-profile-default-profile "jseba"))
-
-;; (use-package gist                       ; Create and list Gists
-;;   :ensure t
-;;   :bind
-;;   (("C-c g g l" . gist-list)
-;;    ("C-c g g b" . gist-region-or-buffer)))
-
-;; (use-package magit-gh-pulls             ; Show Github PRs in Magit
-;;   :ensure t
-;;   :defer t
-;;   :init
-;;   (add-hook 'magit-mode-hook #'turn-on-magit-gh-pulls))
-
-;; (use-package github-clone               ; Clone and fork from Github
-;;   :ensure t
-;;   :bind
-;;   ("C-c g g c" . github-clone))
 
 (use-package smartparens
   :ensure t
@@ -2157,22 +2007,6 @@ _k_: kill        _s_: split                   _{_: wrap with { }
   :init
   (global-hl-todo-mode))
 
-; Wrap semantic units with pairs
-(use-package embrace
-  :ensure t
-  :bind
-  (("C-c y" . lunaryorn-embrace/body)
-   ("C-c x e" . lunaryorn-embrace/body))
-  :init
-  (defhydra lunaryorn-embrace (:hint nil)
-    "
-Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
-"
-    ("a" embrace-add)
-    ("c" embrace-change)
-    ("d" embrace-delete)
-    ("q" nil)))
-
 ;; Highlight current-line
 (use-package hl-line
   ; built-in
@@ -2256,38 +2090,12 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
   (setq ediff-window-setup-function #'ediff-setup-windows-plain
         ediff-split-window-function #'split-window-horizontally))
 
-;; Auto save buffers/windows/frames
-(use-package desktop
-  :ensure t
-  :disabled nil
-  :init
-  (desktop-save-mode)
-  :config
-  (setq desktop-auto-save-timeout 60)
-  (dolist (mode '(magit-mode magit-log-mode))
-    (add-to-list 'desktop-modes-not-to-save mode))
-  (add-to-list 'desktop-files-not-to-save (rx bos "COMMIT_EDITMSG")))
-
 ;; Keymappings
 (global-set-key [remap move-beginning-of-line]
         'smarter-move-beginning-of-line)
 (global-set-key (kbd "C-k") 'close-and-kill-this-pane)
 (define-key prog-mode-map (kbd "C-c c c") 'comment-region)
 (define-key prog-mode-map (kbd "C-c c u") 'uncomment-region)
-
-;;; Net & Web
-(use-package browse-url                 ; Browse URLs
-  :bind
-  (("C-c a u" . browse-url)))
-
-(use-package goto-addr                  ; Make links clickable
-  :defer t
-  :bind
-  (("C-c t a" . goto-address-mode)
-   ("C-c t A" . goto-address-prog-mode))
-  :init
-  (add-hook 'prog-mode-hook #'goto-address-prog-mode)
-  (add-hook 'text-mode-hook #'goto-address-mode))
 
 ;; Backups
 (defvar backup-directory "~/.emacs.d/backups/")
@@ -2361,11 +2169,6 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
               (whitespace-mode 1)))
 
 ;;; Dired settings
-(use-package stripe-buffer
-  :ensure t
-  :init
-  (add-hook 'dired-mode-hook #'stripe-buffer-mode))
-
 (setq dired-dwim-target t
       dired-recursive-copies 'always   ; don't ask for copies
       dired-recursive-deletes 'top     ; only ask for the top directory
@@ -2391,20 +2194,21 @@ Add (_a_), change (_c_) or delete (_d_) a pair.  Quit with _q_.
         paradox-use-homepage-buttons nil   ; type `v` instead
         paradox-hide-wiki-packages t))
 
-;;; Processes and commands
-(use-package proced                     ; Edit system processes
+;; Edit system processes
+(use-package proced
   ;; Proced isn't available on OS X
   :if (not (eq system-type 'darwin))
   :bind ("C-x p" . proced))
 
-;;; Date and time
-(use-package calendar                   ; Built-in calendar
+;; Built-in calendar
+(use-package calendar
   :bind
   ("C-c a c" . calendar)
   :config
   (setq calendar-week-start-day 0))
 
-(use-package time                       ; Show current time
+;; Show current time
+(use-package time
    :bind
    (("C-c a c" . display-time-world))
    :config
