@@ -84,7 +84,7 @@
 
 [core]
   autocrlf = false
-  editor = nvim
+  editor = vim
   excludesfile = ~/.gitignore
   preloadindex = true
 

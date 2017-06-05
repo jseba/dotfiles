@@ -2,7 +2,7 @@
 
 export DISABLE_AUTO_TITLE="true"
 
-source $HOME/.dotfiles/zsh/zgen/zgen.zsh
+source $HOME/.zgen/zgen.zsh
 
 # Check for init script
 if ! zgen saved; then

@@ -8,6 +8,6 @@ export TERMINFO=$HOME/.terminfo
 
 export EDITOR=vim
 
-if [ -d $HOME/.bin ] ; then
-    export PATH=$PATH:$HOME/.bin
+if [ -d $HOME/bin ] ; then
+    export PATH=$PATH:$HOME/bin
 fi
