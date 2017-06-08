@@ -1,19 +1,14 @@
 #!/bin/bash
 
 ## Check for Stow
-type stow >/dev/null 2>&1 || exit 1
+type stow >/dev/null 2>&1 || { echo "Stow not found"; exit 1; }
 
 ## Add list of folders to be managed by stow
-STOWED_DIRS=( bin emacs fonts git herbstluft i3 nvim polybar terminfo tmux vim zsh )
+STOWED_DIRS=( bin base16 emacs fonts fzf git herbstluft i3 nvim terminfo tmux vim zsh )
 
 #
 # Pre-Stow warmup
 #
-
-## Download FZF
-pushd fzf
-./install --bin --64 || exit 1
-popd
 
 ## Load submodules
 git submodule update --init --recursive || exit 1
@@ -31,6 +26,9 @@ done
 # Post-Stow after-party
 #
 
-# not cool enough for an after party yet :(
+## Download FZF
+pushd ${HOME}/.fzf/
+./install --bin --64 || exit 1
+popd
 
 exit 0
