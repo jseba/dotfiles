@@ -1,6 +1,8 @@
 font pango:xos4 Terminess Powerline 8
 new_window pixel 0
-hide_edge_borders both
+gaps inner 10
+gaps outer 10
+smart_gaps on
 
 set $up k
 set $down j
@@ -9,7 +11,9 @@ set $right l
 
 floating_modifier Mod4
 
-bindsym Mod4+Return exec gnome-terminal
+bindsym Mod4+Return exec st
+bindsym Mod4+space exec rofi -show run
+bindsym Mod4+Shift+space exec rofi -show drun
 
 # kill focused window
 bindsym Mod4+d kill
@@ -36,10 +40,10 @@ bindsym Mod4+w layout tabbed
 bindsym Mod4+e layout toggle split
 
 # toggle tiling / floating
-bindsym Mod4+Shift+space floating toggle
+bindsym Mod4+Shift+p floating toggle
 
 # change focus between tiling / floating windows
-bindsym Mod4+space focus mode_toggle
+bindsym Mod4+p focus mode_toggle
 
 # focus the parent container
 bindsym Mod4+a focus parent
@@ -55,17 +59,27 @@ bindsym Mod4+minus scratchpad show
 bindsym Mod4+Tab workspace next
 bindsym Mod4+Shift+Tab workspace prev
 
+# Name the workspaces
+set $workspace1 "1:  www"
+set $workspace2 "2:  code"
+set $workspace3 "3:  terminal"
+set $workspace4 "4:  files"
+set $workspace5 "5:  virtual machines"
+set $workspace6 "6:  status"
+set $workspace7 "7:  music"
+set $workspace8 "8:  random"
+
 # switch to workspace
-bindsym Mod4+1 workspace 1
-bindsym Mod4+2 workspace 2
-bindsym Mod4+3 workspace 3
-bindsym Mod4+4 workspace 4
-bindsym Mod4+5 workspace 5
-bindsym Mod4+6 workspace 6
-bindsym Mod4+7 workspace 7
-bindsym Mod4+8 workspace 8
-bindsym Mod4+9 workspace 9
-bindsym Mod4+0 workspace 10
+bindsym Mod4+1 workspace $workspace1
+bindsym Mod4+2 workspace $workspace2
+bindsym Mod4+3 workspace $workspace3
+bindsym Mod4+4 workspace $workspace4
+bindsym Mod4+5 workspace $workspace5
+bindsym Mod4+6 workspace $workspace6
+bindsym Mod4+7 workspace $workspace7
+bindsym Mod4+8 workspace $workspace8
+bindsym Mod4+9 workspace $workspace9
+bindsym Mod4+0 workspace $workspace10
 
 # move focused container to workspace
 bindsym Mod4+Shift+1 move container to workspace 1
@@ -102,6 +116,27 @@ mode "resize" {
         # back to normal: Enter or Escape
         bindsym Return mode "default"
         bindsym Escape mode "default"
+}
+
+#                       Border      Background      Text
+client.focused          #042b68     #8985a9         #0e1325
+client.unfocused        #042b68     #07080d         #000000
+client.focused_inactive #042b68     #3f477b         #000000
+client.urgent           #042b68     #6df3fb         #000000
+client.placeholder      #042b68     #0aa0f1         #000000
+
+bar {
+    font pango:Source Code Pro 8
+    status_command i3blocks
+    position top
+    colors {
+#                           Border      Background      Text
+        focused_workspace   #042b68     #0a4faf         #bdb5c8
+        active_workspace    #042b68     #5c6197         #bdb5c8
+        inactive_workspace  #042b68     #5c6197         #bdb5c8
+        urgent_workspace    #042b68     #6df3fb         #bdb5c8
+        background                      #0e1325
+    }
 }
 
 bindsym Mod4+r mode "resize"
