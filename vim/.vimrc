@@ -56,6 +56,7 @@ Plug 'lokaltog/vim-distinguished'
 Plug 'nlknguyen/papercolor-theme'
 Plug 'vim-scripts/Wombat'
 Plug 'w0ng/vim-hybrid'
+Plug 'chriskempson/base16-vim'
 
 " Local plugins
 if filereadable("~/.local/vim/plugs.vim")
@@ -198,39 +199,34 @@ vnoremap < <gv
 " Color scheme
 set background=dark
 let g:gruvbox_contrast_dark = 'hard'
+let g:base16_underline = 1
+let g:base16_italic = 1
+let g:gruvbox_italicize_comments = 1
 if !has('gui_running')
-    if !($TERM == "linux" || $OLDTERM == "putty-256color")
-        if (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
-            set termguicolors
-            let g:gruvbox_italicize_comments = 1
-            let g:onedark_terminal_italics = 1
-            call toggletheme#maptruecolors("<F12>")
+    let g:base16_termtrans = 1
+    let g:onedark_terminal_italics = 1
 
-            if !has('nvim')
-                let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-                let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-            endif
-        else
-            let g:base16_termtrans = 1
-            let g:base16_underline = 1
-            let g:base16_italic = 1
-            colorscheme base16
-            call toggletheme#maptransparency("<F10>")
-            call toggletheme#mapbg("<F11>")
-            call toggletheme#map256("<F12>")
-        endif
-
+    if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
+        call toggletheme#maptransparency("<F10>")
+        call toggletheme#mapbg("<F11>")
+        call toggletheme#map256("<F12>")
+        set termguicolors
         if !has('nvim')
             set t_Co=256
             set t_so=[7m
             set t_se=[27m
             set t_ZH=[3m
             set t_ZR=[23m
+            let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+            let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
         endif
-        "hi Normal guibg=none
+
+        colorscheme gruvbox
     else
+        colorscheme base16
     endif
-    colorscheme gruvbox
+
+    hi Normal ctermbg=NONE guibg=NONE
 endif
 if has('gui_running')
     set guifont=Source\ Code\ Pro\ 9
