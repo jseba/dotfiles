@@ -12,6 +12,7 @@ set $right l
 floating_modifier Mod4
 
 bindsym Mod4+Return exec st
+bindsym Mod4+Shift+Return exec st -f 'SauceCodePro Nerd Font:size=14'
 bindsym Mod4+space exec rofi -show combi
 bindsym Mod4+Shift+space exec rofi -show drun
 
