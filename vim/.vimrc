@@ -19,7 +19,12 @@ Plug 'mhinz/vim-signify'
 
 " Languages
 Plug 'sheerun/vim-polyglot'
-Plug 'lyuts/vim-rtags'
+Plug 'scrooloose/syntastic'
+Plug 'ajh17/VimCompletesMe'
+Plug 'rust-lang/rust.vim'
+Plug 'racer-rust/vim-racer', { 'for': ['rs'] }
+Plug 'OmniSharp/omnisharp-vim', { 'for': ['cs'] }
+"Plug 'lyuts/vim-rtags'
 "Plug 'Valloric/YouCompleteMe', { 'for': ['cpp', 'c', 'python', 'go', 'js', 'rs'] }
 
 " Editing
@@ -418,7 +423,35 @@ let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_disable_for_files_larger_than_kb = 2000
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+"inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+
+" VimCompletesMe
+let g:vcm_default_maps = 0
+
+" Omnisharp
+set updatetime=500
+augroup omnisharp_commands
+    autocmd!
+    autocmd FileType cs setlocal omnifunc=OmniSharp#Complete
+    autocmd BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
+    autocmd BufWritePost *.cs call OmniSharp#AddToProject()
+    autocmd CursorHold *.cd call OmniSharp#TypeLookupWithoutDocumentation()
+    autocmd FileType cs nnoremap gd :OmniSharpGoToDefinition()<CR>
+    autocmd FileType cs nnoremap <leader>fi :OmniSharpFindImplementations<cr>
+    autocmd FileType cs nnoremap <leader>ft :OmniSharpFindType<cr>
+    autocmd FileType cs nnoremap <leader>fs :OmniSharpFindSymbol<cr>
+    autocmd FileType cs nnoremap <leader>fu :OmniSharpFindUsages<cr>
+    autocmd FileType cs nnoremap <leader>fm :OmniSharpFindMembers<cr>
+    autocmd FileType cs nnoremap <leader>x  :OmniSharpFixIssue<cr>
+    autocmd FileType cs nnoremap <leader>fx :OmniSharpFixUsings<cr>
+    autocmd FileType cs nnoremap <leader>tt :OmniSharpTypeLookup<cr>
+    autocmd FileType cs nnoremap <leader>dc :OmniSharpDocumentation<cr>
+    autocmd FileType cs nnoremap <C-K> :OmniSharpNavigateUp<cr>
+    autocmd FileType cs nnoremap <C-J> :OmniSharpNavigateDown<cr>
+augroup END
+
+" Syntastic
+let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
 
 " Neovim specific settings
 if has('nvim')
