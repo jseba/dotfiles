@@ -83,7 +83,7 @@ set backspace=indent,eol,start
 set linespace=0
 set nostartofline
 set number
-set showmatch
+set noshowmatch
 set incsearch
 set hlsearch
 set ignorecase
@@ -270,6 +270,7 @@ autocmd Filetype *
     \if &omnifunc == "" |
         \setlocal omnifunc=syntaxcomplete#Complete |
     \endif
+set completeopt+=longest
 hi Pmenu  guifg=#000000 guibg=#F8F8F8 ctermfg=black ctermbg=Lightgray
 hi PmenuSbar  guifg=#8A95A7 guibg=#F8F8F8 gui=NONE ctermfg=darkcyan ctermbg=lightgray cterm=NONE
 hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=darkcyan cterm=NONE
@@ -370,8 +371,14 @@ noremap <Leader>rd :call rtags#Diagnostics()<CR>
 
 " FZF
 " Augment Ag command with fzf#vim#with_preview
-au VimEnter * command! -bang -nargs=* Ag
+command! -bang -nargs=* Ag
   \ call fzf#vim#ag(<q-args>,
+  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \                 <bang>0)
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column  --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
   \                 <bang>0 ? fzf#vim#with_preview('up:60%')
   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
   \                 <bang>0)
@@ -401,7 +408,7 @@ nnoremap <Leader><Space> :Commands<CR>
 nnoremap <Leader>h :Helptags<CR>
 nnoremap <Leader>t :Tags<CR>
 nnoremap <Leader>b :Buffer<CR>
-nnoremap <Leader>a :Ag<Space>
+nnoremap <Leader>a :Rg<Space>
 inoremap <C-x><C-l> <plug>(fzf-complete-line)
 
 " YouCompleteMe
