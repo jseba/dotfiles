@@ -19,7 +19,7 @@ Plug 'mhinz/vim-signify'
 
 " Languages
 Plug 'sheerun/vim-polyglot'
-Plug 'scrooloose/syntastic'
+Plug 'w0rp/ale'
 Plug 'ajh17/VimCompletesMe'
 Plug 'rust-lang/rust.vim'
 Plug 'racer-rust/vim-racer', { 'for': ['rs'] }
@@ -437,7 +437,7 @@ set updatetime=500
 augroup omnisharp_commands
     autocmd!
     autocmd FileType cs setlocal omnifunc=OmniSharp#Complete
-    autocmd BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
+    autocmd BufEnter,TextChanged,InsertLeave *.cs ALELint
     autocmd BufWritePost *.cs call OmniSharp#AddToProject()
     autocmd CursorHold *.cd call OmniSharp#TypeLookupWithoutDocumentation()
     autocmd FileType cs nnoremap gd :OmniSharpGoToDefinition()<CR>
@@ -454,8 +454,13 @@ augroup omnisharp_commands
     autocmd FileType cs nnoremap <C-J> :OmniSharpNavigateDown<cr>
 augroup END
 
-" Syntastic
-let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
+" ALE
+let g:airline#extensions#ale#enabled = 1
+let g:ale_set_quickfix = 1
+let g:ale_set_loclist = 0
+let g:ale_open_list = 1
+let g:ale_linters =
+            \ { 'cpp': [ 'clangcheck' ], }
 
 " Neovim specific settings
 if has('nvim')
