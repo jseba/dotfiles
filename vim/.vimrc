@@ -56,7 +56,7 @@ Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
 
 " Local plugins
-if filereadable("~/.local/vim/plugs.vim")
+if filereadable(expand("~/.local/vim/plugs.vim"))
     so ~/.local/vim/plugs.vim
 endif
 
@@ -466,8 +466,8 @@ endif
 
 
 " Read local machine settings
-if filereadable("~/.local/vim/vimrc")
-    so "~/.local/vim/vimrc"
+if filereadable(expand("~/.lvimrc"))
+    so ~/.lvimrc
 endif
 
 " Read project specific settings from cwd
