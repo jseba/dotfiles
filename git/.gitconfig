@@ -45,6 +45,9 @@
   dc = diff --cached -b     # diff staged changes
   last = diff HEAD^         # diff with last commit
 
+  # fetch
+  fa = fetch --all
+
   # log
   l = log --graph --date=short
   changes = log --pretty=format:\"%h %cr %cn %Cgreen %s%Creset\" --name=status
@@ -101,7 +104,7 @@
   path = /opt/p4v/bin/p4merge
 
 [difftool "vimdiff"]
-  cmd = vim -f '+next' '+execute \"DirDiff\" argv(0) argv(1)' $LOCAL $REMOTE '+syntax off'
+  cmd = nvim -f '+next' '+execute \"DirDiff\" argv(0) argv(1)' $LOCAL $REMOTE '+syntax off'
 
 [rerere]
   enabled = true
