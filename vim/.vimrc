@@ -3,9 +3,9 @@ scriptencoding utf-8
 
 let s:plug_file = '~/.vim/autoload/plug.vim'
 if empty(glob(s:plug_file))
-    silent execute '!curl -fLo ' . s:plug_file . ' --create-dirs '.
-        \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-    autocmd VimEnter * PlugInstall --sync | source '~/.vimrc'
+  silent execute '!curl -fLo ' . s:plug_file . ' --create-dirs '.
+      \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source '~/.vimrc'
 endif
 
 " Bundles
@@ -14,50 +14,42 @@ call plug#begin('~/.vim/plugged')
 " VCS
 Plug 'tpope/vim-fugitive'
 Plug 'gregsexton/gitv'
-"Plug 'airblade/vim-gitgutter'
-Plug 'mhinz/vim-signify'
+"Plug 'mhinz/vim-signify'
+Plug 'airblade/vim-gitgutter'
 
 " Languages
 Plug 'sheerun/vim-polyglot'
-Plug 'w0rp/ale'
-Plug 'ajh17/VimCompletesMe'
-Plug 'rust-lang/rust.vim'
-Plug 'racer-rust/vim-racer', { 'for': ['rs'] }
-Plug 'OmniSharp/omnisharp-vim', { 'for': ['cs'] }
+Plug 'neomake/neomake'
+"Plug 'ajh17/VimCompletesMe'
 "Plug 'lyuts/vim-rtags'
-"Plug 'Valloric/YouCompleteMe', { 'for': ['cpp', 'c', 'python', 'go', 'js', 'rs'] }
+Plug 'Valloric/YouCompleteMe', { 'for': ['cpp', 'c', 'python', 'go', 'js', 'rs'] }
+Plug 'rhysd/vim-clang-format'
 
 " Editing
-Plug 'luochen1990/rainbow'
+"Plug 'luochen1990/rainbow'
 Plug 'scrooloose/nerdcommenter'
 Plug 'will133/vim-dirdiff'
-Plug 'easymotion/vim-easymotion'
-Plug 'osyo-manga/vim-over'
 
 " Interface
 Plug 'junegunn/fzf.vim'
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'haya14busa/incsearch.vim' | Plug 'haya14busa/incsearch-fuzzy.vim' | Plug 'haya14busa/incsearch-easymotion.vim'
+"Plug 'haya14busa/incsearch.vim' | Plug 'haya14busa/incsearch-fuzzy.vim' | Plug 'haya14busa/incsearch-easymotion.vim'
 Plug 'henrik/vim-indexed-search'
-Plug 'sjl/vitality.vim'
-Plug 'tpope/vim-vinegar'
 Plug 'tpope/vim-eunuch'
 
 " Colorschemes
-Plug 'joshdick/onedark.vim'
 Plug 'morhetz/gruvbox'
-Plug 'jacoborus/tender.vim'
 Plug 'tomasr/molokai'
 Plug 'nanotech/jellybeans.vim'
-Plug 'dracula/vim'
 Plug 'nlknguyen/papercolor-theme'
 Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
+Plug 'arcticicestudio/nord-vim'
 
 " Local plugins
 if filereadable(expand("~/.local/vim/plugs.vim"))
-    so ~/.local/vim/plugs.vim
+  so ~/.local/vim/plugs.vim
 endif
 
 " Manually managed
@@ -97,10 +89,10 @@ set listchars=tab:>>,trail:-,extends:#,nbsp:.
 set nowrap
 set autoindent
 set breakindent
-set shiftwidth=4
+set shiftwidth=2
 set expandtab
-set tabstop=4
-set softtabstop=4
+set tabstop=2
+set softtabstop=2
 set nojoinspaces
 set splitright
 set splitbelow
@@ -118,9 +110,9 @@ au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
 
 " Automatically delete trailing whitespace
 func! DeleteTrailingWS()
-    exe "normal mz"
-    $s/\s\+$//ge
-    exe "normal `z"
+  exe "normal mz"
+  $s/\s\+$//ge
+  exe "normal `z"
 endfunc
 au BufWrite *.cpp :call DeleteTrailingWS()
 au BufWrite *.h :call DeleteTrailingWS()
@@ -136,22 +128,22 @@ au BufReadPost *
 
 " Don't close window when deleting a buffer
 function! <SID>BufcloseCloseIt()
-    let l:currentBufNum = bufnr("%")
-    let l:alternateBufNum = bufnr("#")
+  let l:currentBufNum = bufnr("%")
+  let l:alternateBufNum = bufnr("#")
 
-    if buflisted(l:alternateBufNum)
-        buffer #
-    else
-        bnext
-    endif
+  if buflisted(l:alternateBufNum)
+    buffer #
+  else
+    bnext
+  endif
 
-    if bufnr("%") == l:currentBufNum
-        new
-    endif
+  if bufnr("%") == l:currentBufNum
+    new
+  endif
 
-    if buflisted(l:currentBufNum)
-        execute("bdelete! ".l:currentBufNum)
-    endif
+  if buflisted(l:currentBufNum)
+    execute("bdelete! ".l:currentBufNum)
+  endif
 endfunction
 command! Bclose call <SID>BufcloseCloseIt()
 
@@ -200,77 +192,87 @@ vnoremap < <gv
 " Color scheme
 set background=dark
 let g:gruvbox_contrast_dark = 'hard'
+let g:base16colorspace = 256
 let g:base16_underline = 1
 let g:base16_italic = 1
+let g:base16_termtrans = 1
+let g:nord_italic_comments = 10
 let g:gruvbox_italicize_comments = 1
+let g:onedark_terminal_italics = 1
 if !has('gui_running')
-    let g:base16_termtrans = 1
-    let g:onedark_terminal_italics = 1
-
-    if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
-        call toggletheme#maptransparency("<F10>")
-        call toggletheme#mapbg("<F11>")
-        call toggletheme#map256("<F12>")
-        set termguicolors
-        if !has('nvim')
-            set t_Co=256
-            set t_so=[7m
-            set t_se=[27m
-            set t_ZH=[3m
-            set t_ZR=[23m
-            let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-            let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-        endif
-
-        colorscheme gruvbox
-    else
-        colorscheme base16
+  if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
+    call toggletheme#maptransparency("<F10>")
+    call toggletheme#mapbg("<F11>")
+    call toggletheme#map256("<F12>")
+    set termguicolors
+    if !has('nvim')
+      set t_Co=256
+      set t_so=[7m
+      set t_se=[27m
+      set t_ZH=[3m
+      set t_ZR=[23m
+      let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+      let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
     endif
+  endif
 
-    hi Normal ctermbg=NONE guibg=NONE
+  " Read project specific settings from cwd
+  if filereadable(expand("~/.base16_theme.vim"))
+    try
+      so ~/.base16_theme.vim
+    catch /^Vim\%((\a\+\)\=:E185/
+      colorscheme base16
+    endtry
+  endif
+
+  "hi Normal ctermbg=NONE guibg=NONE
 endif
 if has('gui_running')
-    set guifont=Source\ Code\ Pro\ 9
-    set guioptions-=T
-    set guioptions-=e
-    set guioptions-=m
-    set guioptions-=r
-    set guioptions-=l
-    set guioptions-=C
-    set guioptions-=L
-    set guioptions+=c
-    colorscheme gruvbox
+  set guifont=Source\ Code\ Pro\ 9
+  set guioptions-=T
+  set guioptions-=e
+  set guioptions-=m
+  set guioptions-=r
+  set guioptions-=l
+  set guioptions-=C
+  set guioptions-=L
+  set guioptions+=c
+  colorscheme gruvbox
 endif
 
 " Airline setup
 set noshowmode
 set laststatus=2
-let g:airline_theme = 'badwolf'
-let g:airline_extensions = ['netrw', 'tabline', 'whitespace', 'ycm']
+let g:airline_theme = 'base16'
+let g:airline_extensions =
+            \ [
+            \ 'branch',
+            \ 'neomake',
+            \ 'netrw',
+            \ 'tabline',
+            \ 'whitespace',
+            \ 'ycm',
+            \ ]
 if !has('gui_running') && ($TERM == "linux" || $TERM == "putty-256color" || $OLDTERM == "putty-256color")
-    " Disable powerline symbols when it seems unlikely we'll have them
-    let g:airline_left_sep = ''
-    let g:airline_left_alt_sep = ''
-    let g:airline_right_sep = ''
-    let g:airline_right_alt_sep = ''
-    let g:airline_branch = ''
-    let g:airline_readonly = ''
-    let g:airline_linenr = ''
+  " Disable powerline symbols when it seems unlikely we'll have them
+  let g:airline_left_sep = ''
+  let g:airline_left_alt_sep = ''
+  let g:airline_right_sep = ''
+  let g:airline_right_alt_sep = ''
+  let g:airline_branch = ''
+  let g:airline_readonly = ''
+  let g:airline_linenr = ''
 else
-    let g:airline_left_sep = ''
-    let g:airline_left_alt_sep = ''
-    let g:airline_right_sep = ''
-    let g:airline_right_alt_sep = ''
-    let g:airline_branch = ''
-    let g:airline_readonly = ''
-    let g:airline_linenr = ''
+  let g:airline_left_sep = ''
+  let g:airline_left_alt_sep = ''
+  let g:airline_right_sep = ''
+  let g:airline_right_alt_sep = ''
+  let g:airline_branch = ''
+  let g:airline_readonly = ''
+  let g:airline_linenr = ''
 endif
 
 " Omnicomplete
-autocmd Filetype * 
-    \if &omnifunc == "" |
-        \setlocal omnifunc=syntaxcomplete#Complete |
-    \endif
 set completeopt+=longest
 hi Pmenu  guifg=#000000 guibg=#F8F8F8 ctermfg=black ctermbg=Lightgray
 hi PmenuSbar  guifg=#8A95A7 guibg=#F8F8F8 gui=NONE ctermfg=darkcyan ctermbg=lightgray cterm=NONE
@@ -280,7 +282,7 @@ hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=da
 set tags=./tags;./TAGS
 
 " Rainbow
-let g:rainbow_active=1
+let g:rainbow_active = 0
 
 " Fugitive
 nnoremap <silent> <Leader>gs :Gstatus<CR>
@@ -309,28 +311,28 @@ let g:ag_working_path_mode = 'r'
 
 " Incsearch
 if !has('nvim')
-    noremap <silent><expr> /  incsearch#go(<SID>incsearch_config())
-    noremap <silent><expr> ?  incsearch#go(<SID>incsearch_config({'command': '?'}))
-    noremap <silent><expr> g/ incsearch#go(<SID>incsearch_config({'is_stay': 1}))
+  "noremap <silent><expr> /  incsearch#go(<SID>incsearch_config())
+  "noremap <silent><expr> ?  incsearch#go(<SID>incsearch_config({'command': '?'}))
+  "noremap <silent><expr> g/ incsearch#go(<SID>incsearch_config({'is_stay': 1}))
 
-    function! s:incsearch_config(...) abort
-        return incsearch#util#deepextend(deepcopy({
-                    \ 'modules': [incsearch#config#easymotion#module({'overwin': 1})],
-                    \ 'keymap': {
-                    \   "\<C-l>": '<Over>(easymotion)'
-                    \ },
-                    \   'is_expr': 0
-                    \ }), get(a:, 1, {}))
-    endfunction
-    function! s:config_easyfuzzymotion(...) abort
-        return extend(copy({
-                    \   'converters': [incsearch#config#fuzzyword#converter()],
-                    \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
-                    \   'keymap': {"\<C-l>": '<Over>(easymotion)'},
-                    \   'is_expr': 0,
-                    \   'is_stay': 1
-                    \ }), get(a:, 1, {}))
-    endfunction
+  function! s:incsearch_config(...) abort
+    return incsearch#util#deepextend(deepcopy({
+                \ 'modules': [incsearch#config#easymotion#module({'overwin': 1})],
+                \ 'keymap': {
+                \   "\<C-l>": '<Over>(easymotion)'
+                \ },
+                \   'is_expr': 0
+                \ }), get(a:, 1, {}))
+  endfunction
+  function! s:config_easyfuzzymotion(...) abort
+    return extend(copy({
+                \   'converters': [incsearch#config#fuzzyword#converter()],
+                \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
+                \   'keymap': {"\<C-l>": '<Over>(easymotion)'},
+                \   'is_expr': 0,
+                \   'is_stay': 1
+                \ }), get(a:, 1, {}))
+  endfunction
 endif
 
 " EasyMotion
@@ -351,24 +353,24 @@ nmap <Leader>l <Plug>(easymotion-lineforward)
 " Rtags
 let g:rtagsUseDefaultMappings = 0
 let g:rtagsAutoLaunchRdm = 1
-noremap <Leader>ri :call rtags#SymbolInfo()<CR>
-noremap <Leader>rj :call rtags#JumpTo(g:SAME_WINDOW)<CR>
-noremap <Leader>rJ :call rtags#JumpTo(g:SAME_WINDOW, { '--declaration-only' : '' })<CR>
-noremap <Leader>rS :call rtags#JumpTo(g:H_SPLIT)<CR>
-noremap <Leader>rV :call rtags#JumpTo(g:V_SPLIT)<CR>
-noremap <Leader>rT :call rtags#JumpTo(g:NEW_TAB)<CR>
-noremap <Leader>rp :call rtags#JumpToParent()<CR>
-noremap <Leader>rf :call rtags#FindRefs()<CR>
-noremap <Leader>rn :call rtags#FindRefsByName(input("Pattern? ", "", "customlist,rtags#CompleteSymbols"))<CR>
-noremap <Leader>rs :call rtags#FindSymbols(input("Pattern? ", "", "customlist,rtags#CompleteSymbols"))<CR>
-noremap <Leader>rr :call rtags#ReindexFile()<CR>
-noremap <Leader>rl :call rtags#ProjectList()<CR>
-noremap <Leader>rw :call rtags#RenameSymbolUnderCursor()<CR>
-noremap <Leader>rv :call rtags#FindVirtuals()<CR>
-noremap <Leader>rb :call rtags#JumpBack()<CR>
-noremap <Leader>rC :call rtags#FindSuperClasses()<CR>
-noremap <Leader>rc :call rtags#FindSubClasses()<CR>
-noremap <Leader>rd :call rtags#Diagnostics()<CR>
+"noremap <Leader>ri :call rtags#SymbolInfo()<CR>
+"noremap <Leader>rj :call rtags#JumpTo(g:SAME_WINDOW)<CR>
+"noremap <Leader>rJ :call rtags#JumpTo(g:SAME_WINDOW, { '--declaration-only' : '' })<CR>
+"noremap <Leader>rS :call rtags#JumpTo(g:H_SPLIT)<CR>
+"noremap <Leader>rV :call rtags#JumpTo(g:V_SPLIT)<CR>
+"noremap <Leader>rT :call rtags#JumpTo(g:NEW_TAB)<CR>
+"noremap <Leader>rp :call rtags#JumpToParent()<CR>
+"noremap <Leader>rf :call rtags#FindRefs()<CR>
+"noremap <Leader>rn :call rtags#FindRefsByName(input("Pattern? ", "", "customlist,rtags#CompleteSymbols"))<CR>
+"noremap <Leader>rs :call rtags#FindSymbols(input("Pattern? ", "", "customlist,rtags#CompleteSymbols"))<CR>
+"noremap <Leader>rr :call rtags#ReindexFile()<CR>
+"noremap <Leader>rl :call rtags#ProjectList()<CR>
+"noremap <Leader>rw :call rtags#RenameSymbolUnderCursor()<CR>
+"noremap <Leader>rv :call rtags#FindVirtuals()<CR>
+"noremap <Leader>rb :call rtags#JumpBack()<CR>
+"noremap <Leader>rC :call rtags#FindSuperClasses()<CR>
+"noremap <Leader>rc :call rtags#FindSubClasses()<CR>
+"noremap <Leader>rd :call rtags#Diagnostics()<CR>
 
 " FZF
 " Augment Ag command with fzf#vim#with_preview
@@ -410,7 +412,6 @@ nnoremap <Leader>h :Helptags<CR>
 nnoremap <Leader>t :Tags<CR>
 nnoremap <Leader>b :Buffer<CR>
 nnoremap <Leader>a :Rg<Space>
-inoremap <C-x><C-l> <plug>(fzf-complete-line)
 
 " YouCompleteMe
 let g:ycm_collect_identifiers_from_tags_files = 1
@@ -424,53 +425,33 @@ let g:ycm_disable_for_files_larger_than_kb = 2000
 " VimCompletesMe
 let g:vcm_default_maps = 0
 
-" Omnisharp
-set updatetime=500
-augroup omnisharp_commands
-    autocmd!
-    autocmd FileType cs setlocal omnifunc=OmniSharp#Complete
-    autocmd BufEnter,TextChanged,InsertLeave *.cs ALELint
-    autocmd BufWritePost *.cs call OmniSharp#AddToProject()
-    autocmd CursorHold *.cd call OmniSharp#TypeLookupWithoutDocumentation()
-    autocmd FileType cs nnoremap gd :OmniSharpGoToDefinition()<CR>
-    autocmd FileType cs nnoremap <leader>fi :OmniSharpFindImplementations<cr>
-    autocmd FileType cs nnoremap <leader>ft :OmniSharpFindType<cr>
-    autocmd FileType cs nnoremap <leader>fs :OmniSharpFindSymbol<cr>
-    autocmd FileType cs nnoremap <leader>fu :OmniSharpFindUsages<cr>
-    autocmd FileType cs nnoremap <leader>fm :OmniSharpFindMembers<cr>
-    autocmd FileType cs nnoremap <leader>x  :OmniSharpFixIssue<cr>
-    autocmd FileType cs nnoremap <leader>fx :OmniSharpFixUsings<cr>
-    autocmd FileType cs nnoremap <leader>tt :OmniSharpTypeLookup<cr>
-    autocmd FileType cs nnoremap <leader>dc :OmniSharpDocumentation<cr>
-    autocmd FileType cs nnoremap <C-K> :OmniSharpNavigateUp<cr>
-    autocmd FileType cs nnoremap <C-J> :OmniSharpNavigateDown<cr>
-augroup END
-
-" ALE
-let g:airline#extensions#ale#enabled = 1
-let g:ale_set_quickfix = 1
-let g:ale_set_loclist = 0
-let g:ale_open_list = 0
-let g:ale_linters =
-            \ { 'cpp': [ 'clangcheck' ], }
+" Neomake
 
 " Neovim specific settings
 if has('nvim')
-    "set inccommand=nosplit
-    tnoremap <C-g> <C-\><C-n>
-    tnoremap <C-j> <C-\><C-n><C-w>j
-    tnoremap <C-k> <C-\><C-n><C-w>k
-    tnoremap <C-l> <C-\><C-n><C-w>l
-    tnoremap <C-h> <C-\><C-n><C-w>h
+  "set inccommand=nosplit
+  tnoremap <C-g> <C-\><C-n>
+  tnoremap <C-j> <C-\><C-n><C-w>j
+  tnoremap <C-k> <C-\><C-n><C-w>k
+  tnoremap <C-l> <C-\><C-n><C-w>l
+  tnoremap <C-h> <C-\><C-n><C-w>h
 endif
 
+" clang-format
+augroup clang-format
+  autocmd FileType cpp nnoremap <C-m> :ClangFormat<CR>
+  autocmd FileType cpp vnoremap <C-m> :ClangFormat<CR>
+  autocmd FileType c nnoremap <C-m> :ClangFormat<CR>
+  autocmd FileType c vnoremap <C-m> :ClangFormat<CR>
+augroup END
+let g:clang_format#code_style = 'llvm'
 
 " Read local machine settings
 if filereadable(expand("~/.lvimrc"))
-    so ~/.lvimrc
+  so ~/.lvimrc
 endif
 
 " Read project specific settings from cwd
 if filereadable(".project.vim")
-    so .project.vim
+  so .project.vim
 endif
