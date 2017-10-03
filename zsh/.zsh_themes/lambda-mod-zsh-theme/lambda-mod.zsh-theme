@@ -12,6 +12,9 @@ ${LAMBDA}\
  %{$fg_bold[cyan]%}→ %{$reset_color%}'
 
 RPROMPT=''
+if [[ $ZSH_THEME_NO_GIT == "1" ]]; then
+    return 0
+fi
 
 ASYNC_PROC=0
 function precmd() {
