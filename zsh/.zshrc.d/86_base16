@@ -1,0 +1,37 @@
+# vim: set ft=zsh:
+
+BASE16_DEFAULT="solar-flare"
+BASE16_SCRIPTS="${HOME}/.config/base16/scripts"
+
+function theme() {
+  local name variant found
+  local -a paths
+
+  name=${1}
+  variant=${2:-dark}
+  paths=("${BASE16_SCRIPTS}/base16-$name-$variant.sh" \
+         "${BASE16_SCRIPTS}/base16-$name.sh" \
+         "${BASE16_SCRIPTS}/$name-$variant.sh" \
+         "${BASE16_SCRIPTS}/$name.sh")
+  found=false
+
+  for _path in "${paths[@]}"; do
+    if [ -f "$_path" ]; then
+      ln -sfn $_path ~/.base16_theme
+      echo "colorscheme base16-$name" > ~/.base16_theme.vim
+      source ~/.base16_theme
+      found=true
+      break
+    fi
+  done
+
+  if [ "$found" != true ]; then
+    echo "Could not find theme base16-$name-$variant.sh or $name-$variant.sh"
+  fi
+}
+
+if [ -f "~/.base16_theme" ]; then
+  source ~/.base16_theme
+else
+  theme $BASE16_DEFAULT
+fi
