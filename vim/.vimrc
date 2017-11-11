@@ -54,6 +54,7 @@ endif
 
 " Manually managed
 Plug '~/.fzf'
+Plug '~/.vim/gtags'
 
 call plug#end()
 
