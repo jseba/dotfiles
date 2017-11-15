@@ -1,7 +1,0 @@
-export EDITOR=vim
-
-POWERLINE=/usr/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh
-if [ -f "$POWERLINE" ]; then
-  source "$POWERLINE"
-fi
-

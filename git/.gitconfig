@@ -115,6 +115,3 @@
 
 [include]
   path = .gitconfig.local
-
-[http]
-  sslNoVerify = true
