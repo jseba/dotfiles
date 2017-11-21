@@ -14,36 +14,275 @@
 
 ;; Begin
 
-(add-to-list 'load-path "~/.emacs.d/site")
-(add-to-list 'load-path "~/.emacs.d/personal")
+(eval-and-compile (require 'cl-lib))
+
+(defvar nx-debug-mode (or (getenv "DEBUG") init-file-debug)
+  "If non-nil, increase verbosity.")
+
+(defvar nx-emacs-dir (expand-file-name user-emacs-directory)
+  "The path to the emacs.d directory.")
+
+(defconst nx-package-version (format "%s-%s"
+				     emacs-major-version
+				     emacs-minor-version)
+  "The version suffix to attach to the package directory.")
+
+(defvar nx-package-dir (concat nx-emacs-dir "elpa-" nx-package-version "/")
+  "The path to the versioned package directory.")
+
+(defvar nx-cache-dir (concat nx-emacs-dir "cache/")
+  "Directory for volatile storage.")
+
+(defvar nx-etc-dir (concat nx-emacs-dir "etc/")
+  "Directory for non-volatile storage.")
+
+(defvar nx-font nil
+  "The default font to use; expects a FONT-SPEC (`font-spec').")
+
+(defvar nx-theme nil
+  "The default theme to use.")
+
+(defvar nx-init-hook nil
+  "A list of hooks run when Emacs is initialized.")
+
+(defvar nx-post-init-hook nil
+  "A list of hooks run after Emacs is initialized (after `nx-init-hook').")
+
+(defvar nx-init-ui-hook nil
+  "A list of hooks to run after the theme and font are initialized.")
+
+(defvar nx-init-console-frame-hook nil
+  "A list of hooks to run after creating a console frame.")
+
+(defvar nx-init-gui-frame-hook nil
+  "A list of hooks to run after creating a GUI frame.")
+
+(defvar nx-init-p nil
+  "If non-nil, indicates Emacs has been initialized.")
+
+;; Macros
+
+(defmacro λ! (&rest body)
+  "A shortcut for inline interactive lambdas."
+  (declare (doc-string 1))
+  `(lambda () (interactive) ,@body))
+
+(defmacro after! (feature &rest forms)
+  "A smart wrapper around `with-eval-after-load'. Supresses warnings during
+compilation."
+  (declare (indent defun) (debug t))
+  `(,(if (or (not (bound-and-true-p byte-compile-current-file))
+             (if (symbolp feature)
+                 (require feature nil :no-error)
+               (load feature :no-message :no-error)))
+         #'progn
+       #'with-no-warnings)
+    (with-eval-after-load ',feature ,@forms)))
+
+(defmacro quiet! (&rest forms)
+  "Run FORMS without making any noise."
+  `(if nx-debug-mode
+       (progn ,@forms)
+     (fset 'nx--old-write-region-fn (symbol-function 'write-region))
+     (cl-letf ((standard-output (lambda (&rest _)))
+               ((symbol-function 'load-file) (lambda (file) (load file nil t)))
+               ((symbol-function 'message) (lambda (&rest _)))
+               ((symbol-function 'write-region)
+                (lambda (start end filename &optional append visit lockname mustbenew)
+                  (unless visit (setq visit 'no-message))
+                  (nx--old-write-region-fn
+                   start end filename append visit lockname mustbenew)))
+               (inhibit-message t)
+               (save-silently t))
+       ,@forms)))
+
+(defvar nx--transient-counter 0)
+(defmacro add-transient-hook! (hook &rest forms)
+  "Attaches transient forms to a HOOK.
+HOOK can be a quoted hook or a sharp-quoted function (which will be advised).
+These forms will be evaluated once when that function/hook is first invoked,
+then it detaches itself."
+  (declare (indent 1))
+  (let ((append (eq (car forms) :after))
+        (fn (intern (format "nx-transient-hook-%s" (cl-incf nx--transient-counter)))))
+    `(when ,hook
+       (fset ',fn
+             (lambda (&rest _)
+               ,@forms
+               (cond ((functionp ,hook) (advice-remove ,hook #',fn))
+                     ((symbolp ,hook)   (remove-hook ,hook #',fn)))
+               (unintern ',fn nil)))
+       (cond ((functionp ,hook)
+              (advice-add ,hook ,(if append :after :before) #',fn))
+             ((symbolp ,hook)
+              (add-hook ,hook #',fn ,append))))))
+
+(defun nx--resolve-hook-forms (hooks)
+  (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
+           for hook in (nx-enlist (nx-unquote hooks))
+           if (eq (car-safe hook) 'quote)
+            collect (cadr hook)
+           else if quoted-p
+            collect hook
+           else collect (intern (format "%s-hook" (symbol-name hook)))))
+
+(defun nx-unquote (exp)
+  "Return EXP unquoted."
+  (while (memq (car-safe exp) '(quote function))
+    (setq exp (cadr exp)))
+  exp)
+
+(defun nx-enlist (exp)
+  "Return EXP wrapped in a list, or as-is if already a list."
+  (if (listp exp) exp (list exp)))
+
+(defmacro add-hook! (&rest args)
+  "A convenience macro for `add-hook'. Takes, in order:
+
+  1. Optional properties :local and/or :append, which will make the hook
+     buffer-local or append to the list of hooks (respectively),
+  2. The hooks: either an unquoted major mode, an unquoted list of major-modes,
+     a quoted hook variable or a quoted list of hook variables. If unquoted, the
+     hooks will be resolved by appending -hook to each symbol.
+  3. A function, list of functions, or body forms to be wrapped in a lambda.
+
+Examples:
+    (add-hook! 'some-mode-hook 'enable-something)
+    (add-hook! some-mode '(enable-something and-another))
+    (add-hook! '(one-mode-hook second-mode-hook) 'enable-something)
+    (add-hook! (one-mode second-mode) 'enable-something)
+    (add-hook! :append (one-mode second-mode) 'enable-something)
+    (add-hook! :local (one-mode second-mode) 'enable-something)
+    (add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
+    (add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
+
+Body forms can access the hook's arguments through the let-bound variable
+`args'."
+  (declare (indent defun) (debug t))
+  (let ((hook-fn 'add-hook)
+        append-p local-p)
+    (while (keywordp (car args))
+      (pcase (pop args)
+        (:append (setq append-p t))
+        (:local  (setq local-p t))
+        (:remove (setq hook-fn 'remove-hook))))
+    (let ((hooks (doom--resolve-hook-forms (pop args)))
+          (funcs
+           (let ((val (car args)))
+             (if (memq (car-safe val) '(quote function))
+                 (if (cdr-safe (cadr val))
+                     (cadr val)
+                   (list (cadr val)))
+               (list args))))
+          forms)
+      (dolist (fn funcs)
+        (setq fn (if (symbolp fn)
+                     `(function ,fn)
+                   `(lambda (&rest _) ,@args)))
+        (dolist (hook hooks)
+          (push (cond ((eq hook-fn 'remove-hook)
+                       `(remove-hook ',hook ,fn ,local-p))
+                      (t
+                       `(add-hook ',hook ,fn ,append-p ,local-p)))
+                forms)))
+      `(progn ,@(nreverse forms)))))
+
+(defmacro remove-hook! (&rest args)
+  "Convenience macro for `remove-hook'. Takes the same arguments as
+`add-hook!'."
+  `(add-hook! :remove ,@args))
+
+;; Increase resources during startup
+(setq gc-cons-threshold (* 384 1024 1024)
+      gc-cons-percentage 0.6)
+
+(defun doom-try-run-hook (fn hook)
+  "Runs a hook wrapped in a `condition-case-unless-debug' block; its objective
+is to include more information in the error message, without sacrificing your
+ability to invoke the debugger in debug mode."
+  (condition-case-unless-debug ex
+      (if noninteractive
+          (quiet! (funcall fn))
+        (funcall fn))
+    ('error
+     (lwarn hook :error
+          "%s in '%s' -> %s"
+          (car ex) fn (error-message-string ex))))
+  nil)
+
+(defun nx|finalize ()
+  (unless nx-init-p
+    (dolist (hook '(nx-init-hook nx-post-init-hook))
+      (run-hook-wrapped hook #'nx-try-run-hook hook))
+    (setq nx-init-p t))
+
+  (setq gc-cons-threshold (* 20 1024 1024)
+	gc-cons-percentage 0.1))
+(add-hook emacs-startup-hook #'nx|finalize)
 
 ;; Set core interface settings as early as possible
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'horizontal-scroll-bar-mode) (horizontal-scroll-bar-mode -1))
+(advice-add #'display-startup-echo-area-message #'ignore)
 (setq inhibit-startup-screen t
-    inhibit-default-init t
-    initial-scratch-message ""
-    visible-bell nil)
+      inhibit-startup-message t
+      inhibit-startup-echo-area-message user-login-name
+      inhibit-default-init t
+      initial-major-mode 'fundamental-mode
+      initial-scratch-message nil
+      mode-line-format nil
+      visible-bell nil)
 (size-indication-mode t)
 
-;; Fonts
+;; Set default directories
+(setq-default  abbrev-file-name             (concat nx-local-dir "abbrev.el")
+	       auto-save-list-file-name     (concat nx-cache-dir "autosave")
+	       backup-directory-alist       (list (cons "." (concat nx-cache-dir "backup/")))
+	       pcache-directory             (concat nx-cache-dir "pcache/")
+	       mc/list-file                 (concat nx-etc-dir "mc-lists.el")
+	       server-auth-dir              (concat nx-cache-dir "server/")
+	       shared-game-score-directory  (concat nx-etc-dir "shared-game-score/")
+	       tramp-auto-save-directory    (concat nx-cache-dir "tramp-auto-save/")
+	       tramp-backup-directory-alist backup-directory-alist
+	       tramp-persistency-file-name  (concat nx-cache-dir "tramp-persistency.el")
+	       url-cache-directory          (concat nx-cache-dir "url/")
+	       url-configuration-directory  (concat nx-etc-dir "url/"))
+
+
 (set-face-attribute 'default nil
           :family "Source Code Pro"
           :height 100)
 
 ;; Sane defaults
 (fset 'yes-or-no-p #'y-or-n-p)
-(fset 'display-startup-echo-area-message #'ignore)
 (setq load-prefer-newer t)
 
 ;; Setup package manager and use-package
+(defconst nx--use-ssl-p (and (memq system-type '(windows-nt ms-dos))
+			     (gnutls-available-p))
+  "Whether or not to use SSL/TLS for package.el")
+
 (require 'package)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-;(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
-(setq package-enable-at-startup nil)
+(setq package-archives '(("elpa"  . ,(if nx--use-ssl-p
+					 "http://elpa.gnu.org/packages/"
+				       "https://elpa.gnu.org/packages/"))
+			 ("melpa" . ,(if nx--use-ssl-p
+					 "http://melpa.org/packages/"
+				       "https://melpa.org/packages/")))
+      package-enable-at-startup nil
+      package-user-dir nx-package-dir
+
+      byte-compile-verbose nx-debug-mode
+      byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local)
+
+      ;; use-package
+      use-package-always-defer t
+      use-package-always-ensure nil
+      use-package-debug nil
+      use-package-verbose nx-debug-mode)
+
 (or (file-exists-p package-user-dir)
   (package-refresh-contents))
 (package-initialize)
@@ -52,29 +291,15 @@
   (package-install 'use-package))
 (eval-when-compile
   (require 'use-package))
-(require 'bind-key)
-(require 'diminish)
-(require 'time-date)
 
-(use-package bug-hunter
-  :ensure t)
-
-(use-package hydra
-  :ensure t)
 
 ;; Relocate the customization file
-(defconst jseba-custom-file (locate-user-emacs-file "custom.el")
-      "File used to store settings from Customization UI.")
-(use-package cus-edit
-  :defer t
-  :init
-  (load jseba-custom-file 'no-error 'no-message)
-  :config
-  (setq custom-file jseba-custom-file
+(setq custom-file (concat nx-etc-dir "custom.el")
       custom-buffer-done-kill nil
       custom-buffer-verbose-help nil
       custom-unlispify-tag-names nil
-      custom-unlispify-menu-entries nil))
+      custom-unlispify-menu-entries nil)
+(load jseba-custom-file t t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -453,9 +678,9 @@ Disable the highlighting of overlong lines."
   :config
   (volatile-highlights-mode))
 
-;; AFTER volatile-highlights!
 ;; add cutting the current line without marking it
 (use-package rect
+  :after volatile-highlights
   :init
   (defun slick-cut (beg end &optional mode)
   "When called interactively with no active region, kill a single line instead."
@@ -477,6 +702,12 @@ Disable the highlighting of overlong lines."
  (use-package tramp
    :init
    (setq tramp-default-method "ssh"))
+
+(use-package bug-hunter
+  :ensure t)
+
+(use-package hydra
+  :ensure t)
 
 ;;; Spelling and syntax checking
 (use-package ispell                     ; Spell checking
