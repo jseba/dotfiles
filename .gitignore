@@ -1,3 +1,8 @@
 zsh/.zshrc.d/60_custom
 vim/.vim/plugged
 vim/.vim/.netrwhist
+emacs/.emacs.d/cache
+emacs/.emacs.d/elpa
+emacs/.emacs.d/.*
+emacs/.emacs.d/projectile*
+emacs/.emacs.d/etc
