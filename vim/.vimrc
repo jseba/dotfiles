@@ -13,30 +13,23 @@ call plug#begin('~/.vim/plugged')
 
 " VCS
 Plug 'tpope/vim-fugitive'
-Plug 'gregsexton/gitv'
-"Plug 'mhinz/vim-signify'
 Plug 'airblade/vim-gitgutter'
 
 " Languages
 Plug 'sheerun/vim-polyglot'
-Plug 'neomake/neomake'
-"Plug 'ajh17/VimCompletesMe'
-"Plug 'lyuts/vim-rtags'
-Plug 'Valloric/YouCompleteMe', { 'for': ['cpp', 'c', 'python', 'go', 'js', 'rs'] }
+Plug 'ajh17/VimCompletesMe'
+"Plug 'Valloric/YouCompleteMe', { 'for': ['cpp', 'c', 'python', 'go', 'js', 'rs'] }
 Plug 'rhysd/vim-clang-format'
 
 " Editing
-"Plug 'luochen1990/rainbow'
-Plug 'scrooloose/nerdcommenter'
+Plug 'tpope/vim-commentary'
 Plug 'will133/vim-dirdiff'
 
 " Interface
-Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 Plug 'christoomey/vim-tmux-navigator'
-"Plug 'haya14busa/incsearch.vim' | Plug 'haya14busa/incsearch-fuzzy.vim' | Plug 'haya14busa/incsearch-easymotion.vim'
 Plug 'henrik/vim-indexed-search'
-Plug 'tpope/vim-eunuch'
 
 " Colorschemes
 Plug 'morhetz/gruvbox'
@@ -53,61 +46,66 @@ if filereadable(expand("~/.local/vim/plugs.vim"))
 endif
 
 " Manually managed
-Plug '~/.fzf'
 Plug '~/.vim/gtags'
+Plug '~/.vim/wcos'
 
 call plug#end()
 
 " General settings
 syntax on
 filetype plugin indent on
-set mouse=a
-set mousehide
-set shortmess+=filmnrxoOtT
-set history=1000
-set virtualedit=onemore
-set hidden
-set nospell
-set showmode
-set backspace=indent,eol,start
-set linespace=0
-set nostartofline
-set number
-set noshowmatch
-set incsearch
-set hlsearch
-set ignorecase
-set smartcase
-set wildmenu
-set modeline
-set cmdheight=2
-set wildmode=list:longest,full
-set whichwrap=b,s,h,l,<,>,[,]
-set scrolljump=5
-set scrolloff=3
-set list
-set listchars=tab:>>,trail:-,extends:#,nbsp:.
-set nowrap
+
 set autoindent
-set breakindent
-set shiftwidth=2
-set expandtab
-set tabstop=2
-set softtabstop=2
-set nojoinspaces
-set splitright
-set splitbelow
+set backspace=indent,eol,start
 set backup
 set backupdir=$HOME/.local/share/vim/backups
-set undofile
-set undodir=$HOME/.local/share/vim/undo
-set viminfo^=%
+set breakindent
+set cmdheight=2
+set expandtab
 set formatoptions+=j
+set hidden
+set history=1000
+set hlsearch
+set ignorecase
+set incsearch
 set lazyredraw
+set linespace=0
+set list
+set listchars=tab:>>,trail:-,extends:#,nbsp:.
+set modeline
+set mouse=a
+set mousehide
+set nojoinspaces
+set noshowmatch
+set nospell
+set nostartofline
+set nowrap
+set number
+set scrolljump=5
+set scrolloff=3
+set shiftwidth=2
+set shortmess+=filmnrxoOtT
+set showmode
+set smartcase
+set softtabstop=2
+set splitbelow
+set splitright
+set tabstop=2
+set undodir=$HOME/.local/share/vim/undo
+set undofile
+set viminfo^=%
+set virtualedit=onemore
+set whichwrap=b,s,h,l,<,>,[,]
+set wildmenu
+set wildmode=list:longest,full
 
-" Automatically set the cursor to first line
-" when editing a git commit message
-au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
+if has('clipboard')
+  if has ('unnamedplus')
+    set clipboard=unnamed,unnamedplus
+  else
+    set clipboard=unnamed
+  endif
+endif
 
 " Automatically delete trailing whitespace
 func! DeleteTrailingWS()
@@ -117,6 +115,10 @@ func! DeleteTrailingWS()
 endfunc
 au BufWrite *.cpp :call DeleteTrailingWS()
 au BufWrite *.h :call DeleteTrailingWS()
+
+" Automatically set the cursor to first line
+" when editing a git commit message
+au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
 
 " Automatically resize splits when vim is resized.
 au VimResized * exe "normal! \<C-W>="
@@ -148,35 +150,30 @@ function! <SID>BufcloseCloseIt()
 endfunction
 command! Bclose call <SID>BufcloseCloseIt()
 
-" Automatically enter insert mode when focussing a terminal buffer
-au BufWinEnter, WinEnter term://* startinsert
-
 " disable paren matching in TeX, it's really slow
 au FileType tex :NoMatchParen
 
 " Keybindings
-let mapleader=' '
-
 inoremap kj <ESC>
 
 nmap <silent> ,/ :set invhlsearch<CR>
-nmap <silent> <Leader>o :Bclose<CR>
+nmap <silent> <Space>o :Bclose<CR>
 
 nnoremap ; :
 nnoremap K <nop>
 nnoremap Q <nop>
-nnoremap <Leader>< :bp<CR>
-nnoremap <Leader>> :bn<CR>
-nnoremap <Leader>vs :vsplit<CR>
-nnoremap <Leader>ss :split<CR>
-nnoremap <Leader>hh :resize 60<CR>
-nnoremap <Leader>y "+y
-nnoremap <Leader>p "+p
-nnoremap <Leader>ve :edit ~/.vimrc<CR>
+nnoremap <Space>< :bp<CR>
+nnoremap <Space>> :bn<CR>
+nnoremap <Space>vs :vsplit<CR>
+nnoremap <Space>ss :split<CR>
+nnoremap <Space>hh :resize 60<CR>
+nnoremap <Space>y "+y
+nnoremap <Space>p "+p
+nnoremap <Space>ve :edit ~/.vimrc<CR>
 
-map <Leader>pp :setlocal paste!<CR>
-map <Leader>ss :setlocal spell!<CR>
-map <leader>fc /\v^[<\|=>]{7}( .*\|$)<CR>
+map <Space>pp :setlocal paste!<CR>
+map <Space>ss :setlocal spell!<CR>
+map <Space>fc /\v^[<\|=>]{7}( .*\|$)<CR>
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
@@ -217,14 +214,7 @@ if !has('gui_running')
     endif
   endif
 
-  " Read project specific settings from cwd
-  if filereadable(expand("~/.base16_theme.vim"))
-    try
-      so ~/.base16_theme.vim
-    catch /^Vim\%((\a\+\)\=:E185/
-      colorscheme base16
-    endtry
-  endif
+  colorscheme PaperColor
 
   "hi Normal ctermbg=NONE guibg=NONE
 endif
@@ -244,15 +234,12 @@ endif
 " Airline setup
 set noshowmode
 set laststatus=2
-let g:airline_theme = 'base16'
+let g:airline_theme = 'papercolor'
 let g:airline_extensions =
             \ [
-            \ 'branch',
-            \ 'neomake',
             \ 'netrw',
             \ 'tabline',
             \ 'whitespace',
-            \ 'ycm',
             \ ]
 if !has('gui_running') && ($TERM == "linux" || $TERM == "putty-256color" || $OLDTERM == "putty-256color")
   " Disable powerline symbols when it seems unlikely we'll have them
@@ -286,92 +273,28 @@ set tags=./tags;./TAGS
 let g:rainbow_active = 0
 
 " Fugitive
-nnoremap <silent> <Leader>gs :Gstatus<CR>
-nnoremap <silent> <Leader>gd :Gdiff<CR>
-nnoremap <silent> <Leader>gc :Gcommit<CR>
-nnoremap <silent> <Leader>gb :Gblame<CR>
-nnoremap <silent> <Leader>gl :Glog<CR>
-nnoremap <silent> <Leader>gp :Git push<CR>
-nnoremap <silent> <Leader>gr :Gread<CR>
-nnoremap <silent> <Leader>gw :Gwrite<CR>
-nnoremap <silent> <Leader>ge :Gedit<CR>
-nnoremap <silent> <Leader>gi :Git add -p %<CR>
-nnoremap <silent> <Leader>gg :SignifyToggle<CR>
+nnoremap <silent> <Space>gs :Gstatus<CR>
+nnoremap <silent> <Space>gd :Gdiff<CR>
+nnoremap <silent> <Space>gc :Gcommit<CR>
+nnoremap <silent> <Space>gb :Gblame<CR>
+nnoremap <silent> <Space>gl :Glog<CR>
+nnoremap <silent> <Space>gp :Git push<CR>
+nnoremap <silent> <Space>gr :Gread<CR>
+nnoremap <silent> <Space>gw :Gwrite<CR>
+nnoremap <silent> <Space>ge :Gedit<CR>
+nnoremap <silent> <Space>gi :Git add -p %<CR>
+nnoremap <silent> <Space>gg :SignifyToggle<CR>
 
 " Polyglot
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 "let g:cpp_experimental_simple_template_highlight = 1
-let g:polyglot_disabled = [ 'latex' ]
 
 " AlternateFiles
 let g:alternateNoDefaultAlternate = 1
 
 " Ag
 let g:ag_working_path_mode = 'r'
-
-" Incsearch
-if !has('nvim')
-  "noremap <silent><expr> /  incsearch#go(<SID>incsearch_config())
-  "noremap <silent><expr> ?  incsearch#go(<SID>incsearch_config({'command': '?'}))
-  "noremap <silent><expr> g/ incsearch#go(<SID>incsearch_config({'is_stay': 1}))
-
-  function! s:incsearch_config(...) abort
-    return incsearch#util#deepextend(deepcopy({
-                \ 'modules': [incsearch#config#easymotion#module({'overwin': 1})],
-                \ 'keymap': {
-                \   "\<C-l>": '<Over>(easymotion)'
-                \ },
-                \   'is_expr': 0
-                \ }), get(a:, 1, {}))
-  endfunction
-  function! s:config_easyfuzzymotion(...) abort
-    return extend(copy({
-                \   'converters': [incsearch#config#fuzzyword#converter()],
-                \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
-                \   'keymap': {"\<C-l>": '<Over>(easymotion)'},
-                \   'is_expr': 0,
-                \   'is_stay': 1
-                \ }), get(a:, 1, {}))
-  endfunction
-endif
-
-" EasyMotion
-let g:EasyMotion_startofline = 0
-let g:EasyMotion_smartcase = 1
-map <Leader>f <Plug>(easymotion-bd-f)
-nmap <Leader>f <Plug>(easymotion-overwin-f)
-nmap <Leader>s <Plug>(easymotion-overwin-f2)
-map <Leader>L <Plug>(easymotion-bd-jk)
-nmap <Leader>L <Plug>(easymotion-overwin-line)
-map <Leader>w <Plug>(easymotion-bd-w)
-nmap <Leader>w <Plug>(easymotion-overwin-w)
-nmap <Leader>h <Plug>(easymotion-linebackward)
-nmap <Leader>j <Plug>(easymotion-j)
-nmap <Leader>k <Plug>(easymotion-k)
-nmap <Leader>l <Plug>(easymotion-lineforward)
-
-" Rtags
-let g:rtagsUseDefaultMappings = 0
-let g:rtagsAutoLaunchRdm = 1
-"noremap <Leader>ri :call rtags#SymbolInfo()<CR>
-"noremap <Leader>rj :call rtags#JumpTo(g:SAME_WINDOW)<CR>
-"noremap <Leader>rJ :call rtags#JumpTo(g:SAME_WINDOW, { '--declaration-only' : '' })<CR>
-"noremap <Leader>rS :call rtags#JumpTo(g:H_SPLIT)<CR>
-"noremap <Leader>rV :call rtags#JumpTo(g:V_SPLIT)<CR>
-"noremap <Leader>rT :call rtags#JumpTo(g:NEW_TAB)<CR>
-"noremap <Leader>rp :call rtags#JumpToParent()<CR>
-"noremap <Leader>rf :call rtags#FindRefs()<CR>
-"noremap <Leader>rn :call rtags#FindRefsByName(input("Pattern? ", "", "customlist,rtags#CompleteSymbols"))<CR>
-"noremap <Leader>rs :call rtags#FindSymbols(input("Pattern? ", "", "customlist,rtags#CompleteSymbols"))<CR>
-"noremap <Leader>rr :call rtags#ReindexFile()<CR>
-"noremap <Leader>rl :call rtags#ProjectList()<CR>
-"noremap <Leader>rw :call rtags#RenameSymbolUnderCursor()<CR>
-"noremap <Leader>rv :call rtags#FindVirtuals()<CR>
-"noremap <Leader>rb :call rtags#JumpBack()<CR>
-"noremap <Leader>rC :call rtags#FindSuperClasses()<CR>
-"noremap <Leader>rc :call rtags#FindSubClasses()<CR>
-"noremap <Leader>rd :call rtags#Diagnostics()<CR>
 
 " FZF
 " Augment Ag command with fzf#vim#with_preview
@@ -404,15 +327,15 @@ let g:fzf_colors =
   \ 'header':  ['fg', 'Comment'] }
 
 nnoremap <C-p> :Files<CR>
-nnoremap <Leader>p :GFiles<CR>
-nnoremap <Leader>gl :Commits<CR>
-nnoremap <Leader>gbl :BCommits<CR>
-nnoremap <Leader>gs :GFiles?<CR>
-nnoremap <Leader><Space> :Commands<CR>
-nnoremap <Leader>h :Helptags<CR>
-nnoremap <Leader>t :Tags<CR>
-nnoremap <Leader>b :Buffer<CR>
-nnoremap <Leader>a :Rg<Space>
+nnoremap <Space>p :GFiles<CR>
+nnoremap <Space>gl :Commits<CR>
+nnoremap <Space>gbl :BCommits<CR>
+nnoremap <Space>gs :GFiles?<CR>
+nnoremap <Space><Space> :Commands<CR>
+nnoremap <Space>h :Helptags<CR>
+nnoremap <Space>t :Tags<CR>
+nnoremap <Space>b :Buffer<CR>
+nnoremap <Space>a :Rg<Space>
 
 " YouCompleteMe
 let g:ycm_collect_identifiers_from_tags_files = 1
@@ -423,14 +346,8 @@ let g:ycm_confirm_extra_conf = 0
 let g:ycm_disable_for_files_larger_than_kb = 2000
 "inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 
-" VimCompletesMe
-let g:vcm_default_maps = 0
-
-" Neomake
-
 " Neovim specific settings
 if has('nvim')
-  "set inccommand=nosplit
   tnoremap <C-g> <C-\><C-n>
   tnoremap <C-j> <C-\><C-n><C-w>j
   tnoremap <C-k> <C-\><C-n><C-w>k
