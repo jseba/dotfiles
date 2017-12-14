@@ -11,4 +11,6 @@ if grep -q Microsoft /proc/version; then
   # WSL I/O is rather lackluster for git
   export ZSH_THEME_NO_GIT=1
 
+  # X11 forwarding
+  export DISPLAY=localhost:0
 fi
