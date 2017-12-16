@@ -7,6 +7,3 @@
 [submodule "fzf/.fzf"]
 	path = fzf/.fzf
 	url = https://github.com/junegunn/fzf
-[submodule "fonts/.fonts/nerd-fonts"]
-	path = fonts/.fonts/nerd-fonts
-	url = https://github.com/ryanoasis/nerd-fonts
