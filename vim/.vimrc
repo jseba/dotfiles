@@ -197,6 +197,8 @@ let g:base16_termtrans = 1
 let g:nord_italic_comments = 10
 let g:gruvbox_italicize_comments = 1
 let g:onedark_terminal_italics = 1
+colorscheme PaperColor
+
 if !has('gui_running')
   if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
     call toggletheme#maptransparency("<F10>")
@@ -213,12 +215,7 @@ if !has('gui_running')
       let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
     endif
   endif
-
-  colorscheme PaperColor
-
-  "hi Normal ctermbg=NONE guibg=NONE
-endif
-if has('gui_running')
+else
   set guifont=Source\ Code\ Pro\ 9
   set guioptions-=T
   set guioptions-=e
@@ -228,7 +225,6 @@ if has('gui_running')
   set guioptions-=C
   set guioptions-=L
   set guioptions+=c
-  colorscheme gruvbox
 endif
 
 " Airline setup
