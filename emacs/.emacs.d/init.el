@@ -399,7 +399,9 @@ special cases for certain languages with weak native support."
   (nx/smart-newline-and-indent))
 
 (defun nx/smart-kill-whole-line (&optional arg)
-  "Kill whole line and move back to indentation."
+  "Kill whole line and move back to indentation.
+
+With ARG."
   (interactive "p")
   (kill-whole-line arg)
   (back-to-indentation))
@@ -422,9 +424,10 @@ the beginning of the line."
              (beginning-of-visual-line))))))
 
 (defun nx/smart-move-end-of-line ()
-  "Move forward to the last non-blank character in the line, ignoring comments
-and trailing whitespace. If already there, move to the real end of the line.
-If already there, do nothing."
+  "Move forward to the last non-blank character in the line.
+
+Ignores comments and trailing whitespace. If already there, move
+to the real end of the line. If already there, do nothing."
   (interactive)
   (let* ((point (point))
          (eol (save-excursion (end-of-visual-line) (point)))
@@ -475,7 +478,7 @@ beginning or end of the buffer, stop there."
     (back-to-indentation)
     (kill-region (point) prev-pos)))
 
-(defun nx/smart-backward-up-sexp (arg)
+(defun nx/smart-backward-sexp (arg)
   "Jump up to the start of the ARG'th enclosing sexp."
   (interactive "p")
   (let ((ppss (syntax-ppss)))
@@ -611,6 +614,21 @@ BEG and END mark the region to perform on which to perform this operation."
 (defun nx|enable-delete-trailing-whitespace ()
   "Attaches `delete-trailing-whitespace' to a buffer-local `before-save-hook'."
   (add-hook 'before-save-hook #'delete-trailing-whitespace nil t))
+
+;;; Define keybindings
+(bind-keys ("C-j" . nx/smart-newline-and-indent)
+           ([remap kill-whole-line] . nx/smart-kill-whole-line)
+           ([remap move-beginning-of-line] . nx/smart-move-beginning-of-line)
+           ([remap move-end-of-line] . nx/smart-move-end-of-line)
+           ([remap back-to-indentation] . nx/smart-back-to-indentation)
+           ([remap backward-sexp] . nx/smart-backward-sexp)
+           ("C-c e T" . nx/dumb-indent)
+           ([backtab] . nx/dumb-dedent)
+           ("M-DEL" . nx/smart-backward-kill-line)
+           ("C-c e DEL" . nx/backward-delete-whitespace-to-column)
+           ("C-c e i" . nx/inflate-space-maybe)
+           ("C-c e x" . nx/deflate-space-maybe)
+           ("C-c e r" . nx/retab))
 
 ;;; Add hook/advice
 (add-hook 'kill-buffer-query-functions #'nx|dont-kill-scratch-buffer)
@@ -1836,6 +1854,7 @@ ARGS provides Sift command line arguments."
 ;;; Base configuration
 ;;; Define variables/constants
 ;;; Define functions/macros
+;;; Define keybindings
 ;;; Add hooks/advice
 ;;; Packages
 ;;;; Built-ins
