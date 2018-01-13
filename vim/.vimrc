@@ -15,10 +15,9 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
-" Languages
+" Programming
 Plug 'sheerun/vim-polyglot'
-Plug 'ajh17/VimCompletesMe'
-"Plug 'Valloric/YouCompleteMe', { 'for': ['cpp', 'c', 'python', 'go', 'js', 'rs'] }
+Plug 'nlknguyen/c-syntax.vim'
 Plug 'rhysd/vim-clang-format'
 
 " Editing
@@ -38,7 +37,6 @@ Plug 'nanotech/jellybeans.vim'
 Plug 'nlknguyen/papercolor-theme'
 Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
-Plug 'arcticicestudio/nord-vim'
 
 " Local plugins
 if filereadable(expand("~/.local/vim/plugs.vim"))
@@ -61,6 +59,7 @@ set backup
 set backupdir=$HOME/.local/share/vim/backups
 set breakindent
 set cmdheight=2
+set complete+=d
 set expandtab
 set formatoptions+=j
 set hidden
@@ -153,15 +152,27 @@ command! Bclose call <SID>BufcloseCloseIt()
 " disable paren matching in TeX, it's really slow
 au FileType tex :NoMatchParen
 
+" automatic quickfix windows
+augroup autoqf
+  autocmd!
+  autocmd QuickFixCmdPost [^l]* cwindow
+  autocmd QuickFixCmdPost l* lwindow
+augroup END
+
 " Keybindings
 inoremap kj <ESC>
 
-nmap <silent> ,/ :set invhlsearch<CR>
-nmap <silent> <Space>o :Bclose<CR>
+inoremap (<CR> (<CR>)<ESC>O
+inoremap {<CR> {<CR>}<ESC>O
+inoremap [<CR> [<CR>]<ESC>O
+inoremap (; (<CR>);<ESC>O
+inoremap {; (<CR>);<ESC>O
+inoremap [; (<CR>);<ESC>O
+
+nnoremap <silent> <Space>o :Bclose<CR>
+nnoremap <silent> <Space>k :set invhlsearch<CR>
 
 nnoremap ; :
-nnoremap K <nop>
-nnoremap Q <nop>
 nnoremap <Space>< :bp<CR>
 nnoremap <Space>> :bn<CR>
 nnoremap <Space>vs :vsplit<CR>
@@ -170,19 +181,29 @@ nnoremap <Space>hh :resize 60<CR>
 nnoremap <Space>y "+y
 nnoremap <Space>p "+p
 nnoremap <Space>ve :edit ~/.vimrc<CR>
+nnoremap <Space>; *``cgn<ESC>
+nnoremap <Space>, #``cgN<ESC>
 
-map <Space>pp :setlocal paste!<CR>
-map <Space>ss :setlocal spell!<CR>
-map <Space>fc /\v^[<\|=>]{7}( .*\|$)<CR>
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-l> <C-w>l
-map <C-h> <C-w>h
-map <C-g> <ESC>
-map! <C-g> <ESC>
+nnoremap <M-n> :cnext<CR>
+nnoremap <M-p> :cprevious<CR>
 
-vmap <Tab> >gv
-vmap <S-Tab> <gv
+noremap <Space>pp :setlocal paste!<CR>
+noremap <Space>ss :setlocal spell!<CR>
+noremap <Space>fc /\v^[<\|=>]{7}( .*\|$)<CR>
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
+noremap <C-h> <C-w>h
+
+if has('terminal') || has('nvim')
+  tnoremap <C-j> <C-w>j
+  tnoremap <C-k> <C-w>k
+  tnoremap <C-l> <C-w>l
+  tnoremap <C-h> <C-w>h
+endif
+
+vnoremap <Tab> >gv
+vnoremap <S-Tab> <gv
 
 vnoremap > >gv
 vnoremap < <gv
@@ -197,7 +218,13 @@ let g:base16_termtrans = 1
 let g:nord_italic_comments = 10
 let g:gruvbox_italicize_comments = 1
 let g:onedark_terminal_italics = 1
-colorscheme PaperColor
+let g:PaperColor_Theme_Options = {
+      \ 'language' : {
+        \ 'cpp' : {'highlight_standard_library' : 1},
+        \ 'c' : {'highlight_builtins' : 1},
+        \ 'python' : {'highlight_builtins' : 1},
+        \ }
+      \ }
 
 if !has('gui_running')
   if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
@@ -227,10 +254,12 @@ else
   set guioptions+=c
 endif
 
+colorscheme gruvbox
+
 " Airline setup
 set noshowmode
 set laststatus=2
-let g:airline_theme = 'papercolor'
+let g:airline_theme = 'gruvbox'
 let g:airline_extensions =
             \ [
             \ 'netrw',
@@ -264,6 +293,7 @@ hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=da
 
 " Tags
 set tags=./tags;./TAGS
+set tagcase=smart
 
 " Rainbow
 let g:rainbow_active = 0
@@ -281,10 +311,12 @@ nnoremap <silent> <Space>ge :Gedit<CR>
 nnoremap <silent> <Space>gi :Git add -p %<CR>
 nnoremap <silent> <Space>gg :SignifyToggle<CR>
 
-" Polyglot
+" Polyglot/C++
+set cinoptions=N-s
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
-"let g:cpp_experimental_simple_template_highlight = 1
+let g:cpp_class_decl_highlight = 1
+"let g:cpp_experimental_template_highlight = 1
 
 " AlternateFiles
 let g:alternateNoDefaultAlternate = 1
@@ -352,13 +384,12 @@ if has('nvim')
 endif
 
 " clang-format
-augroup clang-format
-  autocmd FileType cpp nnoremap <C-m> :ClangFormat<CR>
-  autocmd FileType cpp vnoremap <C-m> :ClangFormat<CR>
-  autocmd FileType c nnoremap <C-m> :ClangFormat<CR>
-  autocmd FileType c vnoremap <C-m> :ClangFormat<CR>
-augroup END
 let g:clang_format#code_style = 'llvm'
+augroup ClangFormat
+  autocmd!
+  autocmd FileType c,cpp nnoremap <buffer><Space><CR> :<C-u>ClangFormat<CR>
+  autocmd FileType c,cpp vnoremap <buffer><Space><CR> :ClangFormat<CR>
+augroup END
 
 " Read local machine settings
 if filereadable(expand("~/.lvimrc"))
