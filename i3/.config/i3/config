@@ -1,4 +1,4 @@
-font pango:xos4 Terminess Powerline 8
+font pango:xos4 Terminess Powerline 10
 new_window pixel 0
 gaps inner 10
 gaps outer 10
@@ -12,12 +12,17 @@ set $right l
 floating_modifier Mod4
 
 bindsym Mod4+Return exec st
-bindsym Mod4+Shift+Return exec st -f 'SauceCodePro Nerd Font:size=14'
+bindsym Mod4+Shift+Return exec st -f 'Hack:pixelsize=18'
 bindsym Mod4+space exec rofi -show combi
 bindsym Mod4+Shift+space exec rofi -show drun
 
+bindsym Mod4+c exec firefox
+
 # kill focused window
 bindsym Mod4+d kill
+
+# lock screen
+bindsym Mod4+m exec xscreensaver-command -lock
 
 bindsym Mod4+$left focus left
 bindsym Mod4+$down focus down
@@ -127,7 +132,7 @@ client.urgent           #042b68     #6df3fb         #000000
 client.placeholder      #042b68     #0aa0f1         #000000
 
 bar {
-    font pango: RobotoMono Nerd Font 6
+    font pango: Hack 10
     status_command i3blocks
     position top
     colors {
@@ -142,3 +147,7 @@ bar {
 
 bindsym Mod4+r mode "resize"
 
+# autostarts
+exec --no-startup-id nitrogen --restore
+exec --no-startup-id xscreensaver -no-splash
+exec --no-startup-id compton -b -c
