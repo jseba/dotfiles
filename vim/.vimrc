@@ -12,7 +12,6 @@ endif
 call plug#begin('~/.vim/plugged')
 
 " VCS
-Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
 " Programming
@@ -22,30 +21,18 @@ Plug 'rhysd/vim-clang-format'
 
 " Editing
 Plug 'tpope/vim-commentary'
-Plug 'will133/vim-dirdiff'
 
 " Interface
 Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'henrik/vim-indexed-search'
 
 " Colorschemes
 Plug 'morhetz/gruvbox'
-Plug 'tomasr/molokai'
-Plug 'nanotech/jellybeans.vim'
-Plug 'nlknguyen/papercolor-theme'
-Plug 'w0ng/vim-hybrid'
-Plug 'chriskempson/base16-vim'
 
 " Local plugins
 if filereadable(expand("~/.local/vim/plugs.vim"))
   so ~/.local/vim/plugs.vim
 endif
-
-" Manually managed
-Plug '~/.vim/gtags'
-Plug '~/.vim/wcos'
 
 call plug#end()
 
@@ -211,26 +198,10 @@ vnoremap < <gv
 " Color scheme
 set background=dark
 let g:gruvbox_contrast_dark = 'hard'
-let g:base16colorspace = 256
-let g:base16_underline = 1
-let g:base16_italic = 1
-let g:base16_termtrans = 1
-let g:nord_italic_comments = 10
-let g:gruvbox_italicize_comments = 1
-let g:onedark_terminal_italics = 1
-let g:PaperColor_Theme_Options = {
-      \ 'language' : {
-        \ 'cpp' : {'highlight_standard_library' : 1},
-        \ 'c' : {'highlight_builtins' : 1},
-        \ 'python' : {'highlight_builtins' : 1},
-        \ }
-      \ }
+let g:gruvbox_italics = 1
 
 if !has('gui_running')
   if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
-    call toggletheme#maptransparency("<F10>")
-    call toggletheme#mapbg("<F11>")
-    call toggletheme#map256("<F12>")
     set termguicolors
     if !has('nvim')
       set t_Co=256
@@ -260,56 +231,15 @@ colorscheme gruvbox
 set noshowmode
 set laststatus=2
 let g:airline_theme = 'gruvbox'
-let g:airline_extensions =
-            \ [
-            \ 'netrw',
-            \ 'tabline',
-            \ 'whitespace',
-            \ ]
-if !has('gui_running') && ($TERM == "linux" || $TERM == "putty-256color" || $OLDTERM == "putty-256color")
-  " Disable powerline symbols when it seems unlikely we'll have them
-  let g:airline_left_sep = ''
-  let g:airline_left_alt_sep = ''
-  let g:airline_right_sep = ''
-  let g:airline_right_alt_sep = ''
-  let g:airline_branch = ''
-  let g:airline_readonly = ''
-  let g:airline_linenr = ''
-else
-  let g:airline_left_sep = ''
-  let g:airline_left_alt_sep = ''
-  let g:airline_right_sep = ''
-  let g:airline_right_alt_sep = ''
-  let g:airline_branch = ''
-  let g:airline_readonly = ''
-  let g:airline_linenr = ''
-endif
+let g:airline_extensions = []
+let g:airline_powerline_symbols = 0
 
 " Omnicomplete
 set completeopt+=longest
-hi Pmenu  guifg=#000000 guibg=#F8F8F8 ctermfg=black ctermbg=Lightgray
-hi PmenuSbar  guifg=#8A95A7 guibg=#F8F8F8 gui=NONE ctermfg=darkcyan ctermbg=lightgray cterm=NONE
-hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=darkcyan cterm=NONE
 
 " Tags
 set tags=./tags;./TAGS
 set tagcase=smart
-
-" Rainbow
-let g:rainbow_active = 0
-
-" Fugitive
-nnoremap <silent> <Space>gs :Gstatus<CR>
-nnoremap <silent> <Space>gd :Gdiff<CR>
-nnoremap <silent> <Space>gc :Gcommit<CR>
-nnoremap <silent> <Space>gb :Gblame<CR>
-nnoremap <silent> <Space>gl :Glog<CR>
-nnoremap <silent> <Space>gp :Git push<CR>
-nnoremap <silent> <Space>gr :Gread<CR>
-nnoremap <silent> <Space>gw :Gwrite<CR>
-nnoremap <silent> <Space>ge :Gedit<CR>
-nnoremap <silent> <Space>gi :Git add -p %<CR>
-nnoremap <silent> <Space>gg :SignifyToggle<CR>
 
 " Polyglot/C++
 set cinoptions=N-s
@@ -317,9 +247,6 @@ let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
 "let g:cpp_experimental_template_highlight = 1
-
-" AlternateFiles
-let g:alternateNoDefaultAlternate = 1
 
 " Ag
 let g:ag_working_path_mode = 'r'
@@ -364,24 +291,6 @@ nnoremap <Space>h :Helptags<CR>
 nnoremap <Space>t :Tags<CR>
 nnoremap <Space>b :Buffer<CR>
 nnoremap <Space>a :Rg<Space>
-
-" YouCompleteMe
-let g:ycm_collect_identifiers_from_tags_files = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_disable_for_files_larger_than_kb = 2000
-"inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-
-" Neovim specific settings
-if has('nvim')
-  tnoremap <C-g> <C-\><C-n>
-  tnoremap <C-j> <C-\><C-n><C-w>j
-  tnoremap <C-k> <C-\><C-n><C-w>k
-  tnoremap <C-l> <C-\><C-n><C-w>l
-  tnoremap <C-h> <C-\><C-n><C-w>h
-endif
 
 " clang-format
 let g:clang_format#code_style = 'llvm'
