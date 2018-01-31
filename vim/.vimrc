@@ -155,6 +155,9 @@ inoremap [<CR> [<CR>]<ESC>O
 inoremap (; (<CR>);<ESC>O
 inoremap {; (<CR>);<ESC>O
 inoremap [; (<CR>);<ESC>O
+inoremap (<Space> ()<ESC>i
+inoremap {<Space> ()<ESC>i
+inoremap [<Space> ()<ESC>i
 
 nnoremap <silent> <Space>o :Bclose<CR>
 nnoremap <silent> <Space>k :set invhlsearch<CR>
@@ -198,7 +201,7 @@ vnoremap < <gv
 " Color scheme
 set background=dark
 let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_italics = 1
+let g:gruvbox_italic = 1
 
 if !has('gui_running')
   if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
