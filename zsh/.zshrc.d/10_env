@@ -16,8 +16,8 @@ if [ -d $GOPATH/bin ]; then
     export PATH=$PATH:$GOPATH/bin
 fi
 
-if [ $TERM != "tmux-256color" ]; then
+if [ $TERM != "xterm-256color" ]; then
     export OLDTERM=$TERM
+    export TERM="xterm-256color"
 fi
 
-export TERM="tmux-256color"
