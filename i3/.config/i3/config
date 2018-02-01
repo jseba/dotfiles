@@ -11,12 +11,12 @@ set $right l
 
 floating_modifier Mod4
 
-bindsym Mod4+Return exec st
-bindsym Mod4+Shift+Return exec st -f 'Hack:pixelsize=18'
+bindsym Mod4+Return exec alacritty
+bindsym Mod4+Shift+Return exec st
 bindsym Mod4+space exec rofi -show combi
 bindsym Mod4+Shift+space exec rofi -show drun
 
-bindsym Mod4+c exec firefox
+bindsym Mod4+c exec /usr/bin/chromium-browser
 
 # kill focused window
 bindsym Mod4+d kill
