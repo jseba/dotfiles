@@ -9,7 +9,7 @@ PROMPT='
 ${LAMBDA}\
  %{$fg_bold[$USERCOLOR]%}%n@%M\
  %{$fg_no_bold[magenta]%}[%3~]\
- %{$fg_bold[cyan]%}→ %{$reset_color%}'
+ %{$fg_bold[cyan]%}→ %{$reset_color%} '
 
 RPROMPT=''
 if [[ $ZSH_THEME_NO_GIT == "1" ]]; then
