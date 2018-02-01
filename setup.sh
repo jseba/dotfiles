@@ -4,7 +4,7 @@
 type stow >/dev/null 2>&1 || { echo "Stow not found"; exit 1; }
 
 ## Add list of folders to be managed by stow
-STOWED_DIRS=( bin dircolors emacs fonts fzf git herbstluft i3 nvim rofi terminfo tmux urxvt vim xorg zsh )
+STOWED_DIRS=( alacritty bin dircolors emacs fonts fzf git herbstluft i3 nvim rofi terminfo tmux urxvt vim xorg zsh )
 
 #
 # Pre-Stow warmup
