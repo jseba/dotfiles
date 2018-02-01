@@ -227,6 +227,9 @@ endif
 
 colorscheme gruvbox
 
+" allow for transparency
+hi! Normal ctermbg=NONE guibg=NONE
+
 " Airline setup
 set noshowmode
 set laststatus=2
@@ -294,6 +297,10 @@ nnoremap <Space>a :Rg<Space>
 
 " clang-format
 let g:clang_format#code_style = 'llvm'
+let g:clang_format#style_options = {
+      \ 'AlignConsecutiveDeclarations': 'true',
+      \ 'BreakBeforeBraces': 'Linux',
+      \ }
 augroup ClangFormat
   autocmd!
   autocmd FileType c,cpp nnoremap <buffer><Space><CR> :<C-u>ClangFormat<CR>
