@@ -238,7 +238,7 @@ set noshowmode
 set laststatus=2
 let g:airline_theme = 'gruvbox'
 let g:airline_extensions = []
-let g:airline_powerline_symbols = 0
+let g:airline_powerline_fonts = 0
 
 " Omnicomplete
 set completeopt+=longest
