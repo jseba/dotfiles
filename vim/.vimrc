@@ -24,7 +24,6 @@ Plug 'tpope/vim-commentary'
 
 " Interface
 Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
-Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
 
 " Colorschemes
 Plug 'morhetz/gruvbox'
@@ -233,12 +232,37 @@ colorscheme gruvbox
 " allow for transparency
 hi! Normal ctermbg=NONE guibg=NONE
 
-" Airline setup
+" Statusline setup
+function! ModeForStatusline()
+  let mode_status = {
+        \ 'i': 'Insert',
+        \ 'n': 'Normal',
+        \ 'v': 'Visual',
+        \ 'V': 'V-Line',
+        \ "\<C-v>": 'V-Block',
+        \ 'c': 'Command',
+        \ 's': 'Select',
+        \ 'S': 'S-Line',
+        \ "\<C-s>": 'S-Block',
+        \ 't': 'Terminal',
+  \ }
+  return get(mode_status, mode(), '')
+endfunction
+
 set noshowmode
 set laststatus=2
-let g:airline_theme = 'gruvbox'
-let g:airline_extensions = []
-let g:airline_powerline_fonts = 0
+set statusline=
+" set statusline+=%#PmenuSel#
+set statusline+=\ %{ModeForStatusline()}
+set statusline+=\ %#LineNr#
+set statusline+=\ %F
+set statusline+=\ %m
+set statusline+=%=
+set statusline+=\ %y
+set statusline+=\ %v
+set statusline+=\:%l
+set statusline+=\/%L
+set statusline+=\ %{winnr()}
 
 " Omnicomplete
 set completeopt+=longest
