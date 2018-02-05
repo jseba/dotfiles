@@ -151,9 +151,6 @@ inoremap kj <ESC>
 inoremap (<CR> (<CR>)<ESC>O
 inoremap {<CR> {<CR>}<ESC>O
 inoremap [<CR> [<CR>]<ESC>O
-inoremap (; (<CR>);<ESC>O
-inoremap {; (<CR>);<ESC>O
-inoremap [; (<CR>);<ESC>O
 inoremap (<Space> ()<ESC>i
 inoremap {<Space> ()<ESC>i
 inoremap [<Space> ()<ESC>i
@@ -255,17 +252,21 @@ endfunction
 set noshowmode
 set laststatus=2
 set statusline=
-" set statusline+=%#PmenuSel#
 set statusline+=\ %{ModeForStatusline()}
 set statusline+=\ %#LineNr#
-set statusline+=\ %F
+set statusline+=\ %f
 set statusline+=\ %m
 set statusline+=%=
+set statusline+=\ %#TabLine#
 set statusline+=\ %y
+set statusline+=\ %{&fileformat}
+set statusline+=\ %#StatusLine#
+set statusline+=\ %P
 set statusline+=\ %v
 set statusline+=\:%l
 set statusline+=\/%L
 set statusline+=\ %{winnr()}
+set statusline+=\ %#StatusLine#
 
 " Omnicomplete
 set completeopt+=longest
