@@ -18,6 +18,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'sheerun/vim-polyglot'
 Plug 'nlknguyen/c-syntax.vim'
 Plug 'rhysd/vim-clang-format'
+Plug 'Valloric/YouCompleteMe'
+Plug 'w0rp/ale'
 
 " Editing
 Plug 'tpope/vim-commentary'
@@ -152,8 +154,8 @@ inoremap (<CR> (<CR>)<ESC>O
 inoremap {<CR> {<CR>}<ESC>O
 inoremap [<CR> [<CR>]<ESC>O
 inoremap (<Space> ()<ESC>i
-inoremap {<Space> ()<ESC>i
-inoremap [<Space> ()<ESC>i
+inoremap {<Space> {}<ESC>i
+inoremap [<Space> []<ESC>i
 
 nnoremap <silent> <Space>o :Bclose<CR>
 nnoremap <silent> <Space>k :set invhlsearch<CR>
@@ -162,7 +164,7 @@ nnoremap ; :
 nnoremap <Space>< :bp<CR>
 nnoremap <Space>> :bn<CR>
 nnoremap <Space>vs :vsplit<CR>
-nnoremap <Space>ss :split<CR>
+nnoremap <Space>hs :split<CR>
 nnoremap <Space>hh :resize 60<CR>
 nnoremap <Space>y "+y
 nnoremap <Space>p "+p
@@ -337,6 +339,12 @@ augroup ClangFormat
   autocmd FileType c,cpp nnoremap <buffer><Space><CR> :<C-u>ClangFormat<CR>
   autocmd FileType c,cpp vnoremap <buffer><Space><CR> :ClangFormat<CR>
 augroup END
+
+" ALE
+let g:ale_linters = {
+      \ 'c': [ 'clangtidy' ],
+      \ 'cpp': [ 'clangtidy', 'clang-check' ]
+      \ }
 
 " Read local machine settings
 if filereadable(expand("~/.lvimrc"))
