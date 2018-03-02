@@ -16,6 +16,10 @@ if [ -d $GOPATH/bin ]; then
     export PATH=$PATH:$GOPATH/bin
 fi
 
+if [ -d $HOME/.cargo/bin/ ]; then
+    export PATH=$PATH:$HOME/.cargo/bin
+fi
+
 if [ $TERM != "xterm-256color" ]; then
     export OLDTERM=$TERM
     export TERM="xterm-256color"
