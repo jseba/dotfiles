@@ -11,11 +11,12 @@ set $right l
 
 floating_modifier Mod4
 
-bindsym Mod4+Return exec alacritty
-bindsym Mod4+Shift+Return exec st
+bindsym Mod4+Return exec st
+bindsym Mod4+Shift+Return exec alacritty
 bindsym Mod4+space exec rofi -show combi
 bindsym Mod4+Shift+space exec rofi -show drun
 
+bindsym Mod4+b exec /usr/bin/emacs
 bindsym Mod4+c exec /usr/bin/chromium-browser
 
 # kill focused window
@@ -67,13 +68,14 @@ bindsym Mod4+Shift+Tab workspace prev
 
 # Name the workspaces
 set $workspace1 "1:  code"
-set $workspace2 "2:  terminal"
-set $workspace3 "3:  www"
-set $workspace4 "4:  files"
-set $workspace5 "5:  virtual machines"
-set $workspace6 "6:  status"
-set $workspace7 "7:  music"
-set $workspace8 "8:  random"
+set $workspace2 "2:  code"
+set $workspace3 "3:  terminal"
+set $workspace4 "4:  www"
+set $workspace5 "5:  files"
+set $workspace6 "6:  virtual machines"
+set $workspace7 "7:  status"
+set $workspace8 "8:  music"
+set $workspace9 "9:  random"
 
 # switch to workspace
 bindsym Mod4+1 workspace $workspace1
@@ -84,7 +86,7 @@ bindsym Mod4+5 workspace $workspace5
 bindsym Mod4+6 workspace $workspace6
 bindsym Mod4+7 workspace $workspace7
 bindsym Mod4+8 workspace $workspace8
-bindsym Mod4+9 workspace 9
+bindsym Mod4+9 workspace $workspace9
 bindsym Mod4+0 workspace 10
 
 # move focused container to workspace
@@ -96,7 +98,7 @@ bindsym Mod4+Shift+5 move container to workspace $workspace5
 bindsym Mod4+Shift+6 move container to workspace $workspace6
 bindsym Mod4+Shift+7 move container to workspace $workspace7
 bindsym Mod4+Shift+8 move container to workspace $workspace8
-bindsym Mod4+Shift+9 move container to workspace 9
+bindsym Mod4+Shift+9 move container to workspace $workspace9
 bindsym Mod4+Shift+0 move container to workspace 10
 
 # reload the configuration file
