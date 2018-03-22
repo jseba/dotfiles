@@ -150,13 +150,6 @@ augroup END
 " Keybindings
 inoremap kj <ESC>
 
-inoremap (<CR> (<CR>)<ESC>O
-inoremap {<CR> {<CR>}<ESC>O
-inoremap [<CR> [<CR>]<ESC>O
-inoremap (<Space> ()<ESC>i
-inoremap {<Space> {}<ESC>i
-inoremap [<Space> []<ESC>i
-
 nnoremap <silent> <Space>o :Bclose<CR>
 nnoremap <silent> <Space>k :set invhlsearch<CR>
 
