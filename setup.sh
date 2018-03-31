@@ -31,4 +31,7 @@ pushd ${HOME}/.fzf/
 ./install --bin --64 || exit 1
 popd
 
+## Setup DOOM init.el
+ln -sfv $(realpath emacs/.doom.d/.init.el) emacs/.emacs.d/init.el
+
 exit 0
