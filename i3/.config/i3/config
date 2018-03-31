@@ -16,8 +16,8 @@ bindsym Mod4+Shift+Return exec alacritty
 bindsym Mod4+space exec rofi -show combi
 bindsym Mod4+Shift+space exec rofi -show drun
 
-bindsym Mod4+b exec /usr/bin/emacs
-bindsym Mod4+c exec /usr/bin/chromium-browser
+bindsym Mod4+b exec emacs
+bindsym Mod4+c exec chromium-browser
 
 # kill focused window
 bindsym Mod4+d kill
