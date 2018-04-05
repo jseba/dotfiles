@@ -12,7 +12,7 @@
        snippets          ; my elves. They type so I don't have to
        spellcheck        ; tasing you for misspelling mispelling
        syntax-checker    ; tasing you for every semicolon you forget
-      ;version-control   ; remember, remember that commit in November
+       version-control   ; remember, remember that commit in November
        workspaces        ; tab emulation, persistence & separate workspaces
 
        :completion
@@ -34,7 +34,7 @@
        eshell            ; a consistent, cross-platform shell (WIP)
        imenu             ; an imenu sidebar and searchable code index
        make              ; run make tasks from Emacs
-      ;magit             ; magit is magic
+       magit             ; magit is magic
        pdf               ; pdf enhancements
        rotate-text       ; cycle region at point between text candidates
        term              ; terminals in Emacs
