@@ -8,3 +8,4 @@ emacs/.emacs.d/tramp
 emacs/.emacs.d/.*
 emacs/.emacs.d/projectile*
 emacs/.emacs.d/etc
+*.elc
