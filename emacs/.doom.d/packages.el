@@ -2,6 +2,7 @@
 
 ;;; Programming
 (package! lsp-mode)
+(package! lsp-ui)
 (package! company-lsp)
 (package! ivy-xref)
 
@@ -11,6 +12,3 @@
 (package! disaster)
 (package! modern-cpp-font-lock)
 (package! cquery)
-(package! irony)
-(package! company-irony)
-(package! company-irony-c-headers)

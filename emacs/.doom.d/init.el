@@ -1,61 +1,57 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
 (doom! :feature
-       (popup            ; tame sudden yet inevitable temporary windows
-        +all             ; catch all popups that start with an asterix
-        +defaults)       ; default popup rules
-      ;debugger          ; FIXME stepping through code, to help you add bugs
-       eval              ; run code, run (also, repls)
-       (evil +everywhere); come to the dark side (we have cookies)
-       file-templates    ; auto-snippets for empty files
-      ;services          ; TODO managing external services & code builders
-       snippets          ; my elves. They type so I don't have to
-       spellcheck        ; tasing you for misspelling mispelling
-       syntax-checker    ; tasing you for every semicolon you forget
-       version-control   ; remember, remember that commit in November
-       workspaces        ; tab emulation, persistence & separate workspaces
+       ;debugger
+       eval
+       (evil +everywhere)
+       file-templates
+       ;services
+       snippets
+       spellcheck
+       syntax-checker
+       workspaces
 
        :completion
-       company           ; the ultimate code completion backend
-       ivy               ; a search engine for love and life
+       company
+       (ivy +childframe)
+
+       :editor
+       rotate-text
 
        :ui
-       doom              ; what makes DOOM look the way it does
-       doom-dashboard    ; a nifty splash screen for Emacs
-       doom-modeline     ; a snazzy Atom-inspired mode-line
-       hl-todo           ; highlight TODO/FIXME/NOTE tags
-       nav-flash         ; blink the current line after jumping
-       window-select     ; visually switch windows
-       posframe          ; use child frames where possible (Emacs 26+ only)
+       doom
+       (doom-modeline +new)
+       hl-todo
+       popup
+       (pretty-code +fira)
+       vc-gutter
+       window-select
 
        :tools
-       dired             ; making dired pretty [functional]
-       electric-indent   ; smarter, keyword-based electric-indent
-       eshell            ; a consistent, cross-platform shell (WIP)
-       imenu             ; an imenu sidebar and searchable code index
-       make              ; run make tasks from Emacs
-       magit             ; magit is magic
-       pdf               ; pdf enhancements
-       rotate-text       ; cycle region at point between text candidates
-       term              ; terminals in Emacs
+       make
+       magit
+       pdf
+
+       :emacs
+       dired
+       electric
+       eshell
+       imenu
+       term
+       vc
 
        :lang
-       assembly          ; assembly for fun or debugging
-       data              ; config/data formats
-       emacs-lisp        ; drown in parentheses
-       markdown          ; writing docs for people to ignore
-       (org              ; organize your plain life in plain text
-        +attach          ; custom attachment system
-        +babel           ; running code in org
-        +capture         ; org-capture in and outside of Emacs
-        +export          ; Exporting org to whatever you want
-        +publish)        ; Emacs+Org as a static site generator
-       perl              ; write code no one else can comprehend
-       python            ; beautiful is better than ugly
-       sh                ; she sells (ba|z)sh shells on the C xor
+       assembly
+       data
+       emacs-lisp
+       markdown
+       (org +attach +babel +capture +export +publish)
+       perl
+       python
+       sh
 
        :app
-      ;(email +gmail)    ; emacs as an email client
-      ;irc               ; how neckbeards socialize
-      ;(rss +org)        ; emacs as an RSS reader
+      ;(email +gmail)
+      ;irc
+      ;(rss +org)
       )
