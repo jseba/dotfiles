@@ -42,6 +42,7 @@
 
        :lang
        assembly
+       (cc +lsp)
        data
        emacs-lisp
        markdown
