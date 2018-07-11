@@ -12,7 +12,7 @@
        workspaces
 
        :completion
-       company
+       (company +childframe)
        (ivy +childframe)
 
        :editor
@@ -54,4 +54,5 @@
       ;(email +gmail)
       ;irc
       ;(rss +org)
-      )
+       :config
+       (default +evil-commands))

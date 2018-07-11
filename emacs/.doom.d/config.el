@@ -16,7 +16,6 @@
  [remap split-window-vertically]    #'nx/split-window-vertically-with-other-buffer
  [remap split-window-horizontally]  #'nx/split-window-horizontally-with-other-buffer
  [remap delete-other-windows]       #'nx/toggle-delete-other-windows
- [remap completion-at-point]        #'company-complete
 
  (:map company-mode-map
    [remap dabbrev-expand] #'company-dabbrev)
