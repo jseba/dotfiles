@@ -113,8 +113,8 @@
      :desc "Find other file"           :n       "a"     #'projectile-find-other-file
      :desc "Find project editorconfig" :n       "C"     #'editorconfig-find-current-editorconfig
      :desc "Find directory"            :n       "d"     #'dired
-     :desc "Find file in emacs.d"      :n       "e"     #'+default/find-in-config
-     :desc "Browse emacs.d"            :n       "E"     #'+default/find-in-emacsd
+     :desc "Find file in doom.d"       :n       "e"     #'+default/find-in-config
+     :desc "Find file in emacs.d"      :n       "E"     #'+default/find-in-emacsd
      :desc "Recent files"              :n       "r"     #'recentf-open-files
      :desc "Recent project files"      :n       "R"     #'projectile-recentf
      :desc "Yank filename"             :n       "y"     #'+default/yank-buffer-filename
@@ -308,9 +308,6 @@
  :v  "@"  #'+evil:apply-macro
  :n  "g@" #'+evil:apply-macro
 
- ;; repeat in visual mode (FIXME buggy)
- :v  "."  #'evil-repeat
-
  ;; don't leave visual mode after shifting
  :v  "<"  #'+evil/visual-dedent  ; vnoremap < <gv
  :v  ">"  #'+evil/visual-indent  ; vnoremap > >gv
@@ -326,7 +323,6 @@
 
  ;; company-mode (vim-like omnicompletion)
  [remap dabbrev-expand] #'+company/complete
- :i "C-@"    #'+company/complete
  :i "C-SPC"  #'+company/complete
  (:prefix "C-x"
    :i "C-l"   #'+company/whole-lines
