@@ -112,4 +112,22 @@
   :hook (c++-mode . modern-c++-font-lock-mode))
 
 (when (featurep! +lsp)
-  (def-package! cquery))
+  (def-package! cquery
+    :when (executable-find "cquery")
+    :commands lsp-cquery-enable
+    :init
+    (setq cquery-executable (executable-find "cquery")
+          cquery-cache-dir "~/.config/cquery/cache"
+          cquery-extra-args `(,(concat "--log-file="
+                                      (expand-file-name
+                                       (if IS-WINDOWS
+                                           (getenv "TEMP")
+                                         "/tmp"))
+                                      "/cquery.log"))
+          cquery-extra-init-params '(:cacheFormat
+                                     "msgpack"
+                                     :index
+                                     (:comments 3)
+                                     :completion
+                                     (:detailedLabel t))))
+  (add-hook! (c-mode c++-mode) #'+cc|enable-cquery-maybe))

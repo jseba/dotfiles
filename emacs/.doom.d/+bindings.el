@@ -1,4 +1,4 @@
-;;; ~/Dotfiles/emacs/.doom.d/+bindings.el -*- lexical-binding: t; -*-
+;;; +bindings.el -*- lexical-binding: t; -*-
 
 ;; This file defines the standard bindings for Emacs
 

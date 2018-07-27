@@ -1,4 +1,4 @@
-;;; private/jseba/config.el  -*- lexical-binding: t; -*-
+;;; config.el  -*- lexical-binding: t; -*-
 
 (pcase system-type
   ('windows-nt)
@@ -69,8 +69,8 @@
         evil-want-fine-undo nil
         expand-region-contract-fast-key "V"))
 
-(setq doom-font (font-spec :family "Hack" :size 12)
-      doom-big-font (font-spec :family "Hack" :size 16)
+(setq doom-font (font-spec :family "Fira Code Retina" :size 12)
+      doom-big-font (font-spec :family "Fira Code Retina" :size 16)
       tab-always-indent 'complete)
 
 (def-package! ivy-xref)
