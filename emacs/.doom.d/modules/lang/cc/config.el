@@ -26,8 +26,8 @@
             (c-offsets-alist
              (arglist-close . c-lineup-arglist)
              (arglist-intro . ++)
-             (bracelist-intro . c-lineup-arglist-intro-after-paren)
-             (bracelist-open . +)
+             (brace-list-intro . c-lineup-arglist-intro-after-paren)
+             (brace-list-open . +)
              (inline-open . 0)
              (innamespace . 0)
              (knr-argdecl-intro . 5)
@@ -124,10 +124,13 @@
                                            (getenv "TEMP")
                                          "/tmp"))
                                       "/cquery.log"))
-          cquery-extra-init-params '(:cacheFormat
-                                     "msgpack"
-                                     :index
+          cquery-extra-init-params '(:index
                                      (:comments 3)
                                      :completion
-                                     (:detailedLabel t))))
-  (add-hook! (c-mode c++-mode) #'+cc|enable-cquery-maybe))
+                                     (:detailedLabel t)))
+
+    ;; add .cquery configuration file as a project root
+    (after! projectile
+      (push ".cquery" projectile-project-root-files-bottom-up))
+
+    (add-hook! (c-mode c++-mode) #'+cc|enable-cquery-maybe)))
