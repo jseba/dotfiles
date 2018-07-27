@@ -22,7 +22,7 @@
        doom
        (doom-modeline +new)
        hl-todo
-       popup
+       (popup +all +defaults)
        (pretty-code +fira)
        vc-gutter
        window-select

@@ -62,7 +62,7 @@
      :desc "New empty buffer"          :n       "n"     #'evil-buffer-new
      :desc "Switch workspace buffer"   :n       "B"     #'persp-switch-to-buffer
      :desc "Switch buffer"             :n       "b"     #'switch-to-buffer
-     :desc "Kill buffer"               :n       "k"     #'doom/kill-this-buffer
+     :desc "Kill buffer"               :n       "k"     #'kill-this-buffer
      :desc "Kill other buffers"        :n       "K"     #'doom/kill-other-buffers
      :desc "Bury buffer"               :n       "z"     #'bury-buffer
      :desc "Next buffer"               :n       "]"     #'next-buffer
@@ -229,7 +229,7 @@
 
    (:desc "popups" :prefix "q"
      :desc "Cycle next popup"          :n    [tab]  #'+popup/other
-     :desc "Close popup"               :n    "x"    #'+popup/close-popup
+     :desc "Close popup"               :n    "x"    #'+popup/close
      :desc "Close all popups"          :n    "X"    #'+popup/close-all
      :desc "Cleanup popup rules"       :n    "R"    #'+popup/cleanup-rules
      :desc "Restore last popup"        :n    "w"    #'+popup/restore
