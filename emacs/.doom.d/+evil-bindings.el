@@ -3,6 +3,18 @@
 ;; This file defines the keymap if Evil is loaded
 
 (map!
+ [remap evil-jump-to-tag] #'projectile-find-tag
+ [remap find-tag]         #'projectile-find-tag
+
+ ;; ensure there are no conflicts with leader
+ :nvmo doom-leader-key      nil
+ :nvmo doom-localleader-key nil
+
+ ;; Swap RET/C-j in insert mode
+ :i [remap newline] #'newline-and-indent
+ :i "C-j"           #'+default/newline
+
+
  ;; --- Global keybindings -----------------------------------------------------------------
  :gnvmie "M-x"                       #'execute-extended-command
  :gnvmie "M-:"                       #'eval-expression
@@ -38,7 +50,10 @@
  :ne     "M-a"                       #'mark-whole-buffer
  :ne     "M-c"                       #'evil-yank
  :ne     "M-q"                       (if (daemonp) #'delete-frame #'evil-quit-all)
- :ne     "M-f"                       #'swiper
+ (:when (featurep! :completion helm)
+   :ne   "M-f"                       #'swiper-helm)
+ (:when (featurep! :completion ivy)
+   :ne   "M-f"                       #'swiper)
  :n      "M-s"                       #'save-buffer
  :nv     "C-SPC"                     #'+evil:fold-toggle
  :gnvmie "M-v"                       #'clipboard-yank
@@ -109,7 +124,6 @@
    (:desc "files" :prefix "f"
      :desc "Find file"                 :n       "."     #'find-file
      :desc "Find file in project"      :n       "/"     #'projectile-find-file
-     :desc "Find file from here"       :n       "?"     #'counsel-file-jump
      :desc "Find other file"           :n       "a"     #'projectile-find-other-file
      :desc "Find project editorconfig" :n       "C"     #'editorconfig-find-current-editorconfig
      :desc "Find directory"            :n       "d"     #'dired
@@ -118,6 +132,8 @@
      :desc "Recent files"              :n       "r"     #'recentf-open-files
      :desc "Recent project files"      :n       "R"     #'projectile-recentf
      :desc "Yank filename"             :n       "y"     #'+default/yank-buffer-filename
+     (:when (featurep! :completion ivy)
+       :desc "Find file from here"     :n       "?"     #'counsel-file-jump)
      (:when (not IS-WINDOWS)
        :desc "Sudo find file"          :n       "s"     #'doom/sudo-find-file
        :desc "Sudo edit this file"     :n       "S"     #'doom/sudo-this-file))
@@ -173,8 +189,11 @@
      :desc "What minor modes"          :n       ","     #'doom/describe-active-minor-mode)
 
    (:desc "insert" :prefix "i"
-     :desc "From kill-ring"            :nv      "y"     #'counsel-yank-pop
-     :desc "From evil registers"       :nv      "r"     #'counsel-evil-registers
+     (:when (featurep! :completion helm)
+       :desc "From kill-ring"            :nv      "y"     #'helm-show-kill-ring)
+     (:when (featurep! :completion ivy)
+       :desc "From kill-ring"            :nv      "y"     #'counsel-yank-pop
+       :desc "From evil registers"       :nv      "r"     #'counsel-evil-registers)
      :desc "From snippet"              :nv      "s"     #'yas-insert-snippet)
 
    (:desc "notes" :prefix "n"
@@ -224,8 +243,11 @@
      :desc "Find other file"           :n    "o"    #'projectile-find-other-file
      :desc "Switch project"            :n    "p"    #'projectile-switch-project
      :desc "Recent project files"      :n    "r"    #'projectile-recentf
-     :desc "List project tasks"        :n    "t"    #'+ivy/tasks
-     :desc "Invalidate cache"          :n    "x"    #'projectile-invalidate-cache)
+     :desc "Invalidate cache"          :n    "x"    #'projectile-invalidate-cache
+     (:when (featurep! :completion ivy)
+       :desc "List project tasks"      :n    "t"    #'+ivy/tasks)
+     (:when (featurep! :completion helm)
+       :desc "List project tasks"      :n    "t"    #'+helm/tasks))
 
    (:desc "popups" :prefix "q"
      :desc "Cycle next popup"          :n    [tab]  #'+popup/other
@@ -281,9 +303,14 @@
      :desc "Spelling Correction"       :n    "S"    #'flyspell-correct-word-generic)
 
    (:desc "search" :prefix "/"
-     :desc "Project"                   :nv   "p"    #'+ivy/project-search
-     :desc "Directory"                 :nv   "d"    (lambda! (+ivy/project-search t))
-     :desc "Buffer"                    :nv   "b"    #'swiper
+     (:when (featurep! :completion ivy)
+       :desc "Project"                 :nv   "p"    #'+ivy/project-search
+       :desc "Directory"               :nv   "d"    (lambda! (+ivy/project-search t))
+       :desc "Buffer"                  :nv   "b"    #'swiper)
+     (:when (featurep! :completion helm)
+       :desc "Project"                 :nv   "p"    #'+helm/project-search
+       :desc "Directory"               :nv   "d"    (lambda! (+helm/project-search t))
+       :desc "Buffer"                  :nv   "b"    #'swiper-helm)
      :desc "Symbols"                   :nv   "i"    #'imenu
      :desc "Symbols (all buffers)"     :nv   "I"    #'imenu-anywhere
      :desc "Online"                    :nv   "o"    #'+lookup/online-select))
@@ -361,11 +388,38 @@
      [escape]  #'company-search-abort))
 
  ;; counsel
- (:after counsel
-   (:map counsel-ag-map
-     [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
-     "C-SPC"    #'ivy-call-and-recenter ; preview
-     "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action)))
+ (:when (featurep! :completion ivy)
+  (:after counsel
+    (:map counsel-ag-map
+      [backtab]  #'+ivy/wgrep-occur      ; search/replace on results
+      "C-SPC"    #'ivy-call-and-recenter ; preview
+      "M-RET"    (+ivy-do-action! #'+ivy-git-grep-other-window-action))))
+
+ ;; helm
+ (:when (featurep! :completion helm)
+    (:after helm
+      (:map helm-map
+        "ESC"     nil
+        "C-S-n"   #'helm-next-source
+        "C-S-p"   #'helm-previous-source
+        "C-u"     #'helm-delete-minibuffer-contents
+        "C-w"     #'backward-kill-word
+        "C-r"     #'evil-paste-from-register
+        "C-s"     #'helm-minibuffer-history
+        "C-b"     #'backward-word
+        [left]    #'backward-char
+        [right]   #'forward-char
+        [escape]  #'helm-keyboard-quit
+        [tab]     #'helm-execute-persistent-action)
+      (:after helm-files
+        (:map helm-generic-files-map
+          :e [escape] #'helm-keyboard-quit)
+        (:map helm-find-files-map
+          "C-w" #'helm-find-files-up-one-level
+          [tab] #'helm-execute-persistent-action))
+      (:after helm-ag
+        (:map helm-ag-map
+          [backtab] #'helm-ag-edit))))
 
  ;; evil
  (:after evil

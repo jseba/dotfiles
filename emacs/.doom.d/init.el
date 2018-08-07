@@ -12,8 +12,8 @@
        workspaces
 
        :completion
-       (company +childframe)
-       (ivy +childframe)
+       company
+       helm
 
        :editor
        rotate-text
