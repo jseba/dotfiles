@@ -439,7 +439,7 @@ workspace."
       (let ((frame-persp (frame-parameter frame 'workspace)))
         (when (string= frame-persp (+persp-current-name))
           (+persp-delete frame-perp)))))
-  (add-hook 'delete-frame-functions #'+persp-delete-associated-perspective)
+  (add-hook 'delete-frame-functions #'+persp-delete-associated-workspace)
 
   (defun +persp-cleanup-associated-buffers ()
     (when persp-mode

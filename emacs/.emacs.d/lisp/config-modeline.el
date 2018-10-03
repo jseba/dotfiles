@@ -516,7 +516,7 @@ root."
  (when (and vc-mode buffer-file-name)
    (let* ((backend (vc-backend buffer-file-name))
           (state   (vc-state buffer-file-name backend)))
-     (let ((face    '+modeline-inactive)
+     (let ((face    'mode-line-inactive)
            (active  (active))
            (all-the-icons-default-adjust -0.1))
        (concat (cond ((memq state '(edited added))
@@ -584,12 +584,12 @@ root."
 (defun +modeline--macro-recording ()
   "Display current Emacs or Evil macro being recorded."
   (when (and (active) (or defining-kbd-macro executing-kbd-macro))
-    (let ((sep (propertize " " 'face +modeline-panel)))
+    (let ((sep (propertize " " 'face '+modeline-panel)))
       (concat sep
               (propertize (if (bound-and-true-p evil-this-macro)
                               (char-to-string evil-this-macro)
                             "Macro")
-                          'face +modeline-panel)
+                          'face '+modeline-panel)
               sep
               (all-the-icons-octicon
                "triangle-right"
@@ -644,7 +644,7 @@ real-time."
                           (iedit-prev-occurrence)
                           (iedit-find-current-occurrence-overlay))))
            (length (length iedit-occurrences-overlays)))
-       (format " %s/d "
+       (format " %s/%d "
                (if this-oc
                    (- length
                       (length (memq this-oc
@@ -743,7 +743,7 @@ real-time."
 
 (defun +modeline-update-flycheck-segment (&optional status)
   (setq +modeline-flycheck
-        (when-let* ((status-str (+modelie--flycheck-status status)))
+        (when-let* ((status-str (+modeline--flycheck-status status)))
           (concat +modeline--vspc status-str " "))))
 (add-hook 'flycheck-mode-hook #'+modeline-update-flycheck-segment)
 (add-hook 'flycheck-status-changed-functions

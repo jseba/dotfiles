@@ -1,7 +1,7 @@
 ;;; config-projects.el
 
 (use-package projectile
-  :commands (projectile-mode projectile-project-root)
+  :commands (projectile-mode projectile-project-root projectile-project-p)
   :init
   (setq	projectile-enable-caching t
 	    projectile-cache-file (concat %var-dir "projectile.cache")

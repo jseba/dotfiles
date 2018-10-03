@@ -70,6 +70,7 @@
                 (or (+projectile-project-root)
                     default-directory)))
  (%IS-WIN32
-  (setq w32-get-true-file-attributes nil)))
+  (setq w32-get-true-file-attributes nil
+        vc-handled-backends (delq 'Git vc-handled-backends))))
 
 (provide 'config-system)

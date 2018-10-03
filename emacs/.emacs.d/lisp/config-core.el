@@ -22,6 +22,8 @@
 (setq custom-file %custom-file)
 (load custom-file t)
 
+(setq byte-compile-error-on-warn t)
+
 ;;
 ;; Built-in libraries
 

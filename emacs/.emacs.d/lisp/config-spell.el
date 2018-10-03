@@ -23,6 +23,7 @@
   (add-hook 'flyspell-mode-hook #'+flyspell-check-immediately))
 
 (use-package flyspell-correct
+  :after flyspell-correct-helm
   :commands (flyspell-correct-word-generic
              flyspell-correct-previous-word-generic)
   :config
