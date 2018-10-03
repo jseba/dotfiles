@@ -48,6 +48,15 @@ Stops at the first function to return non-nil or change the current window or po
 If the argument is interactive, it is called with `call-interactively' (with no
 arguments). Otherwise, it is called with one argument: the identifier at point.")
 
+  (defvar +xref-documentation-functions
+    '(+xref-online-backend)
+    "Functions for `+xref-documentation' to try before resorting to `dumb-jump'.
+
+Stops at the first function to return non-nil or change the current window or point.
+
+If the argument is interactive, it is called with `call-interactively' (with no
+arguments). Otherwise, it is called with one argument: the identifier at point.")
+
   (defvar +xref-file-functions ()
     "Functions for `+xref-file' to try before resorting to `find-file-at-point'.
 
