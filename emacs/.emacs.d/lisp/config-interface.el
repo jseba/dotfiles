@@ -36,10 +36,10 @@
  use-dialog-box nil
  visible-cursor nil
  x-stretch-cursor nil
- jit-lock-defer-time nil
- jit-lock-stealth-nice 0.1
- jit-lock-stealth-time 0.2
- jit-lock-stealth-verbose nil
+ ;; jit-lock-defer-time nil
+ ;; jit-lock-stealth-nice 0.1
+ ;; jit-lock-stealth-time 0.2
+ ;; jit-lock-stealth-verbose nil
  ring-bell-function #'ignore
  visible-bell nil
  window-resize-pixelwise t
