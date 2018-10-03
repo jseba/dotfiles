@@ -66,6 +66,7 @@
   (require-init 'config-elisp)
   (require-init 'config-snippets)
   (require-init 'config-pdf)
+  (require-init 'config-treemacs)
   ;;(require-init 'config-org)
 
   (run-hook-wrapped 'init-hook #'try-run-hook))
