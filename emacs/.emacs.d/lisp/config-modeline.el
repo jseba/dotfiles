@@ -16,6 +16,8 @@ to display in the mode-line.
 
 Each item should either be a string or a cons cell whose CAR is the path
 component and whose CDR is the name of a face.")
+(defvar +modeline-unicode-symbols t
+  "If non-nil, use Unicode symbols for fancy icons in the mode-line.")
 
 (defvar-local +modeline-format-left ())
 (defvar-local +modeline-format-right ())

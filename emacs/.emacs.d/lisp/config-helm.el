@@ -424,7 +424,7 @@ buffer/window focus."
 
 (use-package helm-projectile
   :bind
-  (([remap projectile-find-file] . helm-projectile-recentf)
+  (([remap projectile-find-file] . helm-projectile-find-file)
    ([remap projectile-switch-project] . helm-projectile-switch-project)
    ([remap projectile-switch-to-buffer] . helm-projectile-switch-to-buffer))
   :commands
