@@ -1,8 +1,0 @@
-# vim: set ft=zsh:
-
-if [ $(uname | grep Darwin) ]; then
-  # Use homebrew LLVM by default
-  if [ -d /usr/local/opt/llvm/bin ]; then
-    export PATH=/usr/local/opt/llvm/bin:$PATH
-  fi
-fi

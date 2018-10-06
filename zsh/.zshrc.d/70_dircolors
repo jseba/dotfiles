@@ -1,7 +1,0 @@
-# vim: set ft=zsh:
-
-if [ $(uname | grep Darwin) ]; then
-  eval $(gdircolors -b ~/.dircolors)
-else
-  eval $(dircolors -b ~/.dircolors)
-fi

@@ -1,5 +1,0 @@
-# vim: set ft=zsh:
-
-# Fancy ninja status
-export NINJA_STATUS="[37m[[35m%u[37m/[33m%r[37m/[32m%f[37m]m [34m%o[m "
-
