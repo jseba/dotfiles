@@ -18,8 +18,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'sheerun/vim-polyglot'
 Plug 'nlknguyen/c-syntax.vim'
 Plug 'rhysd/vim-clang-format'
-Plug 'Valloric/YouCompleteMe'
-Plug 'w0rp/ale'
 
 " Editing
 Plug 'tpope/vim-commentary'
