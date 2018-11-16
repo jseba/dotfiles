@@ -1,0 +1,20 @@
+URxvt*depth: 32
+URxvt*buffered: true
+URxvt*intensityStyles: false
+URxvt*loginShell: true
+URxvt*scrollstyle: rxvt
+URxvt*scrollBar: false
+URxvt*transparent: true
+URxvt*shading: 10
+! URxvt*saveLines: number
+URxvt*termName: tmux-256color
+URxvt*mouseWheelScrollPage: false
+URxvt*cursorBlink: true
+URxvt*pointerBlank: true
+! URxvt*url-launcher: string
+URxvt.perl-ext-common: default,resize-font
+URxvt*font: xft:Iosevka Nerd Font Mono:style=Regular:size=10
+URxvt*boldFont: xft:Iosevka Nerd Font Mono:style=Bold:size=10
+URxvt*italicFont: xft:Iosevka Nerd Font Mono:style=Italic:size=10
+URxvt*boldItalicFont: xft:Iosevka Nerd Font Mono:style=Bold\ Italic:size=10
+!URxvt*letterSpace: -1

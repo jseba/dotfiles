@@ -1,31 +1,46 @@
-;=====================================================
-;
-;   To learn more about how to configure Polybar
-;   go to https://github.com/jaagr/polybar
-;
-;   The README contains alot of information
-;
-;=====================================================
-
 [colors]
-;background = ${xrdb:color0:#222}
-background = #222
-background-alt = #444
-;foreground = ${xrdb:color7:#222}
-foreground = #dfdfdf
-foreground-alt = #555
+c0  = ${xrdb:color0}
+c1  = ${xrdb:color1}
+c2  = ${xrdb:color2}
+c3  = ${xrdb:color3}
+c4  = ${xrdb:color4}
+c5  = ${xrdb:color5}
+c6  = ${xrdb:color6}
+c7  = ${xrdb:color7}
+c8  = ${xrdb:color8}
+c9  = ${xrdb:color9}
+c10 = ${xrdb:color10}
+c11 = ${xrdb:color11}
+c12 = ${xrdb:color12}
+c13 = ${xrdb:color13}
+c14 = ${xrdb:color14}
+c15 = ${xrdb:color15}
+
+foreground = ${xrdb:color7}
+background = ${xrdb:color0}
+
+foreground-alt = ${xrdb:color15}
+background-alt = ${xrdb:color8}
+
+foreground-inverse = ${xrdb:color0}
+background-inverse = ${xrdb:color1}
+
+foreground-faded = ${xrdb:color2}
+background-raised = ${xrdb:color0}
+
+foreground-prefix = ${xrdb:color2}
+
 primary = #ffb52a
 secondary = #e60053
-alert = #bd2c40
+alert = ${xrdb:color3:#444}
 
-[bar/left]
-monitor = ${env:LEFT_MONITOR:GPU-0.DP-1}
-width = 10%
-height = 32
-offset-x = 1%
-offset-y = 1%
+[bar/main]
+monitor = ${env:MONITOR:}
+width = 100%
+height = 24
 radius = 0.0
-fixed-center = false
+fixed-center = true
+override-redirect = false
 
 background = ${colors.background}
 foreground = ${colors.foreground}
@@ -36,24 +51,24 @@ line-color = #f00
 border-size = 4
 border-color = #00000000
 
-padding-left = 0
+padding-left = 2
 padding-right = 2
 
 module-margin-left = 1
 module-margin-right = 2
 
-font-0 = fixed:pixelsize=10;1
-font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
-font-2 = siji:pixelsize=10;1
+font-0 = Fira Code Medium:pixelsize=10;1
+font-1 = Font Awesome:pixelsize=10;1
+font-2 = tewi:pixelsize=10;1
+font-3 = siji:pixelsize=10;1
 
 modules-left = i3
-modules-center = mpd
-modules-right = filesystem volume xkeyboard memory cpu eth temperature date powermenu
+modules-center = xwindow mpd
+modules-right = weather eth date
 
 tray-position = right
-tray-padding = 2
-tray-transparent = true
-tray-background = #0063ff
+tray-padding = 0
+tray-transparent = false
 
 wm-restack = i3
 
@@ -65,22 +80,6 @@ wm-restack = i3
 [module/xwindow]
 type = internal/xwindow
 label = %title:0:30:...%
-
-[module/xkeyboard]
-type = internal/xkeyboard
-blacklist-0 = num lock
-
-format-prefix = " "
-format-prefix-foreground = ${colors.foreground-alt}
-format-prefix-underline = ${colors.secondary}
-
-label-layout = %layout%
-label-layout-underline = ${colors.secondary}
-
-label-indicator-padding = 2
-label-indicator-margin = 1
-label-indicator-background = ${colors.secondary}
-label-indicator-underline = ${colors.secondary}
 
 [module/filesystem]
 type = internal/fs
@@ -101,21 +100,37 @@ wrapping-scroll = false
 ; Only show workspaces on the same output as the bar
 ;pin-workspaces = true
 
-label-mode-padding = 2
-label-mode-foreground = #000
-label-mode-background = ${colors.primary}
+; ws-icon-[0-9]+ = <label>;<icon>
+ws-icon-0 = 1;  code
+ws-icon-1 = 2;  terminal
+ws-icon-2 = 3;  www
+ws-icon-3 = 4;  mail
+ws-icon-4 = 5;  virtual machines
+ws-icon-5 = 6;  status
+ws-icon-6 = 7;  music
+ws-icon-7 = 8;  random
 
 ; focused = Active workspace on focused monitor
-label-focused = %index%
+label-focused = %index%: %icon%
+label-focused-foreground = ${colors.foreground-inverse}
+label-focused-background = ${colors.background-inverse}
+label-focused-padding = 1
 
 ; unfocused = Inactive workspace on any monitor
-label-unfocused = %index%
+label-unfocused = %index%: %icon%
+label-unfocused-foreground = ${colors.foreground-faded}
+label-unfocused-background = ${colors.background-raised}
+label-unfocused-padding = 1
 
 ; visible = Active workspace on unfocused monitor
-label-visible = %index%
+label-visible = %index%: %icon%
+label-visible-background = ${colors.background-inverse}
+label-visible-padding = 1
 
 ; urgent = Workspace with urgency hint set
-label-urgent = %index%
+label-urgent = %index%: %icon%
+label-urgent-background = ${colors.alert}
+label-urgent-padding = 1
 
 [module/mpd]
 type = internal/mpd
@@ -129,28 +144,6 @@ icon-next = 
 
 label-song-maxlen = 25
 label-song-ellipsis = true
-
-[module/xbacklight]
-type = internal/xbacklight
-
-format = <label> <bar>
-label = BL
-
-bar-width = 10
-bar-indicator = |
-bar-indicator-foreground = #ff
-bar-indicator-font = 2
-bar-fill = ─
-bar-fill-font = 2
-bar-fill-foreground = #9f78e1
-bar-empty = ─
-bar-empty-font = 2
-bar-empty-foreground = ${colors.foreground-alt}
-
-[module/backlight-acpi]
-inherit = module/xbacklight
-type = internal/backlight
-card = intel_backlight
 
 [module/cpu]
 type = internal/cpu
@@ -170,13 +163,10 @@ label = %percentage_used%%
 
 [module/eth]
 type = internal/network
-interface = eth0
+interface = eno1
 interval = 3.0
 
-format-connected-underline = #55aa55
-format-connected-prefix = " "
-format-connected-prefix-foreground = ${colors.foreground-alt}
-label-connected = %local_ip%
+label-connected = %downspeed:9% %upspeed:9%
 
 format-disconnected =
 ;format-disconnected = <label-disconnected>
@@ -188,11 +178,8 @@ format-disconnected =
 type = internal/date
 interval = 5
 
-date =
-date-alt = " %Y-%m-%d"
-
+date = " %Y-%m-%d"
 time = %H:%M
-time-alt = %H:%M:%S
 
 format-prefix = 
 format-prefix-foreground = ${colors.foreground-alt}
@@ -247,6 +234,11 @@ ramp-1 = 
 ramp-2 = 
 ramp-foreground = ${colors.foreground-alt}
 
+[module/weather]
+type = custom/script
+exec = weather-bar
+tail = true
+
 [module/powermenu]
 type = custom/menu
 
@@ -276,10 +268,6 @@ menu-2-1-exec = menu-open-0
 
 [settings]
 screenchange-reload = true
-compositing-background = xor
-;compositing-background = screen
-compositing-foreground = source
-compositing-border = over
 
 [global/wm]
 margin-top = 5
