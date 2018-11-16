@@ -13,6 +13,9 @@ STOWED_DIRS=( alacritty bin dircolors emacs fonts fzf git herbstluft i3 nvim rof
 ## Load submodules
 git submodule update --init --recursive || exit 1
 
+# Make sure local shared folder exists
+mkdir -p ${HOME}/.local/share
+
 #
 # IIIIIT'S STOW TIME!!
 #

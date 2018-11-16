@@ -1,6 +1,10 @@
 zsh/.zshrc.d/60_custom
 vim/.vim/plugged
 vim/.vim/.netrwhist
+vim/.local/share/vim/backups/*
+vim/.local/share/vim/undo/*
+!vim/.local/share/vim/backups/.empty
+!vim/.local/share/vim/undo/.empty
 emacs/.emacs.d/cache
 emacs/.emacs.d/elpa
 emacs/.emacs.d/eshell
