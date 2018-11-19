@@ -194,7 +194,9 @@ let g:gruvbox_italic = 1
 
 if !has('gui_running')
   if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
-    set termguicolors
+    if $TERM_PROGRAM != "Apple_Terminal"
+      set termguicolors
+    endif
     if !has('nvim')
       set t_Co=256
       set t_so=[7m
