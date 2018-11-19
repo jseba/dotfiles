@@ -178,19 +178,7 @@ properties:
 a project search (with rg, ag or git-grep) combined with extra heuristics to
 reduce false positives."
     (when (require 'dumb-jump nil t)
-      (let (successful)
-        (cl-letf* ((old-fn (symbol-function 'dumb-jump-get-results))
-                   ((symbol-function 'dumb-jump-get-results)
-                    (lambda (&optional prompt)
-                      (let* ((plist (funcall old-fn prompt))
-                             (results (plist-get plist :results)))
-                        (when (and results (> (length results) 0))
-                          (setq successful t))
-                        plist))))
-          (if other-window
-              (dumb-jump-go-other-window)
-            (dumb-jump-go))
-          successfull))))
+      (plist-get (dumb-jump-go) :results)))
 
   (defun +xref-project-search-backend (identifier)
     "Conducts a simple project text search for IDENTIFIER.

@@ -64,8 +64,7 @@
         helm-display-buffer-default-height 0.25
         helm-imenu-execute-action-at-once-if-one nil
         helm-ff-lynx-style-map nil
-        helm-default-prompt-display-function #'+helm--set-prompt-display
-        helm-display-function #'+helm-posframe-display)
+        helm-default-prompt-display-function #'+helm--set-prompt-display)
 
   (let ((fuzzy t))
     (setq helm-M-x-fuzzy-match fuzzy
@@ -84,77 +83,6 @@
           helm-projectile-fuzzy-match fuzzy
           helm-recentf-fuzzy-match fuzzy
           helm-semantic-fuzzy-match fuzzy))
-  
-  (defvar +helm-posframe-handler #'+helm-poshandler-frame-center-near-bottom
-    "The function that determns the locaton of the childframe.
-
-It should return a cons cell representing the X and Y coordinates.")
-
-  (defvar +helm-posframe-text-scale 0.5
-    "The text-scale to use in the childframe.")
-
-  (defvar +helm-posframe-parameters
-    '((internal-border-width . 8)
-      (width . 0.5)
-      (height . 0.35)
-      (min-width . 80)
-      (min-height . 16)))
-  
-  (defun +helm-poshandler-frame-center-near-bottom (info)
-    "Display the child frame in the center of the frame, slightly closer to the
-bottom, which is easier on the eyes on big displays."
-    (let ((parent-frame (plist-get info :parent-frame))
-          (pos (posframe-poshandler-frame-center info)))
-      (cons (car pos)
-            (truncate (/ (frame-pixel-height parent-frame)
-                         2)))))
-  
-  (defvar +helm--posframe-buffer nil)
-
-  (defun +helm-posframe-display (buffer &optional _resume)
-    "TODO"
-    (setq helm--buffer-in-new-frame-p t)
-    (let ((solaire-p (bound-and-true-p solaire-mode))
-          (params (copy-sequence +helm-posframe-parameters)))
-      (let-alist params
-        (require 'posframe)
-        (posframe-show
-         (setq +helm--posframe-buffer buffer)
-         :position (point)
-         :poshandler +helm-posframe-handler
-         :width
-         (max (cl-typecase .width
-                (integer .width)
-                (float (truncate (* (frame-width) .width)))
-                (function (funcall .width))
-                (t 0))
-              .min-width)
-         :height
-         (max (cl-typecase .height
-                (integer .height)
-                (float (truncate (* (frame-height) .height)))
-                (function (funcall .height))
-                (t 0))
-              .min-height)
-         :override-parameters
-         (dolist (p '(width height min-width min-height) params)
-           (setq params (delq (assq p params) params)))))
-      (unless (or (null +helm-posframe-text-scale)
-                  (= +helm-posframe-text-scale 0))
-        (with-current-buffer buffer
-          (when (and (featurep 'solaire-mode)
-                     (not solaire-p))
-            (solaire-mode +1))
-          (text-scale-set +helm-posframe-text-scale)))))
-
-  (defun +helm-posframe-cleanup ()
-    "Ensures focus is properly returned to the underlying window.
-
-This gives the mode-line a chance to refresh by forcing a change in
-buffer/window focus."
-    (switch-to-buffer +helm--posframe-buffer t)
-    (posframe-delete +helm--posframe-buffer))
-  (add-hook 'helm-cleanup-hook #'+helm-posframe-cleanup)
 
   (defun +helm-fix-get-font-height (orig-fn position)
     (ignore-errors (funcall orig-fn position)))
@@ -428,8 +356,20 @@ buffer/window focus."
    ([remap projectile-switch-project] . helm-projectile-switch-project)
    ([remap projectile-switch-to-buffer] . helm-projectile-switch-to-buffer))
   :commands
-  helm-projectile-find-file
+  (helm-projectile-find-file
+   helm-projectile-switch-project
+   helm-projectile-switch-to-buffer)
   :init
+  (defun +helm-projectile-find-files ()
+    "Call `helm-find-files' if called from HOME, else `helm-projectile-find-file'."
+    (interactive)
+    (call-interactively
+     (if (or (file-equal-p default-directory "~")
+             (when-let* ((proot (+projectile-project-root)))
+               (file-equal-p proot "~")))
+         #'helm-find-files
+       #'helm-projectile-find-file)))
+  
   (setq projectile-completion-system 'helm)
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
   :config

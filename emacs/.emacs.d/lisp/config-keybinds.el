@@ -348,7 +348,11 @@
     "e"  '(+eshell-open
            :which-key "Eshell")
     "E"  '(+eshell-open-popup
-           :which-key "Eshell popup"))
+           :which-key "Eshell popup")
+    "p"  '(+treemacs-toggle
+           :which-key "Project sidebar")
+    "P"  '(+treemacs-find-file
+           :which-key "Find file in project sidebar"))
 
   (general-nmap
     :prefix "SPC p"
@@ -407,6 +411,9 @@
                             (kbd "TAB") [tab]))
 
 (after! evil
+  (evil-define-key* 'insert 'global
+    "\C-a" #'backward-to-bol-or-indent
+    "\C-e" #'forward-to-last-non-comment-or-eol)
   (define-key! evil-ex-completion-map
     "\C-s" #'helm-minibuffer-history
     "\C-a" #'move-beginning-of-line

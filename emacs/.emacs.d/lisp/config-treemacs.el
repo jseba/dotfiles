@@ -2,6 +2,39 @@
 
 (use-package treemacs
   :init
+  (defun +treemacs--init ()
+    (require 'treemacs)
+    (let ((origin-buffer (current-buffer)))
+      (cl-letf ((symbol-function 'treemacs-workspace->is-empty?)
+                (symbol-function 'ignore))
+        (treemacs--init))
+      (dolist (project (treemacs-workspace->projects (treemacs-current-workspace)))
+        (treemacs-do-remove-project-from-workspace project))
+      (with-current-buffer origin-buffer
+        (let ((project-root (or (+projectile-project-root) default-directory)))
+          (treemacs-do-add-project-to-workspace
+           (treemacs--canonical-path project-root)
+           (+projectile-project-name project-root)))
+        (setq treemacs--ready-to-follow t)
+        (when (or treemacs-follow-after-init treemacs-follow-mode)
+          (treemacs--follow)))))
+
+  (defun +treemacs-toggle ()
+    "Initialize or toggle `treemacs'."
+    (interactive)
+    (require 'treemacs)
+    (pcase (treemacs-current-visibility)
+      (`visible (delete-window (treemacs-get-local-window)))
+      (_ (+treemacs--init))))
+
+  (defun +treemacs-find-file (arg)
+    "Open `treemacs' and find current file."
+    (interactive "P")
+    (let ((origin-buffer (current-buffer)))
+      (+treemacs--init)
+      (with-current-buffer origin-buffer
+        (treemacs-find-file arg))))
+  
   (setq treemacs-follow-after-init t
         treemacs-width 35
         treemacs-position 'left
