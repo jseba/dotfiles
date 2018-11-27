@@ -27,6 +27,7 @@ Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
 
 " Colorschemes
 Plug 'morhetz/gruvbox'
+Plug 'nlknguyen/papercolor-theme'
 
 " Local plugins
 if filereadable(expand("~/.local/vim/plugs.vim"))
@@ -191,6 +192,21 @@ vnoremap < <gv
 set background=dark
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
+let g:PaperColor_Theme_Options = {
+            \ 'theme': {
+            \   'default': {
+            \     'transparent_background': 0,
+            \   },
+            \ 'language': {
+            \   'cpp': {
+            \     'highlight_standard_library': 1,
+            \   },
+            \   'c': {
+            \     'highlight_builtins': 1,
+            \   },
+            \  },
+            \ }
+            \}
 
 if !has('gui_running')
   if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
@@ -222,7 +238,7 @@ else
   set guioptions+=c
 endif
 
-colorscheme gruvbox
+colorscheme papercolor
 
 " allow for transparency
 hi! Normal ctermbg=NONE guibg=NONE
