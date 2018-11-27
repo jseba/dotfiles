@@ -93,6 +93,9 @@ if has('clipboard')
   endif
 endif
 
+" Clear search pattern (useful for reloads)
+let @/ = ""
+
 " Automatically delete trailing whitespace
 func! DeleteTrailingWS()
   exe "normal mz"
@@ -152,7 +155,6 @@ inoremap kj <ESC>
 nnoremap <silent> <Space>o :Bclose<CR>
 nnoremap <silent> <Space>k :set invhlsearch<CR>
 
-nnoremap ; :
 nnoremap <Space>< :bp<CR>
 nnoremap <Space>> :bn<CR>
 nnoremap <Space>vs :vsplit<CR>
@@ -297,9 +299,6 @@ let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
 "let g:cpp_experimental_template_highlight = 1
-
-" Ag
-let g:ag_working_path_mode = 'r'
 
 " FZF
 " Augment Ag command with fzf#vim#with_preview
