@@ -18,6 +18,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'sheerun/vim-polyglot'
 Plug 'justinmk/vim-syntax-extra'
 Plug 'rhysd/vim-clang-format'
+Plug 'autozimu/LanguageClient-neovim', {'branch':'next','do':'sh install.sh'}
 
 " Editing
 Plug 'tpope/vim-commentary'
@@ -353,6 +354,28 @@ augroup ClangFormat
   autocmd FileType c,cpp vnoremap <buffer><Space><CR> :ClangFormat<CR>
 augroup END
 
+" LanguageClient
+let g:LanguageClient_serverCommands = {
+      \ 'c': ['cquery', '--log-file=/tmp/cquery.log'],
+      \ 'cpp': ['cquery', '--log-file=/tmp/cquery.log'],
+      \ }
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_settingsPath = '.cquery_settings.json'
+let g:LanguageClient_hasSnippetSupport = 0
+
+augroup LanguageClient_config
+  au!
+  au BufEnter * let b:Plugin_LanguageClient_started = 0
+  au User LanguageClientStarted setl signcolumn=yes
+  au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
+  au User LanguageClientStopped setl signcolumn=auto
+  au User LanguageClientStopped let b:Plugin_LanguageClient_started = 0
+  if has('nvim')
+      au CursorMoved * if b:Plugin_LanguageClient_started |
+            \ silent call LanguageClient#textDocument_documentHighlight() |
+            \ endif
+  endif
+augroup END
 
 " Read local machine settings
 if filereadable(expand("~/.lvimrc"))
