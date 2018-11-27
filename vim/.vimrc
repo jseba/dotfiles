@@ -16,7 +16,7 @@ Plug 'airblade/vim-gitgutter'
 
 " Programming
 Plug 'sheerun/vim-polyglot'
-Plug 'nlknguyen/c-syntax.vim'
+Plug 'justinmk/vim-syntax-extra'
 Plug 'rhysd/vim-clang-format'
 
 " Editing
@@ -68,14 +68,14 @@ set nowrap
 set number
 set scrolljump=5
 set scrolloff=3
-set shiftwidth=2
+set shiftwidth=4
 set shortmess+=filmnrxoOtT
 set showmode
 set smartcase
-set softtabstop=2
+set softtabstop=4
 set splitbelow
 set splitright
-set tabstop=2
+set tabstop=4
 set undodir=$HOME/.local/share/vim/undo
 set undofile
 set viminfo^=%
@@ -271,7 +271,12 @@ set tags=./tags;./TAGS
 set tagcase=smart
 
 " Polyglot/C++
-set cinoptions=N-s
+set cinoptions+=N-s    " don't indent namespaces
+set cinoptions+=g0     " don't indent C++ public/private/protected
+set cinoptions+=:-s    " don't indent case labels
+set cinoptions+=E-s    " don't indent in C++ extern blocks
+set cinoptions+=(0     " line up unclosed parentheses insides...
+set cinoptions+=w1     " ...but ignore whitespace after the open paren
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
