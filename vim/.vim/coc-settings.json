@@ -1,0 +1,23 @@
+{
+    "coc.preferences.autoTrigger": "trigger",
+    "languageserver": {
+        "cquery": {
+            "command": "cquery",
+            "args": ["--log-file=/tmp/cquery.log"],
+            "revealOutputChannelOn": "never",
+            "filetypes": ["c", "cpp"],
+            "initializationOptions": {
+                "cacheDirectory": ".cquery_cache",
+                "compilationDatabaseDirectory": "build",
+                "completion": {
+                  "enableSnippets": false
+                },
+                "index": {
+                  "comments": 2
+                }
+            }
+        }
+    }
+}
+
+

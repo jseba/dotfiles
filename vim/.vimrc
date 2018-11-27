@@ -18,7 +18,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'sheerun/vim-polyglot'
 Plug 'justinmk/vim-syntax-extra'
 Plug 'rhysd/vim-clang-format'
-Plug 'autozimu/LanguageClient-neovim', {'branch':'next','do':'sh install.sh'}
+Plug 'neoclide/coc.nvim', {'tag':'*','do':{-> coc#util#install()}}
+" Plug 'autozimu/LanguageClient-neovim', {'branch':'next','do':'sh install.sh'}
 
 " Editing
 Plug 'tpope/vim-commentary'
@@ -362,6 +363,14 @@ let g:LanguageClient_serverCommands = {
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_settingsPath = '.cquery_settings.json'
 let g:LanguageClient_hasSnippetSupport = 0
+
+augroup Coc_config
+    au!
+    au FileType c,cpp set updatetime=300
+    au FileType c,cpp nnoremap <silent> K :call CocActionAsync('doHover')<CR>
+    au CursorHold * silent call CocActionAsync('highlight')
+    au CursorHoldI * silent call CocActionAsync('showSignatureHelp')
+augroup END
 
 augroup LanguageClient_config
   au!
