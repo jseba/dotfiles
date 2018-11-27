@@ -353,11 +353,6 @@ augroup ClangFormat
   autocmd FileType c,cpp vnoremap <buffer><Space><CR> :ClangFormat<CR>
 augroup END
 
-" ALE
-let g:ale_linters = {
-      \ 'c': [ 'clangtidy' ],
-      \ 'cpp': [ 'clangtidy', 'clang-check' ]
-      \ }
 
 " Read local machine settings
 if filereadable(expand("~/.lvimrc"))
