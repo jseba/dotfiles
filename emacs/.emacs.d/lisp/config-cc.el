@@ -108,7 +108,7 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
   ;; employ smartparens to do it properly
   (sp-with-modes '(c++-mode)
     (sp-local-pair "<" ">"
-                   :when '(+cc-sp-point-is-template-p +cc-sp-point-after-incude-p)
+                   :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p)
                    :post-handlers '(("| " "SPC")))))
 
 (use-package modern-cpp-font-lock
