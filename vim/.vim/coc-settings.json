@@ -1,13 +1,13 @@
 {
     "coc.preferences.autoTrigger": "trigger",
     "languageserver": {
-        "cquery": {
-            "command": "cquery",
-            "args": ["--log-file=/tmp/cquery.log"],
+        "ccls": {
+            "command": "ccls",
+            "args": ["--log-file=/tmp/ccls.log"],
             "revealOutputChannelOn": "never",
             "filetypes": ["c", "cpp"],
             "initializationOptions": {
-                "cacheDirectory": ".cquery_cache",
+                "cacheDirectory": ".ccls_cache",
                 "compilationDatabaseDirectory": "build",
                 "completion": {
                   "enableSnippets": false
