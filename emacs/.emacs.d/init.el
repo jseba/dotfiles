@@ -50,8 +50,6 @@
   (require-init 'config-projects)
   (require-init 'config-popups)
   (require-init 'config-buffers)
-  (require-init 'config-evil)
-  (require-init 'config-workspaces)
   (require-init 'config-editor)
   (require-init 'config-interface)
   (require-init 'config-modeline)
@@ -79,9 +77,3 @@
  '(package-selected-packages
    (quote
     (hl-todo ace-window highlight-quoted company-box company-prescient company-dict company-tng swiper-helm posframe helm-projectile helm-describe-modes helm-company helm-c-yasnippet helm-ag helm visual-fill-column restart-emacs rainbow-delimiters highlight-escape-sequences highlight-numbers solaire-mode doom-themes avy evil-anzu shrink-path hide-mode-line anzu all-the-icons persp-mode evil-visualstar which-key use-package projectile hydra evil-vimish-fold evil-numbers evil-matchit evil-indent-plus evil-escape evil-embrace evil-commentary evil-args))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(fixed-pitch ((t (:font "-*-Fira Code Retina-*-*-*-*-12-*-*-*-*-*-*-*")))))

@@ -235,85 +235,86 @@ delete."
                               if (eq mode 'eshell-mode)
                               return (select-window win))))))))))
 
-  (defun +eshell-init-evil ()
-    "Replaces `evil-collection-eshell-next-prompt-on-insert' with
+    (after! evil
+      (defun +eshell-init-evil ()
+        "Replaces `evil-collection-eshell-next-prompt-on-insert' with
 `+eshell-goto-prompt-on-insert' which ensures the point is on the prompt
 when changing to insert mode."
-    (dolist (hook '(evil-replace-state-entry-hook evil-insert-state-entry-hook))
-      (remove-hook hook 'evil-collection-eshell-next-prompt-on-insert t)
-      (add-hook hook '+eshell-goto-prompt-on-insert nil t)))
+        (dolist (hook '(evil-replace-state-entry-hook evil-insert-state-entry-hook))
+          (remove-hook hook 'evil-collection-eshell-next-prompt-on-insert t)
+          (add-hook hook '+eshell-goto-prompt-on-insert nil t)))
+      (add-hook 'eshell-mode-hook #'+eshell-init-evil)
 
-  (after! evil
-    (evil-define-command +eshell-run (command bang)
-      "TODO"
-      (interactive "<fsh><!>")
-      (let ((buffer (+eshell-last-buffer))
-            (command (+evil-resolve-vim-path command)))
-        (cond (buffer
-               (select-window (get-buffer-window buffer))
-               (+eshell-run-command command buffer))
-              (bang (+eshell-open nil command))
-              ((+eshell-open-popup nil command)))))
-
-    (defun +eshell-goto-prompt-on-insert ()
-      "Move cursor to the prompt when switching to insert mode if point is not
+      (defun +eshell-goto-prompt-on-insert ()
+        "Move cursor to the prompt when switching to insert mode if point is not
 already there."
-      (when (< (point) eshell-last-output-end)
-        (goto-char
-         (if (memq this-command '(evil-append evil-append-line))
-             (point-max)
-           eshell-last-output-end))))
+        (when (< (point) eshell-last-output-end)
+          (goto-char
+           (if (memq this-command '(evil-append evil-append-line))
+               (point-max)
+             eshell-last-output-end))))
 
-    (defun +eshell-goto-end-of-prompt ()
-      "Move cursor to the prompt end when switching to insert mode."
-      (interactive)
-      (goto-char (point-max))
-      (evil-append 1))
+      (defun +eshell-goto-end-of-prompt ()
+        "Move cursor to the prompt end when switching to insert mode."
+        (interactive)
+        (goto-char (point-max))
+        (evil-append 1))
 
-    (evil-define-operator +eshell-evil-change (beg end type register yank-handler
-                                                   delete-func)
-      "Like `evil-change' but will not delete or copy the prompt."
-      (interactive "<R><x><y>")
-      (save-restriction
-        (narrow-to-region eshell-last-output-end (point-max))
-        (evil-change (max beg (point-min))
-                     (if (eq type 'line)
-                         (point-max)
-                       (min (or end (point-max))
-                            (point-max)))
-                     type
-                     register
-                     yank-handler
-                     delete-func)))
+      (evil-define-command +eshell-run (command bang)
+                           "TODO"
+                           (interactive "<fsh><!>")
+                           (let ((buffer (+eshell-last-buffer))
+                                 (command (+evil-resolve-vim-path command)))
+                             (cond (buffer
+                                    (select-window (get-buffer-window buffer))
+                                    (+eshell-run-command command buffer))
+                                   (bang (+eshell-open nil command))
+                                   ((+eshell-open-popup nil command)))))
 
-    (evil-define-operator +eshell-evil-change-line (beg end type register
-                                                        yank-handler)
-      "Change to end of line."
-      :motion evil-end-of-line
-      (interactive "<R><x><y>")
-      (+eshell-evil-change beg end type register yank-handler #'evil-delete-line))
+      (evil-define-operator +eshell-evil-change (beg end type register yank-handler
+                                                     delete-func)
+                            "Like `evil-change' but will not delete or copy the prompt."
+                            (interactive "<R><x><y>")
+                            (save-restriction
+                              (narrow-to-region eshell-last-output-end (point-max))
+                              (evil-change (max beg (point-min))
+                                           (if (eq type 'line)
+                                               (point-max)
+                                             (min (or end (point-max))
+                                                  (point-max)))
+                                           type
+                                           register
+                                           yank-handler
+                                           delete-func)))
 
-    (evil-define-operator +eshell-evil-delete (beg end type register yank-handler)
-      "Like `evil-delete' but will not delete or copy the prompt."
-      (interactive "<R><x><y>")
-      (save-restriction
-        (narrow-to-region eshell-last-output-end (point-max))
-        (evil-delete (if beg (max beg (point-min)) (point-min))
-                     (if (eq type 'line)
-                         (point-max)
-                       (min (or end (point-max))
-                            (point-max)))
-                     type
-                     register
-                     yank-handler)))
+      (evil-define-operator +eshell-evil-change-line (beg end type register
+                                                          yank-handler)
+                            "Change to end of line."
+                            :motion evil-end-of-line
+                            (interactive "<R><x><y>")
+                            (+eshell-evil-change beg end type register yank-handler #'evil-delete-line))
 
-    (evil-define-operator +eshell-evil-delete-line (_beg end type register
-                                                         yank-handler)
-      "Change to end of line."
-      :motion nil
-      :keep-visual t
-      (interactive "<R><x>")
-      (+eshell-evil-delete (point) end type register yank-handler)))
+      (evil-define-operator +eshell-evil-delete (beg end type register yank-handler)
+                            "Like `evil-delete' but will not delete or copy the prompt."
+                            (interactive "<R><x><y>")
+                            (save-restriction
+                              (narrow-to-region eshell-last-output-end (point-max))
+                              (evil-delete (if beg (max beg (point-min)) (point-min))
+                                           (if (eq type 'line)
+                                               (point-max)
+                                             (min (or end (point-max))
+                                                  (point-max)))
+                                           type
+                                           register
+                                           yank-handler)))
+
+      (evil-define-operator +eshell-evil-delete-line (_beg end type register
+                                                           yank-handler)
+                            "Change to end of line."
+                            :motion nil
+                            :keep-visual t
+                            (interactive "<R><x>")
+                            (+eshell-evil-delete (point) end type register yank-handler)))
 
   (defun +eshell-cd-to-project ()
     "Change to the project root of the current directory."
@@ -411,17 +412,6 @@ already there."
   (add-hook 'eshell-mode-hook #'smartparens-mode)
   (add-hook 'eshell-mode-hook #'hide-mode-line-mode)
 
-  (defun +eshell-switch-workspace (type)
-    (when (eq type 'frame)
-      (setq +eshell-buffers (or (persp-parameter 'eshell-buffers)
-                                (make-ring 25)))))
-  (add-hook 'persp-activated-functions #'+eshell-switch-workspace)
-
-  (defun +eshell-save-workspace (_workspace target)
-    (when (framep target)
-      (set-persp-parameter 'eshell-buffers +eshell-buffers)))
-  (add-hook 'persp-before-switch-functions #'+eshell-save-workspace)
-
   (defun +eshell-remove-fringes ()
     (set-window-fringes nil 0 0)
     (set-window-margins nil 1 nil))
@@ -454,25 +444,23 @@ already there."
                   +eshell-aliases)))
   (add-hook 'eshell-alias-load-hook #'+eshell-init-aliases)
 
-  (defun +eshell-init-evil ())
-  (add-hook 'eshell-mode-hook #'+eshell-init-evil)
-
   (defun +eshell-init-keymap ()
-    (evil-define-key* 'normal eshell-mode-map
-      [return] #'+eshell-goto-end-of-prompt
-      "c"      #'+eshell-evil-change
-      "C"      #'+eshell-evil-change-line
-      "d"      #'+eshell-evil-delete
-      "D"      #'+eshell-evil-delete-line)
-    (evil-define-key* 'insert eshell-mode-map
-      [tab]    #'+eshell-pcomplete
-      "\C-j"   #'evil-window-down
-      "\C-k"   #'evil-window-up
-      "\C-h"   #'evil-window-left
-      "\C-l"   #'evil-window-right
-      "\C-d"   #'+eshell-quit-or-delete-char
-      "\C-p"   #'eshell-previous-input
-      "\C-n"   #'eshell-next-input)
+    (after! evil
+      (evil-define-key* 'normal eshell-mode-map
+                        [return] #'+eshell-goto-end-of-prompt
+                        "c"      #'+eshell-evil-change
+                        "C"      #'+eshell-evil-change-line
+                        "d"      #'+eshell-evil-delete
+                        "D"      #'+eshell-evil-delete-line)
+      (evil-define-key* 'insert eshell-mode-map
+                        [tab]    #'+eshell-pcomplete
+                        "\C-j"   #'evil-window-down
+                        "\C-k"   #'evil-window-up
+                        "\C-h"   #'evil-window-left
+                        "\C-l"   #'evil-window-right
+                        "\C-d"   #'+eshell-quit-or-delete-char
+                        "\C-p"   #'eshell-previous-input
+                        "\C-n"   #'eshell-next-input))
     (define-key! eshell-mode-map
       (kbd "C-s")   #'+eshell-search-history
       (kbd "C-c s") #'+eshell-split-below

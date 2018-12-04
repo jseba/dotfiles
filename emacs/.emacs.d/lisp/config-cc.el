@@ -114,8 +114,133 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
 (use-package modern-cpp-font-lock
   :hook (c++-mode . modern-c++-font-lock-mode))
 
+(use-package ccls
+  :when (executable-find "ccls")
+  :init
+  (require 'lsp)
+
+  (setq ccls-executable (executable-find "ccls")
+        ccls-cache-dir (concat %var-dir "ccls/")
+        ccls-extra-args `(,(concat "--log-file="
+                                     (expand-file-name
+                                      (if %IS-WIN32
+                                          (getenv "TEMP")
+                                        "/tmp"))
+                                     "/ccls.log"))
+        ccls-extra-init-params '(:index
+                                 (:comments 3)
+                                 :completion
+                                 (:detailedLabel t)))
+
+  (after! projectile
+    (push ".ccls" projectile-project-root-files-bottom-up))
+
+  (defun +cc-enable-ccls-maybe ()
+    "Enable ccls if compile_commands.json or .ccls files found in project root."
+    (let ((default-directory (+projectile-project-root)))
+      (when (or (file-exists-p ".ccls")
+                (file-exists-p "compile_commands.json"))
+        (require 'ccls)
+        (lsp-ccls-enable))))
+  (add-hook! '(c-mode-hook c++-mode-hook) #'+cc-enable-cquery-maybe)
+
+  (defun +ccls-callee ()
+    (interactive)
+    (lsp-ui-peek-find-custom "$ccls/call" '(:callee t)))
+  (defun +ccls-caller ()
+    (interactive)
+    (lsp-ui-peek-find-custom "$ccls/call"))
+  (defun +ccls-vars (kind)
+    (lsp-ui-peek-find-custom "$ccls/vars" `(:kind ,kind)))
+  (defun +ccls-base (levels)
+    (lsp-ui-peek-find-custom "$ccls/inheritance" `(:levels ,levels)))
+  (defun +ccls-derived (levels)
+    (lsp-ui-peek-find-custom "$ccls/inheritance" `(:levels ,levels :derived t)))
+  (defun +ccls-member (kind)
+    (lsp-ui-peek-find-custom "$ccls/member" `(:kind ,kind)))
+  (defun +ccls-references-address ()
+    (interactive)
+    (lsp-ui-peek-find-custom "textDocument/references"
+                             (plist-put (lsp--text-document-position-params) :role 128)))
+  (defun +ccls-references-macro ()
+    (interactive)
+    (lsp-ui-peek-find-custom "textDocument/references"
+                             (plust-put (lsp--text-document-position-params) :role 64)))
+  (defun +ccls-references-not-call ()
+    (interactive)
+    (lsp-ui-peek-find-custom "textDocument/references"
+                             (plist-put (lsp--text-document-position-params) :excludeRole 32)))
+  (defun +ccls-references-read ()
+    (interactive)
+    (lsp-ui-peek-find-custom "textDocument/references"
+                             (plist-put (lsp--text-document-position-params) :role 8)))
+  (defun +ccls-references-write ()
+    (interactive)
+    (lsp-ui-peek-find-custom "textDocument/references"
+                             (plist-put (lsp--text-document-position-params) :role 16)))
+
+  (general-def
+    :keymaps '(c-mode-map c++-mode-map)
+    :prefix "C-c"
+    "p" '(ccls-preprocess-file
+          :wk "Preprocess file")
+    "R" '(ccls-reload
+          :wk "Reload ccls"))
+  (general-def
+    :keymaps '(c-mode-map c++-mode-map)
+    :prefix "C-c x"
+    ""  '(nil :wk "xref")
+    "a" '(+ccls-references-address
+          :wk "Variable Addresses")
+    "F" '(+ccls-references-not-call
+          :wk "Function Addresses")
+    "P" '(+ccls-references-macro
+          :wk "Macro References")
+    "r" '(+ccls-references-read
+          :wk "Read References")
+    "w" '(+ccls-references-write
+          :wk "Write References")
+    "b" `(,(lambda! (+ccls-base 1))
+          :wk "Direct Bases")
+    "B" `(,(lambda! (+ccls-base 3))
+          :wk "Bases")
+    "d" `(,(lambda! (+ccls-derived 1))
+          :wk "Direct Derived")
+    "D" `(,(lambda! (+ccls-derived 3))
+          :wk "Derived")
+    "i" '(ccls-inheritance-hierarchy
+          :wk "Base Hierarchy")
+    "I" `(,(lambda! (ccls-inheritance-hierarchy t))
+          :wk "Derived Hierarchy")
+    "c" '(+ccls-caller
+          :wk "Callers")
+    "C" '(+ccls-callee
+          :wk "Callees")
+    "e" '(ccls-call-hierarchy
+          :wk "Caller Hierarchy")
+    "E" `(,(lambda! (ccls-call-hierarchy t))
+          :wk "Callee Hierarchy")
+    "s" `(,(lambda! (+ccls-member 2))
+          :wk "Nested Classes")
+    "f" `(,(lambda! (+ccls-member 3))
+          :wk "Member Functions")
+    "m" `(,(lambda! (+ccls-member 0))
+          :wk "Member Variables")
+    "M" '(ccls-member-hierarchy
+          :wk "Member Hierarchy")
+    "v" `(,(lambda! (+ccls-vars 3))
+          :wk "Local Variables")
+    "V" `(,(lambda! (+ccls-vars 1))
+          :wk "Fields")
+    "C-v" `(,(lambda! (+ccls-vars 7))
+            :wk "All Variables")
+    "t" '(lsp-goto-type-definition
+          :wk "Go To Type Definition")
+    "L" '(ccls-code-lens-mode
+          :wk "Code Lens Mode")))
+
 (use-package cquery
-  :when (executable-find "cquery")
+  :when (and (executable-find "cquery") (not (executable-find "ccls")))
   :commands lsp-cquery-enable
   :init
   (setq cquery-executable (executable-find "cquery")

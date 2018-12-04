@@ -6,27 +6,6 @@
              company-grab-line)
   :defer 2
   :after-call post-self-insert-hok
-  :general
-  (:keymaps 'company-active-map
-            "C-w" #'nil ;; don't interfere with `evil-delete-backward-word'
-            "C-n" #'company-select-next
-            "C-p" #'company-select-previous
-            "C-j" #'company-select-next
-            "C-k" #'company-select-previous
-            "C-h" #'company-show-doc-buffer
-            "C-u" #'company-previous-page
-            "C-d" #'company-next-page
-            "C-s" #'company-filter-candidates
-            "C-S-s" #'helm-company
-            "C-SPC" #'company-complete-common
-            [tab] #'company-complete-common-or-cycle
-            [backtab] #'company-select-previous)
-  (:keymaps 'company-search-map
-            "C-n" #'company-select-next-or-abort
-            "C-p" #'company-select-previous-or-abort
-            "C-j" #'company-select-next-or-abort
-            "C-k" #'company-select-previous-or-abort
-            [escape] #'company-search-abort)
   :init
   (defvar +company-backend-alist
     '((text-mode :derived (company-dabbrev company-yasnippet company-ispell))
@@ -142,11 +121,25 @@ everywhere else."
       (call-interactively +company-dabbrev)
       (company-select-previous-or-abort)))
 
-  :config
-  (define-key! company-active-map
-    [return] nil
-    [tab] #'company-select-next
+  (general-def
+    :keymaps 'company-active-map
+    "C-n" #'company-select-next
+    "C-p" #'company-select-previous
+    "C-h" #'company-show-doc-buffer
+    "C-u" #'company-previous-page
+    "C-d" #'company-next-page
+    "C-s" #'company-filter-candidates
+    "C-S-s" #'helm-company
+    "C-SPC" #'company-complete-common
+    [tab] #'company-complete-common-or-cycle
     [backtab] #'company-select-previous)
+  (general-def
+    :keymaps 'company-search-map
+    "C-n" #'company-select-next-or-abort
+    "C-p" #'company-select-previous-or-abort
+    "C-j" #'company-select-next-or-abort
+    "C-k" #'company-select-previous-or-abort
+    [escape] #'company-search-abort)
 
   (add-hook 'company-mode-hook #'+company-init-backends)
   (global-company-mode +1))

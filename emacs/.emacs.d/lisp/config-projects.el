@@ -4,9 +4,9 @@
   :commands (projectile-mode projectile-project-root projectile-project-p)
   :init
   (setq	projectile-enable-caching t
-	    projectile-cache-file (concat %var-dir "projectile.cache")
-	    projectile-indexing-method 'alien
-	    projectile-find-dir-includes-top-level t)
+	      projectile-cache-file (concat %var-dir "projectile.cache")
+	      projectile-indexing-method 'alien
+	      projectile-find-dir-includes-top-level t)
 
   (defmacro +projectile-without-cache (&rest body)
     `(let ((projectile-project-root-cache (make-hash-table :test 'equal))
@@ -44,6 +44,25 @@
                projectile-project-root-cache)))
 
   (add-hook 'init-hook #'projectile-mode)
+
+  (general-def
+    :keymaps 'projectile-mode-map
+    :prefix "C-c p"
+    "" '(nil :wk "Project")
+    "f" '(projectile-find-file
+          :wk "Find file in project")
+    "!" '(projectile-run-command-in-root
+          :wk "Run command in project root")
+    "c" '(projectile-compile-project
+          :wk "Compile project")
+    "a" '(projectile-find-other-file
+          :wk "Find other file")
+    "p" '(projectile-switch-project
+          :wk "Switch project")
+    "r" '(projectile-recentf
+          :wk "Recent project files")
+    "x" '(projectile-invalidate-cache
+          :wk "Invalidate project cache"))
 
   :config
   (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects))

@@ -4,8 +4,9 @@
       select-enable-clipboard t
       select-enable-primary t)
 
-(advice-add #'evil-visual-update-x-selection
-            :override #'ignore)
+(after!
+  (advice-add #'evil-visual-update-x-selection
+              :override #'ignore))
 
 (defmacro set-environment-variable (&rest _vars)
   "Inject VARS from your shell environment into Emacs.")

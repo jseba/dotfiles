@@ -80,7 +80,7 @@
                              (point))))
     (if (and (sp-point-in-comment) (not (= (point) eol)))
         (goto-char eol)
-      (let* ((bol (save-excursion (beginning-of-visual-line) (pint)))
+      (let* ((bol (save-excursion (beginning-of-visual-line) (point)))
              (boc (or (save-excursion
                         (if (not comment-use-syntax)
                             (progn
@@ -94,10 +94,10 @@
                           (skip-chars-backward " " bol)
                           (point)))
                       eol)))
-        ((cond ((= boc (point))
-                (goto-char eol))
-               ((/= bol boc)
-                (goto-char boc))))))))
+        (cond ((= boc (point))
+               (goto-char eol))
+              ((/= bol boc)
+               (goto-char boc)))))))
 
 (defun backward-delete-whitespace-to-column ()
   (interactive)
@@ -188,6 +188,7 @@
                         ((run-hook-with-args-until-success 'delete-backward-functions))
                         ((backward-delete-whitespace-to-column)))))))
         ((delete-char (- n) killflag))))
+(advice-add #'delete-backward-char :override #'delete-backward-char-extended)
 
 (defun newline-and-indent-maybe-continue-comment (_orig-fn)
   (interactive)
@@ -199,6 +200,7 @@
         (t
          (newline nil t)
          (indent-according-to-mode))))
+(advice-add #'newline-and-indent :around #'newline-and-indent-maybe-continue-comment)
 
 (defun set-indirect-buffer-file-name  (orig-fn base-buffer name &optional clone)
   (let ((file-name (buffer-file-name base-buffer))
@@ -210,6 +212,10 @@
                 buffer-file-truename (file-truename file-name)))))
     buffer))
 (advice-add #'make-indirect-buffer :around #'set-indirect-buffer-file-name)
+
+(general-def
+  [remap move-beginning-of-line] #'backward-to-bol-or-indent
+  [remap move-end-of-line]       #'forward-to-last-non-comment-or-eol)
 
 (use-package autorevert
   :after-call after-find-file
@@ -269,8 +275,8 @@ Sexps (quit with _q_)
  ^---^------------^----------^------------------^-----^-----------------		
  _f_: forward     _→_:          slurp forward   _R_: splice		
  _b_: backward    _←_:          slurp backward  _r_: raise		
- _u_: backward ↑  _C-<right>_:  barf forward    _↑_: raise backward		
- _d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward		
+ _u_: backward ↑  _C-<right>_:   barf forward    _↑_: raise backward		
+ _d_: forward ↓   _C-<left>_:    barf backward   _↓_: raise forward		
  _p_: backward ↓		
  _n_: forward ↑		
  ^Kill^           ^Misc^                        ^Wrap^		
@@ -279,13 +285,14 @@ Sexps (quit with _q_)
  _k_: kill        _s_: split                    _{_: wrap with { }		
  ^^               _t_: transpose                _'_: wrap with ' '		
  ^^               _c_: convolute                _\"_: wrap with \" \"		
- ^^               _i_: indent defun"
+ ^^               _i_: indent defun             _/_: unwrap"
     ("q" nil)
     ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
     ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
     ("[" (lambda (_) (interactive "P") (sp-wrap-with-pair "[")))
     ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
     ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
+    ("/" #'sp-unwrap-sexp)
     ("f" #'sp-forward-sexp)
     ("b" #'sp-backward-sexp)
     ("u" #'sp-backward-up-sexp)
@@ -307,6 +314,7 @@ Sexps (quit with _q_)
     ("C-<right>" #'sp-forward-barf-sexp)
     ("<left>" #'sp-backward-slurp-sexp)
     ("C-<left>" #'sp-backward-barf-sexp))
+  (general-def "C-z" #'+smartparens-hydra/body)
   
   (require 'smartparens-config)
   (setq sp-highlight-pair-overlay nil
@@ -358,11 +366,12 @@ Sexps (quit with _q_)
   (global-undo-tree-mode +1))
 
 (use-package helpful
-  :bind
-  (([remap describe-function] . helpful-callable)
-   ([remap describe-command]  . helpful-command)
-   ([remap describe-variable] . helpful-variable)
-   ([remap describe-key]      . helpful-key)))
+  :init
+  (general-def
+    [remap describe-function] #'helpful-callable
+    [remap describe-command]  #'helpful-command
+    [remap describe-variable] #'helpful-variable
+    [remap describe-key]      #'helpful-key))
 
 (provide 'config-editor.el)
 ;;; config-editor.el ends here

@@ -2,7 +2,7 @@
 
 (defvar %theme nil
   "Default theme.")
-(defvar %font (font-spec :family "Fira Code Retina" :size 12)
+(defvar %font (font-spec :family "Iosevka" :size 12)
   "Default font. Should be a FONT-SPEC.")
 
 (setq-default
@@ -190,11 +190,10 @@
 ;; Load theme/font
 (defun setup-fonts ()
   (condition-case ex
-      (custom-set-faces
-       (when (fontp %font)
-         (let ((xlfd (font-xlfd-name %font)))
-           (add-to-list 'default-frame-alist (cons 'font xlfd))
-           `(fixed-pitch ((t (:font ,xlfd)))))))
+      (progn
+        (when (fontp %font)
+          (let ((xlfd (font-xlfd-name %font)))
+            (add-to-list 'default-frame-alist (cons 'font xlfd)))))
     ((debug error)
      (if (string-prefix-p "Font not available: " (error-message-string ex))
          (lwarn 'config-interface :warning

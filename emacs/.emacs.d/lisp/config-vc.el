@@ -101,7 +101,8 @@ otherwise in default state."
   (advice-add #'git-timemachine--show-minibuffer-details
               :override #'+vc-update-header-line)
 
-  (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)
+  (after! evil
+    (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps))
 
   (after! magit
     (add-transient-hook! 'git-timemachine-blame
@@ -191,28 +192,29 @@ control in buffers."
   (define-key magit-status-mode-map
     [remap magit-mode-bury-buffer] #'+magit-quit))
 
-(use-package evil-magit
-  :after magit
-  :init
-  (setq evil-magit-state 'normal
-        evil-magit-use-z-for-folds t)
-  :config
-  (define-key! magit-mode-map
-    "\M-1" nil
-    "\M-2" nil
-    "\M-3" nil
-    "\M-4" nil)
-  (evil-define-key* '(normal visual) magit-mode-map
-    "zz" #'evil-scroll-line-to-center)
-  (after! git-rebase
-    (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
-      (setcar (assoc (car key) evil-magit-rebase-commands-w-descriptions)
-              (cdr key)))
-    (evil-define-key* evil-magit-state git-rebase-mode-map
-      "gj" #'git-rebase-move-line-down
-      "gk" #'git-rebase-move-line-up))
-  (define-key! (magit-mode-map magit-blame-read-only-mode-map)
-    (kbd "SPC") nil))
+(after! evil
+  (use-package evil-magit
+    :after magit
+    :init
+    (setq evil-magit-state 'normal
+          evil-magit-use-z-for-folds t)
+    :config
+    (define-key! magit-mode-map
+      "\M-1" nil
+      "\M-2" nil
+      "\M-3" nil
+      "\M-4" nil)
+    (evil-define-key* '(normal visual) magit-mode-map
+                      "zz" #'evil-scroll-line-to-center)
+    (after! git-rebase
+      (dolist (key '(("M-k" . "gk") ("M-j" . "gj")))
+        (setcar (assoc (car key) evil-magit-rebase-commands-w-descriptions)
+                (cdr key)))
+      (evil-define-key* evil-magit-state git-rebase-mode-map
+                        "gj" #'git-rebase-move-line-down
+                        "gk" #'git-rebase-move-line-up))
+    (define-key! (magit-mode-map magit-blame-read-only-mode-map)
+      (kbd "SPC") nil)))
 
 (provide 'config-vc.el)
 ;;; config-vc.el ends here

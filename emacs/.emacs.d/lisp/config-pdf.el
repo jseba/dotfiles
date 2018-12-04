@@ -8,8 +8,9 @@
   (define-key! pdf-view-mode-map
     "q" #'kill-this-buffer)
 
-  (evil-define-key* 'normal pdf-view-mode-map
-    "q" #'kill-this-buffer)
+  (after! evil
+    (evil-define-key* 'normal pdf-view-mode-map
+                      "q" #'kill-this-buffer))
 
   (defun +pdf-cleanup-windows ()
     "Kill leftover annotation buffers when the document buffer is killed."
