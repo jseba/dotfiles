@@ -242,7 +242,7 @@ else
   set guioptions+=c
 endif
 
-colorscheme papercolor
+colorscheme PaperColor
 
 " allow for transparency
 hi! Normal ctermbg=NONE guibg=NONE
