@@ -371,7 +371,13 @@ Sexps (quit with _q_)
     [remap describe-function] #'helpful-callable
     [remap describe-command]  #'helpful-command
     [remap describe-variable] #'helpful-variable
-    [remap describe-key]      #'helpful-key))
+    [remap describe-key]      #'helpful-key)
+  (general-def
+    :keymaps '(help-mode-map helpful-mode-map)
+    "o"       #'ace-link-help
+    "q"       #'quit-window
+    "<right>" #'forward-button
+    "<left>"  #'backward-button))
 
 (provide 'config-editor.el)
 ;;; config-editor.el ends here

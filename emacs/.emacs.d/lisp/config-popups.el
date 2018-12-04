@@ -408,12 +408,6 @@
              (t (error "Invalid buffer %s" buf))))
     (funcall orig-fn buf norecord)))
 
-(defun +popup-persp-restore-popups (&rest _)
-  "Restore popup windows when loading a perspective from file."
-  (dolist (window (window-list))
-    (when (+popup-parameter 'popup window)
-      (+popup--init window nil))))
-
 (defun +popup-ignore-window-parameters (orig-fn &rest args)
   "Allow *interactive* window moving commands to traverse popups."
   (cl-letf (((symbol-function #'windmove-find-other-window)

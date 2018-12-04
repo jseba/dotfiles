@@ -179,15 +179,6 @@ time this hook is run."
                         (%IS-LINUX "xdg-open \"%s\"")
                         (%IS-WIN32 "start \"%s\"")))))
 
-    (defun +org-exclude-agenda-buffers-from-workspace ()
-      (when org-agenda-new-buffers
-        (let (persp-auto-kill-buffer-on-remove)
-          (persp-remove-buffer org-agenda-new-buffers
-                               (get-current-persp)
-                               nil))))
-    (add-hook 'org-agenda-finalize-hook
-              #'+org-exclude-agenda-buffers-from-workspace)
-
     (defun +org-exclude-agenda-buffers-from-recentf (orig-fn file)
       (let ((recentf-exclude (list (lambda (_file) t))))
         (funcall orig-fn file)))

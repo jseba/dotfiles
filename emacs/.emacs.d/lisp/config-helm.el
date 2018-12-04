@@ -3,10 +3,8 @@
 (use-package helm
   :defer 1
   :after-call pre-command-hook
-  :preface
-  (defvar +helm-global-prompt ">>> ")
-
   :init
+  (defvar +helm-global-prompt ">>> ")
   (defvar helm-generic-files-map (make-sparse-keymap))
 
   (setq helm-candidate-number-limit 50
@@ -300,7 +298,9 @@
 
   (defun +helm-project-search (&optional all-files-p)
     (interactive "P")
-    (funcall (or (+helm--get-command ""))))
+    (funcall (or (+helm--get-command "+helm-%s")
+                 #'+helm-grep)
+             (or all-files-p current-prefix-arg)))
 
   (dolist (engine `(,@(cl-remove-duplicates +helm-project-search-tools
                                             :from-end t)

@@ -122,23 +122,29 @@ everywhere else."
       (company-select-previous-or-abort)))
 
   (general-def
+    "C-;" #'company-capf
+    [remap dabbrev-expand] #'company-dabbrev)
+  (general-def
+    :prefix "C-c c"
+    "l"   #'+company-whole-lines
+    "n"   #'+company-dabbrev
+    "p"   #'+company-dabbrev-code-previous
+    "s"   #'company-ispell
+    "f"   #'company-files
+    "t"   #'company-etags)
+  (general-def
     :keymaps 'company-active-map
     "C-n" #'company-select-next
-    "C-p" #'company-select-previous
+    "C-p" #'company-select-prev
     "C-h" #'company-show-doc-buffer
-    "C-u" #'company-previous-page
-    "C-d" #'company-next-page
-    "C-s" #'company-filter-candidates
-    "C-S-s" #'helm-company
-    "C-SPC" #'company-complete-common
+    "C-s" #'helm-company
+    "C-S-s" #'company-filter-candidates
     [tab] #'company-complete-common-or-cycle
     [backtab] #'company-select-previous)
   (general-def
     :keymaps 'company-search-map
     "C-n" #'company-select-next-or-abort
     "C-p" #'company-select-previous-or-abort
-    "C-j" #'company-select-next-or-abort
-    "C-k" #'company-select-previous-or-abort
     [escape] #'company-search-abort)
 
   (add-hook 'company-mode-hook #'+company-init-backends)
