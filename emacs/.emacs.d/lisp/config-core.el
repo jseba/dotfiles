@@ -19,9 +19,6 @@
 (defconst %IS-MACOS (eq system-type 'darwin))
 (defconst %IS-WIN32 (eq system-type 'windows-nt))
 
-(setq custom-file %custom-file)
-(load custom-file t)
-
 ;;
 ;; Built-in libraries
 
