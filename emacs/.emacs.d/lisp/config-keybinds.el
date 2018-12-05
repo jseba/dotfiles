@@ -55,56 +55,26 @@
   ;;
   ;; Global keybindings
   (general-def
+    :keymaps '(insert normal global visual motion emacs)
     "M-x" #'execute-extended-command
     "A-x" #'execute-extended-command
-    "C-M-f" #'toggle-frame-fullscreen)
+    "M-:" #'eval-expression
+    "A-:" #'eval-expression)
 
   ;;
-  ;; Common
-  (general-def
-    :prefix "C-c"
-    "+" '(text-scale-increase          :wk "Increase font size")
-    "=" '((lambda! (text-scale-set 0)) :wk "Reset font size")
-    "-" '(text-scale-decrease          :wk "Decrease font size")
-    "`" '(+popup-toggle                :wk "Toggle popups")
-    "~" '(+popup-raise                 :wk "Raise popup")
-    "'" '(helm-resume                  :wk "Resume last search")
-    "." '(projectile-find-file         :wk "Browse files")
-    ";" '(swiper-helm                  :wk "Search in buffer")
-    "/" '(+helm-project-search         :wk "Search")
-    "r" '(projectile-recentf           :wk "Recent project files")
-    "e" '(+eshell-open                 :wk "Eshell")
-    "E" '(+eshell-open-popup           :wk "Eshell popup")
-    "i" '(imenu                        :wk "Symbols")
-    "I" '(imenu-anywhere               :wk "Symbols across buffers"))
-
-  ;; TODO: better way to toggle Evil?
+  ;; Evil keybindings
   (after! evil
     (general-evil-setup)
-
-    (general-create-definer
-      general-leader-def
-      :prefix "SPC")
-
-    (general-create-definer
-      general-local-leader-def
-      :prefix "SPC m")
-
-    ;;
-    ;; Global keybindings
-
-    (general-def
-      :keymaps '(insert normal global visual motion emacs)
-      "M-x" #'execute-extended-command
-      "A-x" #'execute-extended-command)
-
-    ;;
-    ;; Evil keybindings
 
     (general-imap
       [remap newline] #'newline-and-indent
       "C-j" #'newline
-
+      "C-x C-o" #'company-capf
+      "C-x C-l" #'+company-whole-lines
+      "C-x C-f" #'company-files
+      "C-x C-n" #'+company-dabbrev
+      "C-x C-p" #'+company-dabbrev-code-previous
+      "C-x C-]" #'company-etags
       "C-SPC" #'+company-complete)
 
     (general-imap
@@ -132,28 +102,17 @@
       "M-TAB" #'+persp-display
       "M-w" #'delete-window
       "M-W" #'delete-frame
-      "C-M-f" #'toggle-frame-fullscreen
       "M-n" #'evil-buffer-new
       "M-N" #'make-frame
-      "M-1" (lambda! (+persp-switch-to 0))
-      "M-2" (lambda! (+persp-switch-to 1))
-      "M-3" (lambda! (+persp-switch-to 2))
-      "M-4" (lambda! (+persp-switch-to 3))
-      "M-5" (lambda! (+persp-switch-to 4))
-      "M-6" (lambda! (+persp-switch-to 5))
-      "M-7" (lambda! (+persp-switch-to 6))
-      "M-8" (lambda! (+persp-switch-to 7))
-      "M-9" (lambda! (+persp-switch-to 8))
-      "M-0" (lambda! (+persp-switch-to-last))
-      "gc"  #'evil-commentary)
-
-    (general-nmap
-      :keymaps 'evil-window-map
+      "gc"  #'evil-commentary
       "C-h" #'evil-window-left
       "C-j" #'evil-window-down
       "C-k" #'evil-window-up
       "C-l" #'evil-window-right
-      "C-w" #'other-window
+      "C-w" #'other-window)
+
+    (general-nmap
+      :keymaps 'evil-window-map
       "H"   #'+evil-window-move-left
       "J"   #'+evil-window-move-down
       "K"   #'+evil-window-move-up
@@ -162,7 +121,6 @@
       "u"   #'winner-undo
       "C-u" #'winner-undo
       "C-r" #'winner-redo
-      "c"   #'+persp-close-window-or-workspace
       "C-C" #'ace-delete-window)
 
     (general-nmap
@@ -198,84 +156,89 @@
               :which-key "Find file in project")
       "."   '(find-file
               :which-key "Browse files")
+      "`"   '(+popup-raise
+              :which-key "Raise popup")
       "~"   '(+popup-toggle
               :which-key "Toggle last popup")
       "'"   '(helm-resume
               :which-key "Resume last search")
       ";"   '(+smartparens-hydra/body
               :which-key "Sexps")
+      ":"   '(eval-expression
+              :which-key "Evaluate Expression")
       "RET" '(bookmark-jump
               :which-key "Jump to bookmark")
-      ","   '(persp-switch-to-buffer
-              :which-key "Switch workspace buffer")
-      "<"   '(switch-to-buffer
+      ","   '(nil
+              :which-key "NIL")
+      "<"   '(previous-buffer
+              :which-key "Previous buffer")
+      ">"   '(next-buffer
+              :which-key "Next buffer")
+      "/"   '(+helm-project-search
+              :which-key "Search in project")
+      "b"   '(switch-to-buffer
               :which-key "Switch buffer")
+      "e"   '(+eshell-open
+              :which-key "EShell")
+      "E"   '(+eshell-open-popup
+              :which-key "EShell popup")
+      "F"   '(toggle-frame-fullscreen
+              :which-key "Fullscreen")
+      "h"   '(nil
+              :which-key "Help")
+      "ha"   '(apropos
+              :which-key "Apropos")
+      "hc"   '(describe-char
+              :which-key "Describe character")
+      "hf"   '(describe-function
+              :which-key "Describe function")
+      "hF"   '(describe-face
+              :which-key "Describe face")
+      "hi"   '(info-lookup-symbol
+              :which-key "Info")
+      "hk"   '(describe-key
+              :which-key "Describe key")
+      "hl"   '(find-library
+              :which-key "Find library")
+      "hm"   '(view-echo-area-messages
+              :which-key "View *Messages*")
+      "hM"   '(describe-mode
+              :which-key "Describe mode")
+      "hv"   '(describe-variable
+              :which-key "Describe variable")
+      "hw"   '(woman
+              :which-key "Man pages")
+      "h."   '(helpful-at-point
+              :which-key "Describe at point")
+      "k"   '(kill-this-buffer
+              :which-key "Kill this buffer")
+      "K"   '(kill-other-buffers
+              :which-key "Kill other buffers")
+      "n"   '(evil-buffer-new
+              :which-key "New empty buffer")
+      "p"   '(nil
+              :which-key "Project")
+      "p!"  '(projectile-run-command-in-root
+             :which-key "Run command in project root")
+      "pc"  '(projectile-compile-project
+             :which-key "Compile project")
+      "pa"  '(projectile-find-other-file
+             :which-key "Find other file")
+      "pp"  '(projectile-switch-project
+             :which-key "Switch project")
+      "pr"  '(projectile-recentf
+             :which-key "Recent project files")
+      "px"  '(projectile-invalidate-cache
+             :which-key "Invalidate project cache")
+      "t"  '(+treemacs-toggle
+             :which-key "Project sidebar")
+      "T"  '(+treemacs-find-file
+             :which-key "Find file in project sidebar")
       "u"   '(universal-argument
               :which-key "Universal argument")
       "w"   '(evil-window-map
-              :which-key "Window")
-      [tab] '(:ignore t :which-key "Workspace"))
+              :which-key "Window"))
 
-    (general-nvmap
-      :prefix "SPC /"
-      "b"   '(swiper-helm
-              :which-key "Buffer")
-      "p"   '(+helm-project-search
-              :which-key "Project")
-      "i"   '(imenu
-              :which-key "Symbols")
-      "I"   '(imenu-anywhere
-              :which-key "Symbols across buffers"))
-
-    (general-nmap
-      :prefix "SPC TAB"
-      ""    '(nil
-              :which-key "Workspace")
-      [tab] '(+persp-display
-              :which-key "Show tab bar")
-      "c"   '(+persp-new
-              :which-key "New workspace")
-      "l"   '(+persp-load
-              :which-key "Load workspace from file")
-      "L"   '(+persp-load-session
-              :which-key "Load session from file")
-      "s"   '(+persp-save
-              :which-key "Save session to file")
-      "S"   '(+persp-save-session
-              :which-key "Save current session")
-      "."   '(+persp-switch-to
-              :which-key "Switch workspace")
-      "x"   '(+persp-kill-session
-              :which-key "Kill session")
-      "d"   '(+persp-delete
-              :which-key "Delete workspace")
-      "r"   '(+persp-rename
-              :which-key "Rename workspace")
-      "n"   '(+persp-switch-right
-              :which-key "Next workspace")
-      "p"   '(+persp-switch-left
-              :which-key "Previous workspace")
-      "1"   `(,(lambda! (+persp-switch-to 0))
-              :which-key "Switch to workspace 1")
-      "2"   `(,(lambda! (+persp-switch-to 1))
-              :which-key "Switch to workspace 2")
-      "3"   `(,(lambda! (+persp-switch-to 2))
-              :which-key "Switch to workspace 3")
-      "4"   `(,(lambda! (+persp-switch-to 3))
-              :which-key "Switch to workspace 5")
-      "5"   `(,(lambda! (+persp-switch-to 4))
-              :which-key "Switch to workspace 5")
-      "6"   `(,(lambda! (+persp-switch-to 5))
-              :which-key "Switch to workspace 6")
-      "7"   `(,(lambda! (+persp-switch-to 6))
-              :which-key "Switch to workspace 7")
-      "8"   `(,(lambda! (+persp-switch-to 7))
-              :which-key "Switch to workspace 8")
-      "9"   `(,(lambda! (+persp-switch-to 8))
-              :which-key "Switch to workspace 9")
-      "0"   '(+persp-switch-to-last
-              :which-key "Switch to last workspace"))
-    
     (general-nmap
       :prefix "SPC b"
       ""    '(nil :which-key "Buffer")
@@ -283,8 +246,6 @@
               :which-key "New empty buffer")
       "b"   '(persp-switch-to-buffer
               :which-key "Switch workspace buffer")
-      "B"   '(switch-to-buffer
-              :which-key "Switch buffer")
       "k"   '(kill-this-buffer
               :which-key "Kill this buffer")
       "K"   '(kill-other-buffers

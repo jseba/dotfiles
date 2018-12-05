@@ -325,7 +325,6 @@ Sexps (quit with _q_)
     ("C-<right>" #'sp-forward-barf-sexp)
     ("<left>" #'sp-backward-slurp-sexp)
     ("C-<left>" #'sp-backward-barf-sexp))
-  (general-def "C-z" #'+smartparens-hydra/body)
   
   (require 'smartparens-config)
   (setq sp-highlight-pair-overlay nil

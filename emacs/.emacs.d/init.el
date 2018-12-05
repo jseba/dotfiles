@@ -55,6 +55,7 @@
   (require-init 'config-buffers)
   (require-init 'config-editor)
   (require-init 'config-interface)
+  (require-init 'config-evil)
   (require-init 'config-modeline)
   (require-init 'config-helm)
   (require-init 'config-spell)

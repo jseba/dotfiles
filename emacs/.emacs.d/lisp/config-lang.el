@@ -308,26 +308,25 @@ will trigger electric reindentation."
   :config
   (general-def
     :keymaps '(c-mode-map c++-mode-map)
-    :prefix "C-c l"
-    "" '(nil :wk "LSP")
+    :prefix "SPC l"
     "=" '(lsp-format-buffer
-          :wk "Format Buffer")
+          :which-key "Format Buffer")
     "a" '(lsp-execute-code-action
-          :wk "Code Action")
+          :which-key "Code Action")
     "l" '(lsp-ui-sideline-mode
-          :wk "Sideline Mode")
+          :which-key "Sideline Mode")
     "d" '(lsp-ui-doc-mode
-          :wk "Doc Mode")
+          :which-key "Doc Mode")
     "e" '(lsp-ui-flycheck-list
-          :wk "Diagnostics")
+          :which-key "Diagnostics")
     "i" '(lsp-ui-imenu
-          :wk "Imenu")
+          :which-key "Imenu")
     "r" '(lsp-rename
-          :wk "Rename")
+          :which-key "Rename")
     "R" '(lsp-restart-workspace
-          :wk "Restart Workspace")
+          :which-key "Restart Workspace")
     "w" '(lsp-ui-peek-find-workspace-symbol
-          :wk "Find Symbol in Workspace")))
+          :which-key "Find Symbol in Workspace")))
 
 (use-package company-lsp
   :after company)

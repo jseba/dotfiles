@@ -45,25 +45,6 @@
 
   (add-hook 'init-hook #'projectile-mode)
 
-  (general-def
-    :keymaps 'projectile-mode-map
-    :prefix "C-c p"
-    "" '(nil :wk "Project")
-    "f" '(projectile-find-file
-          :wk "Find file in project")
-    "!" '(projectile-run-command-in-root
-          :wk "Run command in project root")
-    "c" '(projectile-compile-project
-          :wk "Compile project")
-    "a" '(projectile-find-other-file
-          :wk "Find other file")
-    "p" '(projectile-switch-project
-          :wk "Switch project")
-    "r" '(projectile-recentf
-          :wk "Recent project files")
-    "x" '(projectile-invalidate-cache
-          :wk "Invalidate project cache"))
-
   :config
   (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects))
 

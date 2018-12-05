@@ -200,109 +200,67 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
     (lsp-ui-peek-find-references nil
                                  (list :folders (vector (+projectile-project-root)))))
 
-  (general-def
+  (general-nmap
     :keymaps '(c-mode-map c++-mode-map)
-    :prefix "C-c"
+    :prefix "SPC m"
     "p" '(ccls-preprocess-file
-          :wk "Preprocess file")
+          :which-key "Preprocess file")
     "R" '(ccls-reload
-          :wk "Reload ccls"))
-  (general-def
+          :which-key "Reload ccls"))
+  (general-nmap
     :keymaps '(c-mode-map c++-mode-map)
-    :prefix "C-c x"
-    ""  '(nil :wk "xref")
+    :prefix "SPC x"
     "a" '(+ccls-references-address
-          :wk "Variable Addresses")
+          :which-key "Variable Addresses")
     "F" '(+ccls-references-not-call
-          :wk "Function Addresses")
+          :which-key "Function Addresses")
     "P" '(+ccls-references-macro
-          :wk "Macro References")
+          :which-key "Macro References")
     "r" '(+ccls-references-read
-          :wk "Read References")
+          :which-key "Read References")
     "w" '(+ccls-references-write
-          :wk "Write References")
+          :which-key "Write References")
     "b" `(,(lambda! (+ccls-base 1))
-          :wk "Direct Bases")
+          :which-key "Direct Bases")
     "B" `(,(lambda! (+ccls-base 3))
-          :wk "Bases")
+          :which-key "Bases")
     "d" `(,(lambda! (+ccls-derived 1))
-          :wk "Direct Derived")
+          :which-key "Direct Derived")
     "D" `(,(lambda! (+ccls-derived 3))
-          :wk "Derived")
+          :which-key "Derived")
     "i" '(ccls-inheritance-hierarchy
-          :wk "Base Hierarchy")
+          :which-key "Base Hierarchy")
     "I" `(,(lambda! (ccls-inheritance-hierarchy t))
-          :wk "Derived Hierarchy")
+          :which-key "Derived Hierarchy")
     "c" '(+ccls-caller
-          :wk "Callers")
+          :which-key "Callers")
     "C" '(+ccls-callee
-          :wk "Callees")
+          :which-key "Callees")
     "e" '(ccls-call-hierarchy
-          :wk "Caller Hierarchy")
+          :which-key "Caller Hierarchy")
     "E" `(,(lambda! (ccls-call-hierarchy t))
-          :wk "Callee Hierarchy")
+          :which-key "Callee Hierarchy")
     "s" `(,(lambda! (+ccls-member 2))
-          :wk "Nested Classes")
+          :which-key "Nested Classes")
     "f" `(,(lambda! (+ccls-member 3))
-          :wk "Member Functions")
+          :which-key "Member Functions")
     "m" `(,(lambda! (+ccls-member 0))
-          :wk "Member Variables")
+          :which-key "Member Variables")
     "M" '(ccls-member-hierarchy
-          :wk "Member Hierarchy")
+          :which-key "Member Hierarchy")
     "v" `(,(lambda! (+ccls-vars 3))
-          :wk "Local Variables")
+          :which-key "Local Variables")
     "V" `(,(lambda! (+ccls-vars 1))
-          :wk "Fields")
+          :which-key "Fields")
     "C-v" `(,(lambda! (+ccls-vars 7))
-            :wk "All Variables")
+            :which-key "All Variables")
     "t" '(lsp-goto-type-definition
-          :wk "Go To Type Definition")
+          :which-key "Go To Type Definition")
     "L" '(ccls-code-lens-mode
-          :wk "Code Lens Mode"))
+          :which-key "Code Lens Mode"))
 
   (after! evil
-    (evil-set-initial-state 'ccls-tree-mode 'emacs)
-    
-    (general-nmap
-      :keymaps '(c-mode-map c++-mode-map)
-      :prefix "SPC m"
-      "b" (lambda! (+ccls-base 1))
-      "B" (lambda! (+ccls-base 3))
-      "c" #'+ccls-caller
-      "C" #'+ccls-callee
-      "C" (lambda! (+ccls-base 3))
-      "d" (lambda! (+ccls-derived 1))
-      "D" (lambda! (+ccls-derived 3))
-      "e" #'ccls-call-hierarchy
-      "E" (lambda! (ccls-call-hierarchy t))
-      "s" (lambda! (+ccls-member 2))
-      "f" (lambda! (+ccls-member 3))
-      "i" #'ccls-inheritiance-hierarchy
-      "I" (lambda! (ccls-inheritiance-hierarchy t))
-      "L" #'ccls-code-lens-mode
-      "m" (lambda! (+ccls-member 0))
-      "M" #'ccls-member-hierarchy
-      "R" #'ccls-reload
-      "t" #'lsp-goto-type-definition
-      "v" (lambda! (+ccls-vars 3))
-      "V" (lambda! (+ccls-vars 1))
-      "C-v" (lambda! (+ccls-vars 7))
-      "C-F" #'+ccls-references-not-call
-      "C-m" #'+ccls-references-macro
-      "C-R" #'+ccls-references-read
-      "C-W" #'+ccls-references-write
-      "C-P" #'+ccls-references-in-project
-
-      ;; LSP functions
-      "l=" #'lsp-format-buffer
-      "la" #'lsp-execute-code-action
-      "ll" #'lsp-ui-sideline-mode
-      "ld" #'lsp-ui-doc-mode
-      "le" #'lsp-ui-flycheck-list
-      "li" #'lsp-ui-imenu
-      "lr" #'lsp-rename
-      "lR" #'lsp-restart-workspace
-      "lw" #'lsp-ui-peek-find-workspace-symbol)))
+    (evil-set-initial-state 'ccls-tree-mode 'emacs)))
 
 (use-package cquery
   :disabled

@@ -6,6 +6,7 @@
              company-grab-line)
   :defer 2
   :after-call post-self-insert-hok
+  :bind
   :init
   (defvar +company-backend-alist
     '((text-mode :derived (company-dabbrev company-yasnippet company-ispell))
@@ -122,16 +123,7 @@ everywhere else."
       (company-select-previous-or-abort)))
 
   (general-def
-    "C-;" #'company-capf
     [remap dabbrev-expand] #'company-dabbrev)
-  (general-def
-    :prefix "C-c c"
-    "l"   #'+company-whole-lines
-    "n"   #'+company-dabbrev
-    "p"   #'+company-dabbrev-code-previous
-    "s"   #'company-ispell
-    "f"   #'company-files
-    "t"   #'company-etags)
   (general-def
     :keymaps 'company-active-map
     "C-n" #'company-select-next
