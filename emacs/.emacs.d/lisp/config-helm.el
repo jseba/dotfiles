@@ -301,32 +301,61 @@
     (funcall (or (+helm--get-command "+helm-%s")
                  #'+helm-grep)
              (or all-files-p current-prefix-arg)))
+  (defun +helm-project-search-from-here (&optional all-files-p)
+    (interactive "P")
+    (funcall (or (+helm--get-command "+helm-%s-from-here")
+                 #'+helm-grep-from-here)
+             (or all-files-p current-prefix-arg)))
 
-  (dolist (engine `(,@(cl-remove-duplicates +helm-project-search-tools
-                                            :from-end t)
-                    grep))
-    (defalias (intern (format "+helm-%s" engine))
-      (lambda (all-files-p &optional query directory)
-        (interactive "P")
-        (+helm-file-search engine
-                           :query query
-                           :in directory
-                           :all-files all-files-p)))
-    (defalias (intern (format "+helm-%s-from-cwd" engine))
-      (lambda (all-files-p &optional query)
-        (interactive "P")
-        (+helm-file-search engine
-                           :query query
-                           :in default-directory
-                           :all-files all-files-p))))
+  (defun +helm-rg (all-files-p &optional query directory)
+    (interactive "P")
+    (+helm-file-search 'rg
+      :query query
+      :in directory
+      :all-files all-files-p))
+  (defun +helm-ag (all-files-p &optional query directory)
+    (interactive "P")
+    (+helm-file-search 'ag
+      :query query
+      :in directory
+      :all-files all-files-p))
+  (defun +helm-grep (all-files-p &optional query directory)
+    (interactive "P")
+    (+helm-file-search 'grep
+      :query query
+      :in directory
+      :all-files all-files-p))
+  (defun +helm-rg-from-here (all-files-p &optional query directory)
+    (interactive "P")
+    (+helm-file-search 'rg
+      :query query
+      :in default-directory
+      :all-files all-files-p))
+  (defun +helm-ag-from-here (all-files-p &optional query directory)
+    (interactive "P")
+    (+helm-file-search 'ag
+      :query query
+      :in default-directory
+      :all-files all-files-p))
+  (defun +helm-grep-from-here (all-files-p &optional query directory)
+    (interactive "P")
+    (+helm-file-search 'grep
+      :query query
+      :in default-directory
+      :all-files all-files-p))
+
   (general-def
     :keymaps 'helm-ag-map
     [backtab] #'helm-ag-edit
     [left]    nil
     [right]   nil)
+  (general-def
+    :keymaps 'helm-ag-edit-map
+    [remap quit-window] #'helm-ag--edit-abort
+    "RET" #'compile-goto-error)
  
   :config
-  ;;(+popup-set-rule "^\\*helm-ag-edit" :size 0.35 :ttl 0 :quit nil)
+  (+popup-set-rule "^\\*helm-ag-edit" :size 0.35 :ttl 0 :quit nil)
   (advice-add #'helm-ag-show-status-default-mode-line :override #'ignore))
 
 (use-package helm-c-yasnippet)

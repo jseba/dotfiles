@@ -202,6 +202,16 @@
          (indent-according-to-mode))))
 (advice-add #'newline-and-indent :around #'newline-and-indent-maybe-continue-comment)
 
+(defun retab (&optional beg end)
+  "Change all tabs to spaces, or vice-versa, depding on `indent-tabs-mode'."
+  (interactive "r")
+  (unless (and beg end)
+    (setq beg (point-min)
+          end (point-max)))
+  (if indent-tabs-mode
+      (tabify beg end)
+    (untabify beg end)))
+
 (defun set-indirect-buffer-file-name  (orig-fn base-buffer name &optional clone)
   (let ((file-name (buffer-file-name base-buffer))
         (buffer (funcall orig-fn base-buffer name clone)))
@@ -215,7 +225,8 @@
 
 (general-def
   [remap move-beginning-of-line] #'backward-to-bol-or-indent
-  [remap move-end-of-line]       #'forward-to-last-non-comment-or-eol)
+  [remap move-end-of-line]       #'forward-to-last-non-comment-or-eol
+  [remap newline]                #'newline-and-indent)
 
 (use-package autorevert
   :after-call after-find-file
@@ -338,6 +349,48 @@ Sexps (quit with _q_)
   (add-hook 'minibuffer-setup-hook #'+smartparens-enable-in-eval-expression)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
 
+  ;; autopair quotes more conservatively
+  (let ((unless-list '(sp-point-before-word-p
+                       sp-point-after-word-p
+                       sp-point-before-same-p)))
+    (sp-pair "'" nil :unless unless-list)
+    (sp-pair "\"" nil :unless unless-list))
+
+  ;; auto expand braces
+  (dolist (brace '("(" "{" "["))
+    (sp-pair brace nil
+             :post-handlers '(("||\n[i]" "RET") ("| " "SPC"))
+             ;; except near a word or another opening brace
+             :unless '(sp-point-before-word-p sp-point-before-same-p)))
+
+  ;; don't do square-brace expansion when it doesn't make sense
+  (sp-local-pair '(emacs-lisp-mode org-mode)
+                 "[" nil :post-handlers '(:rem ("| " "SPC")))
+
+  ;; reasonable defaults for comments
+  (sp-local-pair '(c-mode c++-mode)
+                 "/*" "*/"
+                 :actions '(insert)
+                 :post-handlers '(("| " "SPC")
+                                  ("\n*/[i][d-2]" "RET")
+                                  ("\n* ||\n*/[i][d-2]" "*")))
+
+  ;; highjacks backspace to:
+  ;; a) balance spaces inside braces: ( | ) -> (|)
+  ;; b) delete space-indented `tab-width' steps at a time
+  ;; c) close empty multiline brace blocks in one step:
+  ;;   {
+  ;;   |
+  ;;   }
+  ;;   becomes {|}
+  ;; d) refresh `smartparens' `:post-handlers' so SPC and RET expansions work even after a backspace
+  ;; e) properly delete `smartparens' pairs when they are encountered without the need for strict mode
+  ;; f) do none of this when in a string
+  (advice-add #'delete-backard-char :override #'delete-backward-char-extended)
+
+  ;; make `newline-and-indent' smarter when comments are involved
+  (advice-add #'newline-and-indent :around #'newline-and-indent-maybe-continue-comment)
+
   (after! evil
     (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
     (add-hook 'evil-replace-state-exit-hook #'turn-on-smartparens-mode))
@@ -378,6 +431,14 @@ Sexps (quit with _q_)
     "q"       #'quit-window
     "<right>" #'forward-button
     "<left>"  #'backward-button))
+
+(use-package ws-butler
+  :after-call (after-find-file)
+  :config
+  (setq ws-butler-global-exempt-modes
+        (append ws-butler-global-exempt-modes
+                '(special-mode comint-mode term-mode eshell-mode)))
+  (ws-butler-global-mode +1))
 
 (provide 'config-editor.el)
 ;;; config-editor.el ends here

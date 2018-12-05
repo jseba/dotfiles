@@ -256,5 +256,32 @@
   (run-hook-wrapped 'init-ui-hook #'try-run-hook))
 (add-hook 'init-hook #'setup-ui t)
 
+(defun +split-window-vertically-other-buffer (&optional size)
+  "Split the selected window vertically and switch to the new window."
+  (interactive "P")
+  (let ((target-window (split-window-vertically size)))
+    (set-window-buffer target-window (other-window 1))
+    (select-window target-window)))
+(advice-add #'split-window-vertically :override #'+split-window-vertically-other-buffer)
+
+(defun +split-window-horizontally-other-buffer (&optional size)
+  "Split the selected window horizontally and switch to the new window."
+  (interactive "P")
+  (let ((target-window (split-window-horizontally size)))
+    (set-window-buffer target-window (other-window 1))
+    (select-window target-window)))
+(advice-add #'split-window-horizontally :override #'+split-window-horizontally-other-buffer)
+
+(defun maximuze-window ()
+  "Maximize and isolate the current window. Activate again to undo.
+
+If the window changes before then, the undo expires."
+  (interactive)
+  (if (and (one-window-p)
+           (assoc ?_ register-alist))
+      (jump-to-register ?_)
+    (window-configuration-to-register ?_)
+    (delete-other-windows)))
+
 (provide 'config-interface)
 ;;; config-interface.el ends here

@@ -58,6 +58,8 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
            ("\\<A-Z]\\{3,\\}\\>"   . font-lock-constant-face))
      t))
 
+  (add-hook! (c-mode c++-mode) #'(+cc-fontify-constants hs-minor-mode))
+
   :config
   (c-toggle-electric-state -1)
   (c-toggle-auto-newline -1)
@@ -91,7 +93,11 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
 
   ;; TODO: create a Microsoft style
 
-  (add-hook! (c-mode c++-mode) #'+cc-fontify-constants)
+  (after! projectile
+    (general-def
+      :keymaps '(c-mode c++-mode)
+      "C-c p a" #'projectile-find-other-file
+      "C-c p A" #'projectile-find-other-file-other-window))
 
   ;; Disable electric keys as it interferes with smartparens;
   ;; do it manually instead
