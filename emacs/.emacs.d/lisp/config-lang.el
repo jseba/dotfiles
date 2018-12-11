@@ -305,6 +305,7 @@ will trigger electric reindentation."
 (use-package lsp-ui
   :init
   (add-hook 'lsp-mode-hook #'lsp-ui-mode)
+  (setq lsp-ui-sideline-show-symbol nil)
   :config
   (general-def
     :keymaps '(c-mode-map c++-mode-map)

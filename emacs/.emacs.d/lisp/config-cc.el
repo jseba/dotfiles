@@ -137,7 +137,7 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
                                     (if %IS-WIN32
                                         (getenv "TEMP")
                                       "/tmp"))
-                                   "/cquery.log"))
+                                   "/ccls.log"))
         cquery-extra-init-params '(:index
                                    (:comments 3)
                                    :completion
@@ -264,7 +264,7 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
 
 (use-package cquery
   :disabled
-  :when (and (executable-find "cquery") (not (executable-find "ccls")))
+  :when (executable-find "cquery")
   :commands lsp-cquery-enable
   :init
   (setq cquery-executable (executable-find "cquery")
@@ -280,17 +280,57 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
                                    :completion
                                    (:detailedLabel t)))
 
-  ;; add ".cquery" configuration file as a project root
-  (after! projectile
-    (push ".cquery" projectile-project-root-files-bottom-up))
+  (after! evil
+    (evil-set-initial-state 'cquery-tree-mode 'emacs))
 
-  (defun +cc-enable-cquery-maybe ()
-    "Enable Cquery if compile_commands.json or .cquery files found in project root."
+  (defun +cquery-enable-maybe ()
+    "Enable CQuery if compile_commands.json or .cquery files found in project root."
     (let ((default-directory (+projectile-project-root)))
       (when (or (file-exists-p ".cquery")
                 (file-exists-p "compile_commands.json"))
-        (lsp-cquery-enable))))
-  (add-hook! '(c-mode-hook c++-mode-hook) #'+cc-enable-cquery-maybe))
+        (lsp))))
+  (add-hook! '(c-mode-hook c++-mode-hook) #'+cquery-enable-maybe)
+
+  (defun +cquery-base ()
+    (interactive)
+    (cquery-xref-find-custom "$cquery/base"))
+  (defun +cquery-callers ()
+    (interactive)
+    (cquery-xref-find-custom "$cquery/callers"))
+  (defun +cquery-vars ()
+    (interactive)
+    (cquery-xref-find-custom "$cquery/vars"))
+
+  (general-nmap
+    :keymaps '(c-mode-map c++-mode-map)
+    :prefix "SPC m"
+    "p" '(cquery-preprocess-file
+          :which-key "Preprocess file"))
+  (general-nmap
+    :keymaps '(c-mode-map c++-mode-map)
+    :prefix "SPC x"
+    "M" '(cquery-member-hierarchy
+          :which-key "Member hierarchy")
+    "c" '((lambda! (cquery-call-hierarchy nil))
+          :which-key "Caller hierarchy")
+    "C" '((lambda! (cquery-call-hierarchy t))
+          :which-key "Callee hierarchy")
+    "i" '((lambda! (cquery-inheritance-hierarchy nil))
+          :which-key "Base hierarchy")
+    "I" '((lambda! (cquery-inheritance-hierarchy t))
+          :which-key "Base hierarchy")
+    "b" '(+cquery-base
+          :which-key "Bases")
+    "c" '(+cquery-callers
+          :which-key "Callers")
+    "v" '(+cquery-vars
+          :which-key "Variables")
+    "l" '(cquery-code-lens-mode
+          :which-key "Code Lens Mode")
+    "F" '(cquery-freshen-index
+          :which-key "Freshen Index")
+    "t" '(lsp-goto-type-definition
+          :which-key "Go To Type Definition")))
 
 (use-package cmake-mode)
 

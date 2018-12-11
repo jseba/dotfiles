@@ -7,6 +7,9 @@
 	      projectile-cache-file (concat %var-dir "projectile.cache")
 	      projectile-indexing-method 'alien
 	      projectile-find-dir-includes-top-level t)
+  (when (executable-find "fd")
+    (setq projectile-git-command "fd . --type f -0"
+          projectile-generic-command projectile-git-command))
 
   (defmacro +projectile-without-cache (&rest body)
     `(let ((projectile-project-root-cache (make-hash-table :test 'equal))
@@ -46,6 +49,10 @@
   (add-hook 'init-hook #'projectile-mode)
 
   :config
+  ;; add ".cquery" and ".ccls" configuration file as a project root
+  (push ".cquery" projectile-project-root-files-bottom-up)
+  (push ".ccls" projectile-project-root-files-bottom-up)
+
   (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects))
 
 (provide 'config-projects)
