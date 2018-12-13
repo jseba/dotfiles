@@ -1,0 +1,16 @@
+#!/bin/bash
+
+BASE_URL="http://www.wsdot.com/Traffic/api/TravelTimes/TravelTimesREST.svc/"
+ACCESS_CODE="436e194a-8f7a-4683-88db-6275f426cc77"
+
+CMD_GET_TIME_JSON="GetTravelTimeAsJson"
+
+REDMOND_TO_SEATTLE_TRAVEL_ID="83"
+
+RESULT=$(curl -s "${BASE_URL}${CMD_GET_TIME_JSON}?AccessCode=${ACCESS_CODE}&TravelTimeID=${REDMOND_TO_SEATTLE_TRAVEL_ID}")
+
+AVG_TIME=$(echo ${RESULT} | jq -r '.AverageTime | @sh')
+
+ICON=""
+
+echo "${ICON} Time Home: ${AVG_TIME}"
