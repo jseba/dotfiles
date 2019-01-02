@@ -1,222 +1,123 @@
 set nocompatible
 scriptencoding utf-8
-
-let s:plug_file = '~/.vim/autoload/plug.vim'
-if empty(glob(s:plug_file))
-  silent execute '!curl -fLo ' . s:plug_file . ' --create-dirs '.
-      \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source '~/.vimrc'
-endif
-
-" Bundles
-call plug#begin('~/.vim/plugged')
-
-" VCS
-Plug 'airblade/vim-gitgutter'
-
-" Programming
-Plug 'sheerun/vim-polyglot'
-Plug 'justinmk/vim-syntax-extra'
-Plug 'rhysd/vim-clang-format'
-Plug 'neoclide/coc.nvim', {'tag':'*','do':{-> coc#util#install()}}
-" Plug 'autozimu/LanguageClient-neovim', {'branch':'next','do':'sh install.sh'}
-
-" Editing
-Plug 'tpope/vim-commentary'
-
-" Interface
-Plug 'junegunn/fzf' | Plug 'junegunn/fzf.vim'
-
-" Colorschemes
-Plug 'morhetz/gruvbox'
-Plug 'nlknguyen/papercolor-theme'
-
-" Local plugins
-if filereadable(expand("~/.local/vim/plugs.vim"))
-  so ~/.local/vim/plugs.vim
-endif
-
-call plug#end()
-
-" General settings
-syntax on
 filetype plugin indent on
 
+" Basic options
 set autoindent
-set backspace=indent,eol,start
-set backup
-set backupdir=$HOME/.local/share/vim/backups
-set breakindent
-set cmdheight=2
-set complete+=d
-set expandtab
-set formatoptions+=j
 set hidden
+set ruler
+set backspace=indent,eol,start
+set noshowmode
+set showcmd
+set hidden
+set ttyfast
+set nonumber
+set laststatus=2
 set history=1000
-set hlsearch
-set ignorecase
-set incsearch
-set lazyredraw
-set linespace=0
-set list
-set listchars=tab:>>,trail:-,extends:#,nbsp:.
-set modeline
-set mouse=a
-set mousehide
-set nojoinspaces
-set noshowmatch
-set nospell
-set nostartofline
-set nowrap
-set number
-set scrolljump=5
-set scrolloff=3
-set shiftwidth=4
-set shortmess+=filmnrxoOtT
-set showmode
-set smartcase
-set softtabstop=4
 set splitbelow
 set splitright
-set tabstop=4
-set undodir=$HOME/.local/share/vim/undo
-set undofile
-set viminfo^=%
-set virtualedit=onemore
-set whichwrap=b,s,h,l,<,>,[,]
-set wildmenu
-set wildmode=list:longest,full
+set listchars=tab:>>,trail:-,extends:#,nbsp:.
+set list
+set colorcolumn=+1
+set diffopt+=vertical
+set linebreak
+set norelativenumber
+set noautoread
+set autowrite
+set shiftround
+set title
+set matchtime=3
+set lazyredraw
 
-if has('clipboard')
-  if has ('unnamedplus')
-    set clipboard=unnamed,unnamedplus
-  else
-    set clipboard=unnamed
-  endif
-endif
+" Spelling
+" XXX: move me
+set dictionary=/usr/share/dict/words
+set spellfile=~/.vim/words.utf-8.add,~/.vim/local/words.utf-8.add
+nnoremap zG 2zg
 
-" Clear search pattern (useful for reloads)
-let @/ = ""
+" iTerm is slow at rendering Unicode lines, so just use ASCII
+set fillchars=diff:⣿,vert:│
+set fillchars=diff:⣿,vert:\|
 
-" Automatically delete trailing whitespace
-func! DeleteTrailingWS()
-  exe "normal mz"
-  $s/\s\+$//ge
-  exe "normal `z"
-endfunc
-au BufWrite *.cpp :call DeleteTrailingWS()
-au BufWrite *.h :call DeleteTrailingWS()
+" No syntax highlighting if lines are too long
+set synmaxcol=800
 
-" Automatically set the cursor to first line
-" when editing a git commit message
-au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
+" Basic completion
+set complete=.,w,b,u,t
+set completeopt=longest,menuone
 
-" Automatically resize splits when vim is resized.
-au VimResized * exe "normal! \<C-W>="
+" Save when losing focus
+" XXX: move me
+au FocusLost * :silent! wall
 
-" Automatically return to last editing point
-au BufReadPost *
-            \ if line("'\"") > 0 && line("'\"") <= line("$") |
-            \   exe "normal! g`\"" |
-            \ endif
+" Leader
+let mapleader=" "
+let maplocalleader="\\"
 
-" Don't close window when deleting a buffer
-function! <SID>BufcloseCloseIt()
-  let l:currentBufNum = bufnr("%")
-  let l:alternateBufNum = bufnr("#")
-
-  if buflisted(l:alternateBufNum)
-    buffer #
-  else
-    bnext
-  endif
-
-  if bufnr("%") == l:currentBufNum
-    new
-  endif
-
-  if buflisted(l:currentBufNum)
-    execute("bdelete! ".l:currentBufNum)
-  endif
-endfunction
-command! Bclose call <SID>BufcloseCloseIt()
-
-" disable paren matching in TeX, it's really slow
-au FileType tex :NoMatchParen
-
-" automatic quickfix windows
-augroup autoqf
-  autocmd!
-  autocmd QuickFixCmdPost [^l]* cwindow
-  autocmd QuickFixCmdPost l* lwindow
+" Trailing whitespace
+" XXX: Move me
+augroup trailing
+    au!
+    au InsertEnter * :set listchars-=trail:-
+    au InsertLeave * :set listchars+=trail:-
 augroup END
 
-" Keybindings
-inoremap kj <ESC>
+" Wildmenu completion
+" XXX: move me
+set wildmenu
+set wildmode=list:longest
 
-nnoremap <silent> <Space>o :Bclose<CR>
-nnoremap <silent> <Space>k :set invhlsearch<CR>
+" Ignore uninteresting files/folders
+" XXX: move me
+set wildignore+=.hg,.git,.svn
+set wildignore+=*.aux,*.out,*.toc
+set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg
+set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest
+set wildignore+=*.spl
+set wildignore+=*.sw?
+set wildignore+=*.DS_Store
+set wildignore+=*.luac
+set wildignore+=*.pyc
+set wildignore+=*.orig
 
-nnoremap <Space>< :bp<CR>
-nnoremap <Space>> :bn<CR>
-nnoremap <Space>vs :vsplit<CR>
-nnoremap <Space>hs :split<CR>
-nnoremap <Space>hh :resize 60<CR>
-nnoremap <Space>y "+y
-nnoremap <Space>p "+p
-nnoremap <Space>ve :edit ~/.vimrc<CR>
-nnoremap <Space>; *``cgn<ESC>
-nnoremap <Space>, #``cgN<ESC>
+" TODO: add more things
+" set wildignore+=
 
-nnoremap <M-n> :cnext<CR>
-nnoremap <M-p> :cprevious<CR>
+" Automatically return to last editing point
+" XXX: move me
+augroup edit_return
+    au BufReadPost *
+                \ if line("'\"") > 0 && line("'\"") <= line("$") |
+                \   exe 'normal! g`"zvzz' |
+                \ endif
+augroup END
 
-noremap <Space>pp :setlocal paste!<CR>
-noremap <Space>ss :setlocal spell!<CR>
-noremap <Space>fc /\v^[<\|=>]{7}( .*\|$)<CR>
-noremap <C-j> <C-w>j
-noremap <C-k> <C-w>k
-noremap <C-l> <C-w>l
-noremap <C-h> <C-w>h
+" Tabs, spaces, wrapping
+set tabstop=4
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set wrap
+set textwidth=140
+set formatoptions=qrn1j
 
-if has('terminal') || has('nvim')
-  tnoremap <C-j> <C-w>j
-  tnoremap <C-k> <C-w>k
-  tnoremap <C-l> <C-w>l
-  tnoremap <C-h> <C-w>h
-endif
+" Backups
+set backup
+set noswapfile
 
-vnoremap <Tab> >gv
-vnoremap <S-Tab> <gv
-
-vnoremap > >gv
-vnoremap < <gv
+set undodir=~/.vim/tmp/undo//
+set backupdir=~/.vim/tmp/backup//
+set directory=~/.vim/tmp/swap//
 
 " Color scheme
 set background=dark
-let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_italic = 1
-let g:PaperColor_Theme_Options = {
-            \ 'theme': {
-            \   'default': {
-            \     'transparent_background': 0,
-            \   },
-            \ 'language': {
-            \   'cpp': {
-            \     'highlight_standard_library': 1,
-            \   },
-            \   'c': {
-            \     'highlight_builtins': 1,
-            \   },
-            \  },
-            \ }
-            \}
 
+" XXX: move me
 if !has('gui_running')
-  if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
     if $TERM_PROGRAM != "Apple_Terminal"
       set termguicolors
     endif
+
     if !has('nvim')
       set t_Co=256
       set t_so=[7m
@@ -229,25 +130,52 @@ if !has('gui_running')
       let &t_SR = "\<Esc>[5 q"
       let &t_EI = "\<Esc>[2 q"
     endif
-  endif
-else
-  set guifont=Source\ Code\ Pro\ 9
-  set guioptions-=T
-  set guioptions-=e
-  set guioptions-=m
-  set guioptions-=r
-  set guioptions-=l
-  set guioptions-=C
-  set guioptions-=L
-  set guioptions+=c
 endif
 
-colorscheme PaperColor
+syntax on
+colorscheme badwolf
 
-" allow for transparency
-hi! Normal ctermbg=NONE guibg=NONE
+" Highlight VC conflict markers
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 
-" Statusline setup
+" Abbreviations
+" XXX: moveme
+silent! digr -. 8230 " U+2026 HORIZONTAL ELLIPSIS
+silent! digr !, 8816 " U+2270 NEITHER LESS-THAN NOR EQUAL TO
+silent! digr !. 8817 " U+2271 NEITHER GREATER-THAN NOR EQUAL TO
+silent! digr xs 8339 " U+2093 SUBSCRIPT X
+silent! digr >< 8652 " U+21cc EQUILIBRIUM
+silent! digr o+ 8853 " U+2295 CIRCLED PLUS
+
+" Base keymappings
+inoremap kj <esc>
+
+" uppercase word
+inoremap <C-u> <esc>mzgUiw`za
+
+" keep the cursor in place while joining lines
+nnoremap J mzJ`z
+
+" split line (inverse of join)
+nnoremap S i<cr><esc>^mwgk:silent! s/\v +$//<cr>:noh<cr>`w
+
+" substitute shortcuts
+nnoremap <c-s> :%s/
+vnoremap <c-s> :s/
+
+" select current line, excluding indentation
+nnoremap vv ^vg_
+
+" quick access to common files
+nnoremap <leader>ve :edit $MYVIMRC<cr>
+nnoremap <leader>vd :edit ~/.vim/words<cr>
+nnoremap <leader>vg :edit ~/.gitconfig<cr>
+nnoremap <leader>vz :edit ~/.zshrc<cr>
+nnoremap <leader>vt :edit ~/.tmux.conf<cr>
+
+" Status Line
+" XXX: move me
+
 function! ModeForStatusline()
   let mode_status = {
         \ 'i': 'Insert',
@@ -264,8 +192,8 @@ function! ModeForStatusline()
   return get(mode_status, mode(), '')
 endfunction
 
-set noshowmode
-set laststatus=2
+" TODO: dim status line of inactive windows
+" see Emacs configuration
 set statusline=
 set statusline+=\ %{ModeForStatusline()}
 set statusline+=\ %#LineNr#
@@ -283,115 +211,320 @@ set statusline+=\/%L
 set statusline+=\ %{winnr()}
 set statusline+=\ %#StatusLine#
 
-" Omnicomplete
-set completeopt+=longest
+" Searching and Movement
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch
+set gdefault
 
-" Tags
-set tags=./tags;./TAGS
-set tagcase=smart
+set scrolloff=5
+set sidescroll=1
+set sidescrolloff=10
 
-" Polyglot/C++
+set virtualedit=block,onemore
+
+nnoremap / /\v
+vnoremap / /\v
+
+nnoremap <silent> <leader>k :set invhlsearch<cr>
+nnoremap <silent> <leader>l :noh<cr>:call clearmatches()<cr>
+
+runtime macros/matchit.vim
+map <tab> %
+silent! unmap [%
+silent! unmap ]%
+
+" don't move on */#
+nnoremap <silent> * :let stay_view = winsaveview()<cr>*:call winrestview(stay_view)<cr>
+nnoremap <silent> # :let stay_view = winsaveview()<cr>#:call winrestview(stay_view)<cr>
+
+" center search matches after jumping
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" import useful shortcuts from Emacs
+inoremap <c-a> <esc>I
+inoremap <c-e> <esc>A
+cnoremap <c-a> <home>
+cnoremap <c-e> <end>
+cnoremap <c-b> <left>
+cnoremap <c-f> <right>
+cnoremap <c-x> <c-f>
+
+" move to last change (like gi)
+nnoremap gI `.i
+
+" invert line-wise up/down movement
+nnoremap j gj
+nnoremap k gk
+nnoremap gj j
+nnoremap gk k
+
+" easier buffer navigation
+nnoremap <c-h> <c-w>h
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-l> <c-w>l
+
+" Visual Mode */#
+" XXX: move me
+function! s:VSetSearch()
+    let l:temp = @@
+    norm! gvy
+    let @/ = '\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
+    let @@ = temp
+endfunction
+
+vnoremap * :<c-u>call <SID>VSetSearch()<cr>//<cr><c-o>
+vnoremap # :<c-u>call <SID>VSetSearch()<cr>??<cr><c-o>
+
+" List navigation (arrow keys aren't used otherwise, make them useful)
+nnoremap <left>  :cprev<cr>zvzz
+nnoremap <right> :cnext<cr>zvzz
+nnoremap <up>    :lprev<cr>zvzz
+nnoremap <down>  :lnext<cr>zvzz
+
+" Folding
+set foldlevelstart=0
+
+" recursively open whatever fold the cursor is in, even if partially open
+nnoremap z0 zcz0
+
+" Focus current line
+" XXX: move me
+function! FocusLine()
+    let l:oldscrolloff = &scrolloff
+    set scrolloff=0
+    exe "keepjumps normal! mzzMzvzt25\<c-y>`z:Pulse\<cr>"
+    let &scrolloff = l:oldscrolloff
+endfunction
+nnoremap <c-z> :call FocusLine()<cr>
+
+" Filetypes
+" XXX: move me
+
+" TODO: set these better
 set cinoptions+=N-s    " don't indent namespaces
 set cinoptions+=g0     " don't indent C++ public/private/protected
 set cinoptions+=:-s    " don't indent case labels
 set cinoptions+=E-s    " don't indent in C++ extern blocks
 set cinoptions+=(0     " line up unclosed parentheses insides...
 set cinoptions+=w1     " ...but ignore whitespace after the open paren
-let g:cpp_class_scope_highlight = 1
-let g:cpp_member_variable_highlight = 1
-let g:cpp_class_decl_highlight = 1
-"let g:cpp_experimental_template_highlight = 1
 
-" FZF
-" Augment Ag command with fzf#vim#with_preview
-command! -bang -nargs=* Ag
-  \ call fzf#vim#ag(<q-args>,
-  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \                 <bang>0)
-command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --column  --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \                 <bang>0)
-
-let g:fzf_files_options = '--preview "cat {} 2>/dev/null | head -'.&lines.'"'
-let g:fzf_layout = { 'down': '~15%' }
-let g:fzf_colors =
-\ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'none'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
-
-nnoremap <C-p> :Files<CR>
-nnoremap <Space>p :GFiles<CR>
-nnoremap <Space>gl :Commits<CR>
-nnoremap <Space>gbl :BCommits<CR>
-nnoremap <Space>gs :GFiles?<CR>
-nnoremap <Space><Space> :Commands<CR>
-nnoremap <Space>h :Helptags<CR>
-nnoremap <Space>t :Tags<CR>
-nnoremap <Space>b :Buffer<CR>
-nnoremap <Space>a :Rg<Space>
-
-" clang-format
-let g:clang_format#code_style = 'llvm'
-let g:clang_format#style_options = {
-      \ 'AlignConsecutiveDeclarations': 'true',
-      \ 'BreakBeforeBraces': 'Linux',
-      \ }
-augroup ClangFormat
-  autocmd!
-  autocmd FileType c,cpp nnoremap <buffer><Space><CR> :<C-u>ClangFormat<CR>
-  autocmd FileType c,cpp vnoremap <buffer><Space><CR> :ClangFormat<CR>
-augroup END
-
-" LanguageClient
-let g:LanguageClient_serverCommands = {
-      \ 'c': ['cquery', '--log-file=/tmp/cquery.log'],
-      \ 'cpp': ['cquery', '--log-file=/tmp/cquery.log'],
-      \ }
-let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_settingsPath = '.cquery_settings.json'
-let g:LanguageClient_hasSnippetSupport = 0
-
-augroup Coc_config
+augroup ft_c
     au!
-    au FileType c,cpp set updatetime=300
-    au FileType c,cpp nnoremap <silent> K :call CocActionAsync('doHover')<CR>
-    au CursorHold * silent call CocActionAsync('highlight')
-    au CursorHoldI * silent call CocActionAsync('showSignatureHelp')
+    au FileType c setlocal foldmethod=marker foldmarker={,}
+    au FileType c setlocal ts=2 sts=2 sw=2 expandtab
 augroup END
 
-augroup LanguageClient_config
-  au!
-  au BufEnter * let b:Plugin_LanguageClient_started = 0
-  au User LanguageClientStarted setl signcolumn=yes
-  au User LanguageClientStarted let b:Plugin_LanguageClient_started = 1
-  au User LanguageClientStopped setl signcolumn=auto
-  au User LanguageClientStopped let b:Plugin_LanguageClient_started = 0
-  if has('nvim')
-      au CursorMoved * if b:Plugin_LanguageClient_started |
-            \ silent call LanguageClient#textDocument_documentHighlight() |
-            \ endif
-  endif
+augroup ft_cpp
+    au!
+    au FileType cpp setlocal foldmethod=marker foldmarker={,}
+    au FileType cpp setlocal ts=2 sts=2 sw=2 expandtab
 augroup END
 
-" Read local machine settings
-if filereadable(expand("~/.lvimrc"))
-  so ~/.lvimrc
-endif
+function! DiffFoldLevel()
+    let l:line=getline(v:lnum)
+    if l:line =~# '^\(diff\|Index\)' " file
+        return '>1'
+    elseif l:line =~# '^\(@@\|\d\)'  " hunk
+        return '>2'
+    elseif l:line =~# '^\*\*\* \d\+,\d\+ \*\*\*\*$' " context: file1
+        return '>2'
+    elseif l:line =~# '^--- \d\+,\d\+ ----$'        " context: file2
+        return '>2'
+    else
+        return '='
+    endif
+endfunction
 
-" Read project specific settings from cwd
-if filereadable(".project.vim")
-  so .project.vim
+augroup ft_diff
+    au!
+    autocmd FileType diff setlocal foldmethod=expr
+    autocmd Filetype diff setlocal foldexpr=DiffFoldLevel()
+augroup END
+
+augroup ft_dtrace
+    au!
+    autocmd BufNewFile,BufRead *.d set filetype=dtrace
+augroup END
+
+augroup ft_vim
+    au!
+    autocmd FileType vim setlocal foldmethod=marker keywordprg=:help
+    autocmd FileType help setlocal textwidth=78
+    autocmd BufEnter *.txt if &ft == 'help' | wincmd L | endif
+augroup END
+
+" Grep
+" XXX: move me
+if executable('rg')
+    let g:grepprg='rg --vimgrep --no-heading'
+    let g:grepformat='%f:%l:%c:%m,%f:%l:%m'
 endif
+nnoremap <leader>a :grep<space>
+
+" Location List Toggles
+" XXX: move me
+function! ErrorsToggle()
+    if exists("w:is_error_window")
+        unlet w:is_error_window
+        exec "q"
+    else
+        exec "Errors"
+        lopen
+        let w:is_error_window=1
+    endif
+endfunction
+command! ErrorsToggle call ErrorsToggle()
+
+function! LocationToggle()
+    if exists("w:is_location_window")
+        unlet w:is_location_window
+        exec "q"
+    else
+        lopen
+        let w:is_location_window=1
+    endif
+endfunction
+command! LocationToggle call LocationToggle()
+
+function! QuickFixToggle(forced)
+    if exists("g:quickfix_win") && a:forced == 0
+        cclose
+        unlet g:quickfix_win
+    else
+        copen 10
+        let g:quickfix_win = bufnr("$")
+    endif
+endfunction
+command! -bang -nargs=? QuickFixToggle call QuickFixToggle(<bang>0)
+
+" Grep operator
+" XXX: move me
+function! s:GrepMotion(type) abort
+    let l:reg_save = @@
+
+    if a:type ==# 'v'
+        normal! `<v`>y
+    elseif a:type ==# 'char'
+        normal! `[v`]y
+    else
+        return
+    endif
+
+    silent execute "grep! -R " . shellescape(@@) . " ."
+    copen
+
+    let @@ = l:reg_save
+endfunction
+
+nnoremap <leader>g :set operatorfunc=<SID>GrepOperator<cr>g@
+vnoremap <leader>g :<c-u>call <SID>GrepOperator(visualmode())<cr>
+
+" Pulse line
+" XXX: move me
+function! s:Pulse()
+    redir => old_hi
+        silent execute 'hi CursorLine'
+    redir END
+    let old_hi = split(old_hi, '\n')[0]
+    let old_hi = substitute(old_hi, 'xxx', '')
+
+    let steps = 8
+    let width = 1
+    let start = width
+    let end = steps * width
+    let color = 233
+
+    for i in range(start,end,width)
+        execute "hi CursorLine ctermbg=" . (color+i)
+        redraw
+        sleep 6m
+    endfor
+    for i in range(end,start,-1*width)
+        execute "hi CursorLine ctermbg=" . (color+i)
+        redraw
+        sleep 6m
+    endfor
+
+    execute 'hi ' . old_hi
+endfunction
+command! -nargs=0 Pulse call :Pulse()
+
+" Highlight Interesting Words
+function! HiInterestingWord(n)
+    normal! mz
+    normal! "zyiw
+    let l:mid = 86750 + a:n
+    silent! call matchdelete(mid)
+    let l:pat = '\V\<' . escape(@z,'\') . '\>'
+    call matchadd("InterestingWord" . a:n, pat, 1, mid)
+    normal! `z
+endfunction
+
+hi def InterestingWord1 ctermbg=214 ctermfg=16 guibg=#ffa724 guifg=#000000
+hi def InterestingWord2 ctermbg=154 ctermfg=16 guibg=#aeee00 guifg=#000000
+hi def InterestingWord3 ctermbg=121 ctermfg=16 guibg=#8cffba guifg=#000000
+hi def InterestingWord4 ctermbg=137 ctermfg=16 guibg=#b88853 guifg=#000000
+hi def InterestingWord5 ctermbg=211 ctermfg=16 guibg=#ff9eb8 guifg=#000000
+hi def InterestingWord6 ctermbg=195 ctermfg=16 guibg=#ff2c4b guifg=#000000
+
+nnoremap <silent> <leader>1 :call HiInterestingWord(1)<cr>
+nnoremap <silent> <leader>2 :call HiInterestingWord(2)<cr>
+nnoremap <silent> <leader>3 :call HiInterestingWord(3)<cr>
+nnoremap <silent> <leader>4 :call HiInterestingWord(4)<cr>
+nnoremap <silent> <leader>5 :call HiInterestingWord(5)<cr>
+nnoremap <silent> <leader>6 :call HiInterestingWord(6)<cr>
+
+" Scratch buffer
+let g:scratch_buffer_name = '__scratch__'
+
+function! s:ScratchBufferOpen(new_win)
+    let split_win = a:new_win
+
+    " if current buffer is modified, default to opening the scratch buffer in
+    " a new window
+    if !split_win && &modified
+        let split_win = 1
+    endif
+
+    " check for the scratch buffer's existence
+    let scratch_bufnum = bufnr(g:scratch_buffer_name)
+    if scratch_bufnum == -1
+        if split_win
+            exe "new " . g:scratch_buffer_name
+        else
+            exe "edit " . g:scratch_buffer_name
+        endif
+    else
+        " check if an open window contains the scratch buffer
+        let scratch_winnum = bufwinnr(scratch_bufnum)
+        if scratch_winnum != -1
+            if winnr() != scratch_winnum
+                exe scratch_winnum . "wincmd w"
+            endif
+        else
+            if split_win
+                exe "split +buffer" . scratch_bufnum
+            else
+                exe "buffer " . scratch_bufnum
+            endif
+        endif
+    endif
+endfunction
+
+function! s:ScratchMarkBuffer()
+    setlocal buftype=nofile
+    setlocal bufhidden=hide
+    setlocal nowswapfile
+    setlocal buflisted
+endfunction
+
+augroup scratch_buffer
+    autocmd BufNewFile __Scratch__ call s:ScratchMarkBuffer()
+augroup END
+
+command! -nargs=0 Scratch  call :ScratchBufferOpen(0)
+command! -nargs=0 SplitScratch call :ScratchBufferOpen(1)

@@ -5,6 +5,14 @@ vim/.local/share/vim/backups/*
 vim/.local/share/vim/undo/*
 !vim/.local/share/vim/backups/.empty
 !vim/.local/share/vim/undo/.empty
+vim/.vim/local/*
+vim/.vim/backup/*
+vim/.vim/swap/*
+vim/.vim/undo/*
+!vim/.vim/local/.empty
+!vim/.vim/backup/.empty
+!vim/.vim/swap/.empty
+!vim/.vim/undo/.empty
 emacs/.emacs.d/cache
 emacs/.emacs.d/elpa
 emacs/.emacs.d/eshell
@@ -15,3 +23,4 @@ emacs/.emacs.d/projectile*
 emacs/.emacs.d/etc
 *.elc
 .uuid
+*~
