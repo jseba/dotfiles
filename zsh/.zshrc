@@ -34,6 +34,12 @@ export SSH="$HOME/.ssh"
 # path to ssh-agent environment
 export SSH_ENV="$SSH/ssh-agent.conf"
 
+# path to history file
+export HISTFILE="$HOME/.zsh_history"
+
+# amount of history to save (lots)
+export HISTSIZE=30000
+
 ############################
 #
 # Variables
@@ -57,6 +63,9 @@ autoload -Uz compaudit compinit
 
 # load ls colors
 autoload -U colors && colors
+
+# load history search
+autoload -U history-search-end
 
 ############################
 #
@@ -208,6 +217,10 @@ compdef _man _man_colored
 # create sudo widget
 zle -N _sudo_command_line
 
+# search history by already typed prefix
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+
 ############################
 #
 # Options
@@ -218,7 +231,7 @@ zle -N _sudo_command_line
 unsetopt menu_complete
 
 # instead, show completion menu on successive tab press
-setopt auto_menu         
+setopt auto_menu
 
 # disable flow control (this isn't a serial terminal)
 unsetopt flowcontrol
@@ -267,6 +280,24 @@ setopt multios
 
 # perform parameter and arithmetic expansions and command substitution on prompt first
 setopt prompt_subst
+
+# append history so multiple shells can run in parallel
+setopt append_history
+
+# remove duplicates first when trimming history
+setopt hist_expire_dups_first
+
+# ignore contiguous duplicates
+setopt hist_ignore_dups
+
+# trim superfluous spaces from history lines
+setopt hist_reduce_blanks
+
+# add history lines immediately rather than waiting for the shell to exit
+setopt inc_append_history
+
+# no beeps
+unsetopt beep
 
 ############################
 #
@@ -346,6 +377,10 @@ bindkey -e
 
 # double Esc to add/remove sudo from beginning of line
 bindkey "\e\e" sudo-command-line
+
+# navigate history by prefix
+bindkey "\e[A" history-beginning-search-backward-end
+bindkey "\e[B" history-beginning-search-forward-end
 
 ############################
 #
