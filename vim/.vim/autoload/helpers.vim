@@ -1,3 +1,8 @@
+function! helpers#breakline()
+    s/^\(\s*\)\(.\{-}\)\(\s*\)\(\%#\)\(\s*\)\(.*\)/\1\2\r\1\4\6
+    call histdel("/",-1)
+endfunction
+
 function! helpers#bufcloseit()
   let l:currentBufNum = bufnr("%")
   let l:alternateBufNum = bufnr("#")
@@ -17,10 +22,51 @@ function! helpers#bufcloseit()
   endif
 endfunction
 
+function helpers#ccr()
+  let cmdline = getcmdline()
+  if cmdline =~ '\v\C^(ls|files|buffers)'
+    return "\<cr>:b"
+  elseif cmdline =~ '\v\C/(#|nu|num|numb|numbe|number)$'
+    return "\<cr>:"
+  elseif cmdline =~ '\v\C^(dli|il)'
+    return "\<cr>:" . cmdline[0] . "j  " . split(cmdline, " ")[1] . "<s-left>\<left>"
+  elseif cmdline =~ '\v\C^(cli|lli)'
+    return "\<cr>:sil " . repeat(cmdline[0], 2) . "\<space>"
+  elseif cmdline =~ '\C^old'
+    set nomore
+    return "\<cr>:sil se more|e #<"
+  elseif cmdline =~ '\C^changes'
+    set nomore
+    return "\<cr>:sil se more|norm! g;\<s-left>"
+  elseif cmdline =~ '\C^ju'
+    set nomore
+    return "\<cr>:sil se more|norm! \<c-o>\<s-left>"
+  elseif cmdline =~ '\C^marks'
+    return "\<cr>:norm! `"
+  elseif cmdline =~ '\C^undol'
+    return "\<cr>:u "
+  else
+    return "\<cr>"
+  endif
+endfunction
+
 function! helpers#delete_trailing_whitespace()
-  exe "normal mz"
+  execute"normal mz"
   $s/\s\+$//ge
-  exe "normal `z"
+  execute"normal `z"
+endfunction
+
+function! helpers#mru_complete(arg_lead, cmdline, cursor_pos)
+  let l:readables = filter(copy(v:oldfiles), { i, v -> filereadable(expand(v)) })
+  return filter(l:readables, 'v:val =~ a:arg_lead)
+endfunction
+
+function helpers#mru(cmd, arg)
+  if a:cmd == "tabedit"
+    execute a:cmd . " " . a:arg . "\|lcd %:p:h"
+  else
+    execute a:cmd . " " . a:arg
+  endif
 endfunction
 
 function! helpers#operator_grep(type) abort
@@ -76,13 +122,13 @@ function! helpers#open_scratch_buffer(new_win)
     let win_num = bufwinnr(l:buf_num)
     if l:win_num != -1
       if winnr() != l:win_num
-        exe l:win_num . "wincmd w"
+        executel:win_num . "wincmd w"
       endif
     else
       if l:split_win
-        exe "split +buffer" . l:buf_num
+        execute"split +buffer" . l:buf_num
       else
-        exe "buffer " . l:buf_num
+        execute"buffer " . l:buf_num
       endif
     endif
   endif

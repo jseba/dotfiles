@@ -1,3 +1,4 @@
+" vim: ff=unix fenc=utf-8
 set nocompatible
 scriptencoding utf-8
 
@@ -9,21 +10,20 @@ if has('win32')
     let g:skip_loading_mswin = 1
 endif
 
-let s:plug_file = '$HOME/.vim/autoload/plug.vim'
-if empty(glob(s:plug_file))
-  silent execute '!curl -fLo ' . s:plug_file . ' --create-dirs '.
-      \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source '$HOME/.vimrc'
-endif
-
-" Bundles
+" Plugins
 call plug#begin('~/.vim/plugged')
 
 Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'pboettch/vim-cmake-syntax'
 Plug 'romainl/vim-qf'
+Plug 'romainl/vim-qlist'
+Plug 'tpope/vim-git'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
-Plug 'morhetz/gruvbox'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-abolish'
+Plug 'wellle/targets.vim'
+Plug 'justinmk/vim-sneak'
 Plug 'nlknguyen/papercolor-theme'
 
 " Local plugins
@@ -61,7 +61,7 @@ set history=1000
 set hlsearch
 set ignorecase
 set incsearch
-set lazyredraw
+" set lazyredraw
 set linespace=0
 set list
 set listchars=tab:>>,trail:-,extends:#,nbsp:.
@@ -71,6 +71,7 @@ set mousehide
 set noautoread
 set nojoinspaces
 set noshowmatch
+set noshowmode
 set nospell
 set nostartofline
 set noswapfile
@@ -81,7 +82,6 @@ set scrolloff=3
 set shiftround
 set shiftwidth=4
 set shortmess+=filmnrxoOtT
-set showmode
 set sidescroll=1
 set sidescrolloff=10
 set smartcase
@@ -90,7 +90,7 @@ set spell
 set spellfile=$HOME/.vim/words.utf-8.add,$HOME/.vim/local/words.utf-8.add
 set splitbelow
 set splitright
-set synmaxcol=800
+set synmaxcol=200
 set tabstop=4
 set textwidth=140
 set title
@@ -142,20 +142,45 @@ hi def InterestingWord5 ctermbg=211 ctermfg=16 guibg=#ff9eb8 guifg=#000000
 hi def InterestingWord6 ctermbg=195 ctermfg=16 guibg=#ff2c4b guifg=#000000
 
 " automatically delete trailing whitespace
-au BufWrite *.cpp :call helpers#delete_trailing_whitespace()
-au BufWrite *.h :call helpers#delete_trailing_whitespace()
+augroup wsbutler
+  au!
+  au BufWrite *.cpp :call helpers#delete_trailing_whitespace()
+  au BufWrite *.h :call helpers#delete_trailing_whitespace()
+augroup END
 
 " automatically set the cursor to first line when editing a git commit message
-au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
+augroup gitcommit_sob
+  au!
+  au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
+augroup END
 
 " automatically resize splits when vim is resized.
-au VimResized * exe "normal! \<C-W>="
+augroup resize_trigger
+  au!
+  au VimResized * exe "normal! \<C-W>="
+augroup END
 
 " automatically return to last editing point
-au BufReadPost *
+augroup resume_edit
+  au!
+  au BufReadPost *
             \ if line("'\"") > 0 && line("'\"") <= line("$") |
             \   exe "normal! g`\"" |
             \ endif
+augroup END
+
+" overcharge return key in command mode
+cnoremap <expr> <cr> helpers#ccr()
+
+" lightweight MRU
+command! -nargs=1 -complete=customlist,helpers#mru_complete
+            \ Medit    call helpers#mru('edit', fnameescape(<f-args>))
+command! -nargs=1 -complete=customlist,helpers#mru_complete
+            \ Msplit   call helpers#mru('split', fnameescape(<f-args>))
+command! -nargs=1 -complete=customlist,helpers#mru_complete
+            \ Mvsplit  call helpers#mru('vsplit', fnameescape(<f-args>))
+command! -nargs=1 -complete=customlist,helpers#mru_complete
+            \ Mtabedit call helpers#mru('tabedit', fnameescape(<f-args>))
 
 " don't close window when deleting a buffer
 command! Bclose call helpers#bufcloseit()
@@ -167,7 +192,10 @@ command! -nargs=0 Scratch call helpers#open_scratch_buffer(0)
 command! -nargs=0 SplitScratch call helpers#open_scratch_buffer(1)
 
 " disable paren matching in TeX, it's really slow
-au FileType tex :NoMatchParen
+augroup tex_nomatchparen
+  au!
+  au FileType tex :NoMatchParen
+augroup END
 
 " automatic quickfix windows
 augroup autoqf
@@ -215,13 +243,31 @@ inoremap <c-l> <esc>zza
 inoremap <c-a> <esc>I
 inoremap <c-e> <esc>A
 cnoremap <c-a> <home>
+cnoremap <c-d> <del>
 cnoremap <c-e> <end>
 cnoremap <c-f> <right>
 cnoremap <c-b> <left>
 cnoremap <c-x> <c-f>
 
+" open new line above/below
+inoremap <m-o> <C-O>o
+inoremap <m-O> <C-O>O
+
+" make Y consistent with C and D
+nnoremap Y y$
+
 " move to last change
 nnoremap gI `.i
+
+" select last inserted text
+nnoremap gV `[v`[
+
+" word-wise <c-y>
+inoremap <expr> <c-y> pumvisible ? "\<c-y>" :
+            \ matchstr(getline(line('.')-1), '\%' . virtcol('.') . 'v\%(\k\+\\|.\)')
+
+" current file directory
+noremap! <silent> <c-r><c-\> <c-r>=expand('%:p:h', 1)<cr>
 
 " invert line-wise up/down movement
 nnoremap j gj
@@ -239,12 +285,12 @@ noremap <c-h> <c-w>h
 nnoremap <left>  :cprev<cr>zvzz
 nnoremap <right> :cnext<cr>zvzz
 nnoremap <up>    :lprev<cr>zvzz
-nnoremap <right> :lnext<cr>zvzz
+nnoremap <down>  :lnext<cr>zvzz
 
 " grep
 if executable('rg')
   set grepprg=rg\ --vimgrep\ --no-heading
-  set grepformat="%f:%l:%c:%m,%f:%l:%m"
+  set grepformat=%f:%l:%c:%m,%f:%l:%m,%f
 endif
 
 nnoremap <Space>a :grep<space>
@@ -270,9 +316,6 @@ if has('terminal') || has('nvim')
   tnoremap <C-l> <C-w>l
   tnoremap <C-h> <C-w>h
 endif
-
-vnoremap <Tab> >gv
-vnoremap <S-Tab> <gv
 
 vnoremap > >gv
 vnoremap < <gv
@@ -316,7 +359,9 @@ if !has('gui_running')
     endif
   endif
 else
-  set guifont=Source\ Code\ Pro\ 9
+  if !has('gui_macvim')
+    set guifont=Source\ Code\ Pro\ 9
+  endif
   set guioptions-=T
   set guioptions-=e
   set guioptions-=m
