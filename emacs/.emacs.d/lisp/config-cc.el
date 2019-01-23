@@ -99,11 +99,6 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
       "C-c p a" #'projectile-find-other-file
       "C-c p A" #'projectile-find-other-file-other-window))
 
-  ;; Disable electric keys as it interferes with smartparens;
-  ;; do it manually instead
-  (dolist (key '("#" "{" "}" "/" "*" ";" "," ":" "(" ")" "\177"))
-    (define-key c-mode-base-map key nil))
-
   ;; Smartparens and cc-mode both try to autoclose angle-brackets
   ;; intelligently. The result is...less intelligent than they
   ;; think (redundant characters), so do it manually
@@ -121,6 +116,7 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
   :hook (c++-mode . modern-c++-font-lock-mode))
 
 (use-package ccls
+  :disabled
   :when (executable-find "ccls")
   :init
   (require 'lsp)

@@ -244,9 +244,6 @@
 (add-hook 'after-make-frame-functions #'reload-theme-in-frame-maybe)
 (add-hook 'after-delete-frame-functions #'reload-theme-maybe)
 
-;; TODO: remove this?
-(add-hook! (prog-mode text-mode conf-mode) #'display-line-numbers-mode)
-
 (defun apply-ansi-color-to-compilation-buffer ()
   (with-silent-modifications
     (ansi-color-apply-on-region compilation-filter-start (point))))
