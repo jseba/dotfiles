@@ -26,5 +26,11 @@
 (require 'map)
 (require 'subr-x)
 
+(eval-and-compile
+  (unless %EMACS26+
+    (with-no-warnings
+      (defalias 'if-let* #'if-let)
+      (defalias 'when-let* #'when-let))))
+
 (provide 'config-core)
 ;;; config-core.el ends here

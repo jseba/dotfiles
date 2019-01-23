@@ -128,8 +128,6 @@
         (+ (if (boundp 'display-line-numbers) 6 0)
            fill-column)))
 
-(use-package posframe)
-
 (use-package winner
   :defer 1
   :preface
