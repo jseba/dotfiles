@@ -2,7 +2,7 @@
 
 (defvar %theme nil
   "Default theme.")
-(defvar %font (font-spec :family "Iosevka" :size 12)
+(defvar %font (font-spec :family "Fira Code Retina" :size 12)
   "Default font. Should be a FONT-SPEC.")
 
 (setq-default
@@ -115,7 +115,8 @@
   (setq hl-todo-keyword-faces
         `(("TODO"  . ,(face-foreground 'warning))
           ("FIXME" . ,(face-foreground 'error))
-          ("NOTE"  . ,(face-foreground 'success)))))
+          ("NOTE"  . ,(face-foreground 'success))
+          ("XXX"   . ,(face-foreground 'shadow)))))
 
 (use-package restart-emacs
   :init
@@ -267,7 +268,7 @@
     (select-window target-window)))
 (advice-add #'split-window-horizontally :override #'+split-window-horizontally-other-buffer)
 
-(defun maximuze-window ()
+(defun maximize-window ()
   "Maximize and isolate the current window. Activate again to undo.
 
 If the window changes before then, the undo expires."

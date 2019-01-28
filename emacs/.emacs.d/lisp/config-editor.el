@@ -241,6 +241,14 @@
 (defalias 'join-line-above #'join-line)
 (defalias 'join-line-below (lambda! (join-line t)))
 
+(defun new-buffer ()
+  "Creates a new empty buffer."
+  (interactive)
+  (let ((buffer (generate-new-buffer "*new*")))
+    (set-window-buffer nil)
+    (with-current-buffer buffer
+      (funcall (default-value 'major-mode)))))
+
 (use-package autorevert
   :after-call after-find-file
   :config

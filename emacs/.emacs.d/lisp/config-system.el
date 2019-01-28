@@ -70,4 +70,6 @@
   (setq w32-get-true-file-attributes nil
         vc-handled-backends (delq 'Git vc-handled-backends))))
 
+(use-package ripgrep)
+
 (provide 'config-system)
