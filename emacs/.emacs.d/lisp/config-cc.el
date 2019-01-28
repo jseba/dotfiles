@@ -93,18 +93,11 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
 
   ;; TODO: create a Microsoft style
 
-  (after! projectile
-    (general-def
-      :keymaps '(c-mode c++-mode)
-      "C-c p a" #'projectile-find-other-file
-      "C-c p A" #'projectile-find-other-file-other-window))
-
   ;; Smartparens and cc-mode both try to autoclose angle-brackets
   ;; intelligently. The result is...less intelligent than they
   ;; think (redundant characters), so do it manually
-  (define-key! c++-mode-map
-    "<" nil
-    ">" nil)
+  (dolist (key '("<" ">"))
+    (define-key c++-mode-map key nil))
 
   ;; employ smartparens to do it properly
   (sp-with-modes '(c++-mode)
@@ -115,12 +108,12 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
 (use-package modern-cpp-font-lock
   :hook (c++-mode . modern-c++-font-lock-mode))
 
+(use-package clang-format)
+
 (use-package ccls
   :disabled
   :when (executable-find "ccls")
   :init
-  (require 'lsp)
-
   (defconst +ccls-cache-dir ".ccls_cache")
   (defconst +ccls-project-root-files
     '("commpile_commands.json"
@@ -154,6 +147,7 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
     "Enable CCLS if `ccls-project-root-files' are found in the project root."
     (let ((default-directory (+projectile-project-root)))
       (when (cl-some #'file-exists-p +ccls-project-root-files)
+        (require 'lsp)
         (lsp)
         (+company-set-backends '(c-mode c++-mode) 'company-lsp))))
   (add-hook! '(c-mode-hook c++-mode-hook) #'+cc-enable-ccls-maybe)
@@ -194,141 +188,16 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
                              (plist-put (lsp--text-document-position-params) :excludeRole 32)))
   (defun +ccls-references-in-project ()
     (lsp-ui-peek-find-references nil
-                                 (list :folders (vector (+projectile-project-root)))))
+                                 (list :folders (vector (+projectile-project-root))))))
 
-  (general-nmap
-    :keymaps '(c-mode-map c++-mode-map)
-    :prefix "SPC m"
-    "p" '(ccls-preprocess-file
-          :which-key "Preprocess file")
-    "R" '(ccls-reload
-          :which-key "Reload ccls"))
-  (general-nmap
-    :keymaps '(c-mode-map c++-mode-map)
-    :prefix "SPC x"
-    "a" '(+ccls-references-address
-          :which-key "Variable Addresses")
-    "F" '(+ccls-references-not-call
-          :which-key "Function Addresses")
-    "P" '(+ccls-references-macro
-          :which-key "Macro References")
-    "r" '(+ccls-references-read
-          :which-key "Read References")
-    "w" '(+ccls-references-write
-          :which-key "Write References")
-    "b" `(,(lambda! (+ccls-base 1))
-          :which-key "Direct Bases")
-    "B" `(,(lambda! (+ccls-base 3))
-          :which-key "Bases")
-    "d" `(,(lambda! (+ccls-derived 1))
-          :which-key "Direct Derived")
-    "D" `(,(lambda! (+ccls-derived 3))
-          :which-key "Derived")
-    "i" '(ccls-inheritance-hierarchy
-          :which-key "Base Hierarchy")
-    "I" `(,(lambda! (ccls-inheritance-hierarchy t))
-          :which-key "Derived Hierarchy")
-    "c" '(+ccls-caller
-          :which-key "Callers")
-    "C" '(+ccls-callee
-          :which-key "Callees")
-    "e" '(ccls-call-hierarchy
-          :which-key "Caller Hierarchy")
-    "E" `(,(lambda! (ccls-call-hierarchy t))
-          :which-key "Callee Hierarchy")
-    "s" `(,(lambda! (+ccls-member 2))
-          :which-key "Nested Classes")
-    "f" `(,(lambda! (+ccls-member 3))
-          :which-key "Member Functions")
-    "m" `(,(lambda! (+ccls-member 0))
-          :which-key "Member Variables")
-    "M" '(ccls-member-hierarchy
-          :which-key "Member Hierarchy")
-    "v" `(,(lambda! (+ccls-vars 3))
-          :which-key "Local Variables")
-    "V" `(,(lambda! (+ccls-vars 1))
-          :which-key "Fields")
-    "C-v" `(,(lambda! (+ccls-vars 7))
-            :which-key "All Variables")
-    "t" '(lsp-goto-type-definition
-          :which-key "Go To Type Definition")
-    "L" '(ccls-code-lens-mode
-          :which-key "Code Lens Mode"))
-
-  (after! evil
-    (evil-set-initial-state 'ccls-tree-mode 'emacs)))
-
-(use-package cquery
-  :disabled
-  :when (executable-find "cquery")
-  :commands lsp-cquery-enable
+(use-package cmake-mode
   :init
-  (setq cquery-executable (executable-find "cquery")
-        cquery-cache-dir (concat %var-dir "cquery/")
-        cquery-extra-args `(,(concat "--log-file="
-                                     (expand-file-name
-                                      (if %IS-WIN32
-                                          (getenv "TEMP")
-                                        "/tmp"))
-                                     "/cquery.log"))
-        cquery-extra-init-params '(:index
-                                   (:comments 3)
-                                   :completion
-                                   (:detailedLabel t)))
+  (after! projectile
+    (projectile-register-project-type
+     'cmake '("CMakeLists.txt")
+     :compile "cmake --build build")))
 
-  (after! evil
-    (evil-set-initial-state 'cquery-tree-mode 'emacs))
-
-  (defun +cquery-enable-maybe ()
-    "Enable CQuery if compile_commands.json or .cquery files found in project root."
-    (let ((default-directory (+projectile-project-root)))
-      (when (or (file-exists-p ".cquery")
-                (file-exists-p "compile_commands.json"))
-        (lsp))))
-  (add-hook! '(c-mode-hook c++-mode-hook) #'+cquery-enable-maybe)
-
-  (defun +cquery-base ()
-    (interactive)
-    (cquery-xref-find-custom "$cquery/base"))
-  (defun +cquery-callers ()
-    (interactive)
-    (cquery-xref-find-custom "$cquery/callers"))
-  (defun +cquery-vars ()
-    (interactive)
-    (cquery-xref-find-custom "$cquery/vars"))
-
-  (general-nmap
-    :keymaps '(c-mode-map c++-mode-map)
-    :prefix "SPC m"
-    "p" '(cquery-preprocess-file
-          :which-key "Preprocess file"))
-  (general-nmap
-    :keymaps '(c-mode-map c++-mode-map)
-    :prefix "SPC x"
-    "M" '(cquery-member-hierarchy
-          :which-key "Member hierarchy")
-    "c" '((lambda! (cquery-call-hierarchy nil))
-          :which-key "Caller hierarchy")
-    "C" '((lambda! (cquery-call-hierarchy t))
-          :which-key "Callee hierarchy")
-    "i" '((lambda! (cquery-inheritance-hierarchy nil))
-          :which-key "Base hierarchy")
-    "I" '((lambda! (cquery-inheritance-hierarchy t))
-          :which-key "Base hierarchy")
-    "b" '(+cquery-base
-          :which-key "Bases")
-    "c" '(+cquery-callers
-          :which-key "Callers")
-    "v" '(+cquery-vars
-          :which-key "Variables")
-    "l" '(cquery-code-lens-mode
-          :which-key "Code Lens Mode")
-    "F" '(cquery-freshen-index
-          :which-key "Freshen Index")
-    "t" '(lsp-goto-type-definition
-          :which-key "Go To Type Definition")))
-
-(use-package cmake-mode)
+(use-package meson-mode) ;; TODO: Register project type with `projectile'
 
 (use-package demangle-mode)
 
