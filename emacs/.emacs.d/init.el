@@ -2,12 +2,12 @@
 
 (eval-when-compile
   (and (version< emacs-version "25")
-	   (error "Detected Emacs %s; required version is 25.1 or higher"
-			  emacs-version)))
+       (error "Detected Emacs %s; required version is 25.1 or higher"
+              emacs-version)))
 
 (unless (bound-and-true-p early-init-file)
   (load (concat (file-name-directory load-file-name) "early-init")
-		nil t))
+        nil t))
 
 (defvar %debug-mode (or (getenv "DEBUG") init-file-debug)
   "If non-nil, enable more verbose output.")
@@ -48,14 +48,13 @@
   (require-init 'config-core)
   (require-init 'config-util)
   (require-init 'config-packages)
-  (require-init 'config-system)
   (require-init 'config-keybinds)
+  (require-init 'config-system)
   (require-init 'config-projects)
   (require-init 'config-popups)
   (require-init 'config-buffers)
   (require-init 'config-editor)
   (require-init 'config-interface)
-  ;; (require-init 'config-evil)
   (require-init 'config-modeline)
   (require-init 'config-helm)
   (require-init 'config-spell)
@@ -68,7 +67,7 @@
   (require-init 'config-elisp)
   (require-init 'config-snippets)
   (require-init 'config-pdf)
-  (require-init 'config-treemacs)
+  ;;(require-init 'config-treemacs)
   ;;(require-init 'config-org)
 
   (run-hook-wrapped 'init-hook #'try-run-hook))
