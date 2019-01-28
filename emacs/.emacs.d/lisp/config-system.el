@@ -9,8 +9,8 @@
 
 (cond
  (%IS-MACOS
-  (setq mac-command-modifier 'meta
-        mac-option-modifier 'alt
+  (setq mac-command-modifier 'super
+        mac-option-modifier 'meta
         mouse-wheel-scroll-amount '(5 ((shift) . 2))
         mouse-wheel-progressive-speed nil
         ns-use-native-fullscreen nil
