@@ -289,7 +289,7 @@
   (quiet! (recentf-mode +1)))
 
 (use-package smartparens
-  :after-call after-find-file
+  :after-call (after-find-file pre-command-hook)
   :commands (sp-pair sp-local-pair sp-with-modes)
   :config
   (defhydra +smartparens-hydra (:hint nil)
