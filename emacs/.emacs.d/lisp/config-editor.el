@@ -223,10 +223,23 @@
     buffer))
 (advice-add #'make-indirect-buffer :around #'set-indirect-buffer-file-name)
 
-(general-def
-  [remap move-beginning-of-line] #'backward-to-bol-or-indent
-  [remap move-end-of-line]       #'forward-to-last-non-comment-or-eol
-  [remap newline]                #'newline-and-indent)
+(defun newline-above-and-indent ()
+  "Insert an indented newline before the current one."
+  (interactive)
+  (beginning-of-line)
+  (save-excursion (newline))
+  (indent-according-to-mode))
+
+(defun newline-below-and-indent ()
+  "Insert an indented newline after the current one."
+  (interactive)
+  (end-of-line)
+  (newline-and-indent))
+
+(defalias '+newline #'newline)
+
+(defalias 'join-line-above #'join-line)
+(defalias 'join-line-below (lambda! (join-line t)))
 
 (use-package autorevert
   :after-call after-find-file
@@ -325,7 +338,12 @@ Sexps (quit with _q_)
     ("C-<right>" #'sp-forward-barf-sexp)
     ("<left>" #'sp-backward-slurp-sexp)
     ("C-<left>" #'sp-backward-barf-sexp))
-  
+
+  (map! [remap beginning-of-sexp]     #'sp-beginning-of-sexp
+        [remap end-of-sexp]           #'sp-end-of-sexp
+        [remap forward-sexp]          #'sp-forward-sexp
+        [remap backward-sexp]         #'sp-backward-sexp)
+
   (require 'smartparens-config)
   (setq sp-highlight-pair-overlay nil
         sp-highlight-wrap-overlay nil
@@ -385,14 +403,10 @@ Sexps (quit with _q_)
   ;; d) refresh `smartparens' `:post-handlers' so SPC and RET expansions work even after a backspace
   ;; e) properly delete `smartparens' pairs when they are encountered without the need for strict mode
   ;; f) do none of this when in a string
-  (advice-add #'delete-backard-char :override #'delete-backward-char-extended)
+  (advice-add #'delete-backward-char :override #'delete-backward-char-extended)
 
   ;; make `newline-and-indent' smarter when comments are involved
   (advice-add #'newline-and-indent :around #'newline-and-indent-maybe-continue-comment)
-
-  (after! evil
-    (add-hook 'evil-replace-state-entry-hook #'turn-off-smartparens-mode)
-    (add-hook 'evil-replace-state-exit-hook #'turn-on-smartparens-mode))
 
   (smartparens-global-mode +1))
 
@@ -419,17 +433,16 @@ Sexps (quit with _q_)
 
 (use-package helpful
   :init
-  (general-def
-    [remap describe-function] #'helpful-callable
-    [remap describe-command]  #'helpful-command
-    [remap describe-variable] #'helpful-variable
-    [remap describe-key]      #'helpful-key)
-  (general-def
-    :keymaps '(help-mode-map helpful-mode-map)
-    "o"       #'ace-link-help
-    "q"       #'quit-window
-    "<right>" #'forward-button
-    "<left>"  #'backward-button))
+  (map! [remap describe-function] #'helpful-callable
+        [remap describe-command]  #'helpful-command
+        [remap describe-variable] #'helpful-variable
+        [remap describe-key]      #'helpful-key
+
+        (:keymap (help-mode-map helpful-mode-map)
+          "o"       #'ace-link-help
+          "q"       #'quit-window
+          "<right>" #'forward-button
+          "<left>"  #'backward-button)))
 
 (use-package ws-butler
   :after-call (after-find-file)

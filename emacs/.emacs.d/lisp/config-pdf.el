@@ -5,7 +5,7 @@
   :config
   (pdf-tools-install)
 
-  (define-key! pdf-view-mode-map
+  (define-key pdf-view-mode-map
     "q" #'kill-this-buffer)
 
   (after! evil

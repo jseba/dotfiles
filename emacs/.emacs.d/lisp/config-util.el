@@ -186,33 +186,5 @@ The body of the advice is in BODY."
 		,@body))
 			   commands)))
 
-(defmacro define-key! (keymaps key def &rest rest)
-  "Like `define-key', but accepts a variable number of KEYMAPS and/or KEY+DEFs.
-
-KEYMAPS can also be (or contain) `\'global' or `\'local' to make this equivalent
-to using `global-set-key' or `local-set-key'.
-
-KEY is a key string or vector. It is *not* piped through `kbd'."
-  (declare (indent defun))
-  (or (cl-evenp (length rest))
-	  (signal 'wrong-number-of-arguments (list 'evenp (length rest))))
-  (if (and (listp keymaps)
-		   (not (eq (car-safe keymaps) 'quote)))
-	  `(dolist (map (list ,@keymaps))
-		 ,(macroexpand `(define-key! map ,key ,def ,@rest)))
-	(when (eq (car-safe keymaps) 'quote)
-	  (pcase (cadr keymaps)
-		(`global (setq keymaps '(current-global-map)))
-		(`local  (setq keymaps '(current-local-map)))
-		(x (error "%s is not a valid keymap" x))))
-	`(let ((map ,keymaps))
-	   (define-key map ,key ,def)
-	   ,@(let (forms)
-		   (while rest
-			 (let ((key (pop rest))
-				   (def (pop rest)))
-			   (push `(define-key map ,key ,def) forms)))
-		   (nreverse forms)))))
-
 (provide 'config-util.el)
 ;;; config-util.el ends here

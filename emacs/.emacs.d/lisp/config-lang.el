@@ -305,29 +305,7 @@ will trigger electric reindentation."
 (use-package lsp-ui
   :init
   (add-hook 'lsp-mode-hook #'lsp-ui-mode)
-  (setq lsp-ui-sideline-show-symbol nil)
-  :config
-  (general-def
-    :keymaps '(c-mode-map c++-mode-map)
-    :prefix "SPC l"
-    "=" '(lsp-format-buffer
-          :which-key "Format Buffer")
-    "a" '(lsp-execute-code-action
-          :which-key "Code Action")
-    "l" '(lsp-ui-sideline-mode
-          :which-key "Sideline Mode")
-    "d" '(lsp-ui-doc-mode
-          :which-key "Doc Mode")
-    "e" '(lsp-ui-flycheck-list
-          :which-key "Diagnostics")
-    "i" '(lsp-ui-imenu
-          :which-key "Imenu")
-    "r" '(lsp-rename
-          :which-key "Rename")
-    "R" '(lsp-restart-workspace
-          :which-key "Restart Workspace")
-    "w" '(lsp-ui-peek-find-workspace-symbol
-          :which-key "Find Symbol in Workspace")))
+  (setq lsp-ui-sideline-show-symbol nil))
 
 (use-package company-lsp
   :after company)

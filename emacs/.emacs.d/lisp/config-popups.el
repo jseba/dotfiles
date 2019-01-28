@@ -746,7 +746,7 @@
                                        +popup-set-modeline-on-enable
                                        +popup-unset-modeline-on-disable))
 
-(define-key! +popup-buffer-mode-map
+(define-key +popup-buffer-mode-map
   [escape] #'global-escape)
 
 (add-hook 'init-ui-hook #'+popup-mode)

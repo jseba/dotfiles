@@ -122,23 +122,6 @@ everywhere else."
       (call-interactively +company-dabbrev)
       (company-select-previous-or-abort)))
 
-  (general-def
-    [remap dabbrev-expand] #'company-dabbrev)
-  (general-def
-    :keymaps 'company-active-map
-    "C-n" #'company-select-next
-    "C-p" #'company-select-prev
-    "C-h" #'company-show-doc-buffer
-    "C-s" #'helm-company
-    "C-S-s" #'company-filter-candidates
-    [tab] #'company-complete-common-or-cycle
-    [backtab] #'company-select-previous)
-  (general-def
-    :keymaps 'company-search-map
-    "C-n" #'company-select-next-or-abort
-    "C-p" #'company-select-previous-or-abort
-    [escape] #'company-search-abort)
-
   (add-hook 'company-mode-hook #'+company-init-backends)
   (global-company-mode +1))
 
