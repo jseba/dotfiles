@@ -444,34 +444,7 @@ already there."
                   +eshell-aliases)))
   (add-hook 'eshell-alias-load-hook #'+eshell-init-aliases)
 
-  (defun +eshell-init-keymap ()
-    (after! evil
-      (evil-define-key* 'normal eshell-mode-map
-                        [return] #'+eshell-goto-end-of-prompt
-                        "c"      #'+eshell-evil-change
-                        "C"      #'+eshell-evil-change-line
-                        "d"      #'+eshell-evil-delete
-                        "D"      #'+eshell-evil-delete-line)
-      (evil-define-key* 'insert eshell-mode-map
-                        [tab]    #'+eshell-pcomplete
-                        "\C-j"   #'evil-window-down
-                        "\C-k"   #'evil-window-up
-                        "\C-h"   #'evil-window-left
-                        "\C-l"   #'evil-window-right
-                        "\C-d"   #'+eshell-quit-or-delete-char
-                        "\C-p"   #'eshell-previous-input
-                        "\C-n"   #'eshell-next-input))
-    (define-key! eshell-mode-map
-      (kbd "C-s")   #'+eshell-search-history
-      (kbd "C-c s") #'+eshell-split-below
-      (kbd "C-c v") #'+eshell-split-right
-      (kbd "C-c x") #'+eshell-kill-and-close
-      [remap split-window-below] #'+eshell-split-below
-      [remap split-window-right] #'+eshell-split-right
-      [remap backward-to-bol-or-indent] #'eshell-bol
-      [remap backward-kill-to-bol-or-indent] #'eshell-kill-input
-      [remap evil-window-split] #'+eshell-split-below
-      [remap evil-window-vsplit] #'+eshell-split-right))
+  (defun +eshell-init-keymap ())
   (add-hook 'eshell-first-time-mode-hook #'+eshell-init-keymap))
 
 (use-package eshell-z
