@@ -1,12 +1,14 @@
 ;;; config-helm.el
 
-(use-package helm
-  :defer 1
+(use-package helm-mode
+  :defer t
+  :ensure helm
   :after-call pre-command-hook
-  :init
+  :preface
   (defvar +helm-global-prompt ">>> ")
   (defvar helm-generic-files-map (make-sparse-keymap))
 
+  :init
   (map! [remap apropos] #'helm-apropos
         [remap find-library] #'helm-locate-library
         [remap bookmark-jump] #'helm-bookmarks
@@ -18,6 +20,9 @@
         [remap switch-to-buffer] #'helm-buffers-list
         [remap recentf-open-files] #'helm-recentf))
 
+(use-package helm
+  :after helm-mode
+  :preface
   (setq helm-candidate-number-limit 50
         helm-display-header-line nil
         helm-mode-line-string nil
@@ -30,6 +35,7 @@
         helm-ff-lynx-style-map nil
         helm-default-prompt-display-function #'+helm--set-prompt-display)
 
+  :init
   (let ((fuzzy t))
     (setq helm-M-x-fuzzy-match fuzzy
           helm-ag-fuzzy-match fuzzy
@@ -51,15 +57,6 @@
   (defun +helm-fix-get-font-height (orig-fn position)
     (ignore-errors (funcall orig-fn position)))
   (advice-add #'posframe--get-font-height :around #'+helm-fix-get-font-height)
-
-  (defun +helm-projectile-find-file ()
-    (interactive)
-    (call-interactively
-     (if (or (file-equal-p default-directory "~")
-             (when-let* ((proot (+projectile-project-root 'nocache)))
-               (file-equal-p proot "~")))
-         #'helm-find-files
-       #'helm-projectile-find-file)))
 
   (defun +helm--set-prompt-display (pos)
     (let (beg state region-active m)
