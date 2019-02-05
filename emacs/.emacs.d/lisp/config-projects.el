@@ -47,15 +47,11 @@
                projectile-project-root-cache)))
 
   (add-hook 'init-hook #'projectile-mode)
-  (map! :leader "p" projectile-command-map)
 
   :config
   ;; add ".cquery" and ".ccls" configuration file as a project root
   (push ".cquery" projectile-project-root-files-bottom-up)
   (push ".ccls" projectile-project-root-files-bottom-up)
-
-  (define-key projectile-mode-map
-    (kbd "C-c p") 'projectile-command-map)
 
   (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects))
 

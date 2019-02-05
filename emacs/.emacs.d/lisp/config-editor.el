@@ -244,10 +244,12 @@
 (defun new-buffer ()
   "Creates a new empty buffer."
   (interactive)
-  (let ((buffer (generate-new-buffer "*new*")))
-    (set-window-buffer nil)
-    (with-current-buffer buffer
-      (funcall (default-value 'major-mode)))))
+  (if (featurep 'evil)
+      (evil-buffer-new)
+    (let ((buffer (generate-new-buffer "*new*")))
+      (set-window-buffer nil)
+      (with-current-buffer buffer
+        (funcall (default-value 'major-mode))))))
 
 (use-package autorevert
   :after-call after-find-file
@@ -444,13 +446,7 @@ Sexps (quit with _q_)
   (map! [remap describe-function] #'helpful-callable
         [remap describe-command]  #'helpful-command
         [remap describe-variable] #'helpful-variable
-        [remap describe-key]      #'helpful-key
-
-        (:keymap (help-mode-map helpful-mode-map)
-          "o"       #'ace-link-help
-          "q"       #'quit-window
-          "<right>" #'forward-button
-          "<left>"  #'backward-button)))
+        [remap describe-key]      #'helpful-key))
 
 (use-package ws-butler
   :after-call (after-find-file)

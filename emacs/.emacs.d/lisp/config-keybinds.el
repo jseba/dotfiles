@@ -50,9 +50,13 @@
 (use-package general
   :demand t)
 
-(defvar +map-leader-key "C-c"
-  "The leader prefix key.")
+(defvar +map-leader-key "SPC"
+  "The leader prefix for Evil mode.")
+(defvar +map-leader-alt-key "M-SPC"
+  "An alternative leader prefix key, used for Insert and Emacs states.")
 (defvar +map-localleader-key (concat +map-leader-key " m")
+  "The local-leader prefix key (for major-mode specific commands).")
+(defvar +map-localleader-alt-key (concat +map-leader-alt-key " m")
   "The local-leader prefix key (for major-mode specific commands).")
 (defvar +map-leader-map (make-sparse-keymap)
   "The overriding keymap for `leader' keys.")
@@ -65,14 +69,34 @@
 
 (defmacro define-leader-key! (&rest args)
   `(general-define-key
-    :states nil
+    :states '(normal visual motion insert emacs)
     :keymaps '+map-leader-map
     :prefix +map-leader-key
+    :non-normal-prefix +map-leader-alt-key
     ,@args))
-(general-create-definer define-localleader-key!
+(general-create-definer define-localleader!
+  :states '(normal visual motion insert emacs)
   :major-modes t
   :wk-full-keys nil
-  :prefix +map-localleader-key)
+  :prefix +map-localleader-key
+  :non-normal-prefix +map-localleader-alt-key)
+
+(defvar +map--evil-state-alist
+  '((?n . normal)
+    (?v . visual)
+    (?i . insert)
+    (?e . emacs)
+    (?o . operator)
+    (?m . motion)
+    (?r . replace)
+    (?g . global))
+  "A list of cons cells that map a letter to an Evil state symbol.")
+
+(defun +map--keyword-to-states (keyword)
+  "Convert a KEYWORD into a list of `Evil' state symbols."
+  (cl-loop for l across (substring (symbol-name keyword) 1)
+           if (cdr (assq l +map--evil-state-alist)) collect it
+           else do (error "not a valid state: %s" l)))
 
 (dolist (key '(:after
                :desc
@@ -81,6 +105,7 @@
                :keymap
                :mode
                :prefix
+               :textobj
                :unless
                :when))
   (put key 'lisp-indent-function 'defun))
@@ -133,8 +158,18 @@
                                prefix)
                     (when (stringp desc)
                       (setq rest (append (list :desc desc "" nil) rest)))))
+                 (:textobj
+                  (let* ((key (pop rest))
+                         (inner (pop rest))
+                         (outer (pop rest)))
+                    (push `(map! (:keymap evil-inner-text-objects-map ,key ,inner)
+                                 (:keymap evil-outer-text-objects-map ,key ,outer))
+                          +map--forms)))
                  (_
-                  (error "Not a valid `map!' property: %s" key)
+                  (condition-case _
+                      (+map--def (pop rest) (pop rest) (+map--keyword-to-states key) desc)
+                    (error
+                     (error "Not a valid `map!' property: %s" key)))
                   (setq desc nil))))
 
               ((+map--def key (pop rest) nil desc)
@@ -186,7 +221,6 @@
   (when +map--batch-forms
     (cl-loop with attrs = (+map--state)
              for (state . defs) in +map--batch-forms
-             if (not state)
              collect `(,(or +map--fn 'general-define-key)
                        ,@(if state `(:states ',state))
                        ,@attrs
@@ -220,38 +254,122 @@ Shamelessly lifted from Doom Emacs."
 (add-hook! tty-setup-hook (define-key input-decode-map
                             (kbd "TAB") [tab]))
 
-(map! "C-a"   #'backward-to-bol-or-indent
-      "C-e"   #'forward-to-last-non-comment-or-eol
-      "C-j"   #'newline-below-and-indent
-      "C-S-j" #'newline-above-and-indent
+(map! [remap beginning-of-line] #'backward-to-bol-or-indent
+      [remap end-of-line]       #'forward-to-last-non-comment-or-eol
+      [remap find-tag]          #'projectile-find-tag
+      [remap evil-jump-to-tag]  #'projectile-find-tag)
 
-      [remap newline] #'newline-and-indent
-      [C-return]      #'+newline
+(map! :n    "gQ"        #'+format-region
+      :m    "]a"        #'evil-forward-arg
+      :m    "[a"        #'evil-backward-arg
+      :v    "<"         #'+evil-visual-dedent
+      :v    ">"         #'+evil-visual-indent
+      :v    "S"         #'evil-surround-region
+      :nv   "gr"        #'+eval-region
+      :nv   "gR"        #'+eval-buffer
+      :nv   "gc"        #'evil-commentary
+      :nv   "C-a"       #'evil-numbers/inc-at-pt
+      :nv   "C-x"       #'evil-numbers/dec-at-pt
+      :i    [tab]       #'tab-to-tab-stop
+      :i    [control-i] #'indent-for-tab-command
+      :n    "C-h"       #'evil-window-left
+      :n    "C-j"       #'evil-window-down
+      :n    "C-k"       #'evil-window-up
+      :n    "C-l"       #'evil-window-right
+      :n    "C-w"       #'other-window
+      :n    "C-S-f"     #'toggle-frame-fullscreen
+      :nv   "K"         #'+xref-documentation
+      :nv   "gd"        #'+xref-definition
+      :nv   "gD"        #'+xref-references
+      :nv   "gf"        #'+xref-file)
 
-      [M-return]    #'join-line-below
-      [M-S-return]  #'join-line-above
-
-      "C-S-f" #'toggle-frame-fullscreen
-
-      "C-x p" #'+popup-other
-      "C-`"   #'+popup-toggle
-      "C-~"   #'+popup-raise
-      "C-;"   #'+smartparens-hydra/body)
-
-(map! :leader                           ; "C-c"
-      "["       #'previous-buffer
-      "]"       #'next-buffer
-      "SPC"     #'projectile-find-file
-      "RET"     #'bookmark-jump
-      "/"       #'+helm-project-search
-      "'"       #'helm-resume
-      "e"       #'+eshell-open
-      "E"       #'+eshell-open-popup
-      "k"       #'kill-this-buffer
-      "K"       #'kill-other-buffers
-      "r"       #'projectile-recentf
-      "R"       #'recentf-open-files
-      "x"       #'flycheck-list-errors)
+(map! :leader
+      :desc "Find File in Project"          "SPC"       #'projectile-find-file
+      :desc "Jump to Bookmark"              "RET"       #'bookmark-jump
+      :desc "Previous Buffer"               "<"         #'previous-buffer
+      :desc "Next Buffer"                   ">"         #'next-buffer
+      :desc "Eval Last Sexp"                "C-e"       #'eval-last-sexp
+      (:prefix ("[" . "Previous")
+        :desc "Diff Hunk"                   "d"         #'diff-hunk-prev
+        :desc "To Do"                       "t"         #'hl-todo-previous
+        :desc "Error"                       "x"         #'next-error
+        :desc "Spelling Error"              "s"         #'evil-next-flyspell-error
+        :desc "Spelling Correction"         "S"         #'flyspell-auto-correct-word)
+      (:prefix ("]" . "Next")
+        :desc "Diff Hunk"                   "d"         #'diff-hunk-next
+        :desc "To Do"                       "t"         #'hl-todo-next
+        :desc "Error"                       "x"         #'previous-error
+        :desc "Spelling Error"              "s"         #'evil-previous-flyspell-error
+        :desc "Spelling Correction"         "S"         #'flyspell-auto-correct-previous-word)
+      :desc "Dired"                         "-"         #'dired-jump
+      :desc "Toggle Last Popup"             "`"         #'+popup-toggle
+      :desc "Raise Popup"                   "~"         #'+popup-raise
+      :desc "Search in Project"             "/"         #'+helm-project-search
+      :desc "Resume Last Search"            "'"         #'helm-resume
+      :desc "Switch Buffer"                 ","         #'switch-to-buffer
+      :desc "Find File"                     "."         #'find-file
+      (:prefix ("b" . "Buffer")
+        :desc "Toggle Narrowing"            "-"         #'+clone-and-narrow-buffer
+        :desc "Sudo Edit This File"         "!"         #'+sudo-edit-this-file
+        :desc "Open Scratch Buffer"         "x"         #'+open-scratch-buffer
+        :desc "Bury This Buffer"            "z"         #'bury-buffer)
+      :desc "Eshell"                        "e"         #'+eshell-open
+      :desc "Eshell (Popup)"                "E"         #'+eshell-open-popup
+      (:prefix ("f" . "File")
+        :desc "Sudo Find File"              "!"         #'+sudo-find-file
+        :desc "Rename This File"            "r"         #'rename-file
+        :desc "Delete This File"            "X"         #'+delete-this-file
+        :desc "Yank File Name"              "y"         #'+yank-buffer-filename)
+      (:prefix ("h" . "Help")
+        :desc "Apropos"                     "a"         #'apropos
+        :desc "Describe character"          "c"         #'describe-char
+        :desc "Describe function"           "f"         #'describe-function
+        :desc "Describe face"               "F"         #'describe-face
+        :desc "Info"                        "i"         #'info-lookup-symbol
+        :desc "Describe key"                "k"         #'describe-key
+        :desc "Find library"                "l"         #'find-library
+        :desc "View *Messages*"             "m"         #'view-echo-area-messages
+        :desc "Describe mode"               "M"         #'describe-mode
+        :desc "Describe variable"           "v"         #'describe-variable
+        :desc "Man pages"                   "w"         #'woman
+        :desc "Describe at point"           "."         #'helpful-at-point)
+      (:prefix ("p" . "Project")
+        :desc "Run Command"                 "!"         #'projectile-run-command-in-root
+        :desc "Run Command Async"           "&"         #'projectile-run-async-shell-command-in-root
+        :desc "Find Alternate File"         "a"         #'projectile-find-other-file
+        :desc "Switch Project Buffer"       "b"         #'projectile-switch-to-buffer
+        :desc "Configure Project"           "C"         #'projectile-configure-project
+        :desc "Compile Project"             "c"         #'projectile-compile-project
+        :desc "Find Directory"              "d"         #'projectile-find-dir
+        :desc "Dired Project"               "D"         #'projectile-dired
+        :desc "Edit Project Dir-Locals"     "e"         #'projectile-edit-dir-locals
+        :desc "Find File In Known Projects" "f"         #'projectile-find-file-in-known-projects
+        :desc "Find File DWIM"              "g"         #'projectile-find-file-dwim
+        :desc "Invalidate Cache"            "i"         #'projectile-invalidate-cache
+        :desc "Find Tag"                    "j"         #'projectile-find-tag
+        :desc "Kill Project Buffers"        "k"         #'projectile-kill-buffers
+        :desc "Find File in Directory"      "l"         #'projectile-find-file-in-directory
+        :desc "Switch Project"              "p"         #'projectile-switch-project
+        :desc "Switch to Open Project"      "P"         #'projectile-switch-open-project
+        :desc "Replace in Project"          "r"         #'projectile-replace
+        :desc "Regex Replace in Project"    "R"         #'projectile-replace-regexp
+        :desc "Save All Project Buffers"    "s"         #'projectile-save-project-buffers
+        :desc "Toggle Implementation/Test"  "t"         #'projectile-toggle-between-implementation-and-test
+        :desc "Find Test File"              "T"         #'projectile-find-test-file
+        :desc "Run Project"                 "u"         #'projectile-run-project
+        :desc "Project Version Control"     "v"         #'projectile-vc
+        :desc "Browse Dirty Projects"       "V"         #'projectile-browse-dirty-projects
+        :desc "Run Eshell in Project"       "x"         #'projectile-run-eshell
+        :desc "Cache Current File"          "z"         #'projectile-cache-current-file
+        :desc "Previous Project Buffer"     "<left>"    #'projectile-previous-project-buffer
+        :desc "Next Project Buffer"         "<right>"   #'projectile-next-project-buffer)
+      :desc "Kill This Buffer"              "k"         #'kill-this-buffer
+      :desc "Kill Other Buffers"            "K"         #'kill-other-buffers
+      :desc "New Buffer"                    "n"         #'new-buffer
+      :desc "Recent Project Files"          "r"         #'projectile-recentf
+      :desc "Recent Files"                  "R"         #'recentf-open-files
+      :desc "Universal Argument"            "u"         #'universal-argument
+      :desc "Display Errors"                "x"         #'flycheck-list-errors)
 
 (after! lsp
   (map! :leader (:prefix ("l" . "lsp")
@@ -315,6 +433,12 @@ Shamelessly lifted from Doom Emacs."
         [remap backward-to-bol-or-indent] #'eshell-bol
         [remap backward-kill-to-bol-or-indent] #'eshell-kill-input))
 
+(after! helm
+  (map! (:keymap helm-map
+          [left]    #'left-char
+          [right]   #'right-char
+          "C-S-n"   #'helm-next-source
+          "C-S-p"   #'helm-prev)))
 (after! smartparens
   (map!
     "C-M-a"     #'sp-beginning-of-sexp
@@ -329,28 +453,43 @@ Shamelessly lifted from Doom Emacs."
     "C-<left>"  #'sp-backward-slurp-sexp
     "M-<left>"  #'sp-backward-barf-sexp))
 
-(after! company
-  (map!
-   [remap dabbrev-expand] #'+company-dabbrev
-   [control-i]            #'+company-complete
+(map!
+ [remap dabbrev-expand] #'+company-dabbrev
 
-   (:keymap company-active-map
-     "C-n"       #'company-select-next
-     "C-p"       #'company-select-prev
-     "C-h"       #'company-show-doc-buffer
-     "C-S-h"     #'company-show-doc-buffer
-     "C-s"       #'company-search-candidates
-     "M-s"       #'company-filter-candidates
-     [tab]       #'company-complete-common-or-cycle
-     [backtab]   #'company-select-previous
-     [C-Return]  #'helm-company)
-   (:keymap company-search-map
-     "C-n"      #'company-search-repeat-forward
-     "C-p"      #'company-search-repeat-backward
-     "C-s"      (lambda! (company-search-abort) (company-filter-candidates))
-     [escape]   #'company-search-abort)
-   (:keymap comint-mode-map
-     [tab]      #'company-complete)))
+ :i "C-SPC"   #'+company-complete
+ (:prefix "C-x"
+   :i "C-l"      #'+company-whole-lines
+   :i "C-f"      #'company-files
+   :i "C-]"      #'company-etags
+   :i "C-s"      #'company-ispell
+   :i "C-o"      #'company-capf
+   :i "C-n"      #'+company-dabbrev
+   :i "C-p"      #'+company-dabbrev-code-previous)
+
+ (:keymap company-active-map
+   "C-n"       #'company-select-next
+   "C-p"       #'company-select-prev
+   "C-h"       #'company-show-doc-buffer
+   "C-S-h"     #'company-show-doc-buffer
+   "C-s"       #'company-search-candidates
+   "M-s"       #'company-filter-candidates
+   [tab]       #'company-complete-common-or-cycle
+   [backtab]   #'company-select-previous
+   [C-Return]  #'helm-company)
+ (:keymap company-search-map
+   "C-n"      #'company-search-repeat-forward
+   "C-p"      #'company-search-repeat-backward
+   "C-s"      (lambda! (company-search-abort) (company-filter-candidates))
+   [escape]   #'company-search-abort)
+ (:keymap comint-mode-map
+   [tab]      #'company-complete))
+
+(after! view
+  (define-key view-mode-map [escape] #'View-quit-all))
+(map! :keymap Man-mode-map
+      :n "q" #'kill-this-buffer)
+(map! :keymap (help-mode-map helpful-mode-map)
+      :n  "q" #'quit-window)
 
 (map! :keymap (minibuffer-local-map
                minibuffer-local-ns-map
@@ -358,13 +497,13 @@ Shamelessly lifted from Doom Emacs."
                minibuffer-local-must-match-map
                minibuffer-local-isearch-map
                read-expression-map)
-      "\C-s" #'helm-minibuffer-history
-      "C-w" #'backward-kill-word
-      "C-u" #'backward-kill-sentence
-      "C-z" (lambda! (ignore-errors
-                       (call-interactively #'undo)))
-      "C-S-d" #'scroll-up-command
-      "C-S-n" #'scroll-down-command)
+      "ESC"       #'abort-recursive-edit
+      "\C-s"      #'helm-minibuffer-history
+      "C-w"       #'backward-kill-word
+      "C-u"       #'backward-kill-sentence
+      "C-z"       (lambda! (ignore-errors (call-interactively #'undo)))
+      "C-S-d"     #'scroll-up-command
+      "C-S-n"     #'scroll-down-command)
 
 (provide 'config-keybinds)
 ;;; config-keybinds.el ends here

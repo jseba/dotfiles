@@ -219,13 +219,13 @@ If OTHER-WINDOW, open the result in another window.
 Each function in `+xref-definition-functions' is tried until one changes the
 point or current buffer. Falls back to `dumb-jump', naive file text search,
 then `evil-goto-definition'."
-     (interactive
-      (list (+xref--symbol-or-region)
-            current-prefix-arg))
-     (cond ((null identifier) (user-error "Nothing under point"))
-           ((and +xref-definition-functions
-                 (+xref--jump-to :definition identifier)))
-           ((error "Couldn't find the definition of '%s'" identifier))))
+    (interactive
+     (list (+xref--symbol-or-region)
+           current-prefix-arg))
+    (cond ((null identifier) (user-error "Nothing under point"))
+          ((and +xref-definition-functions
+                (+xref--jump-to :definition identifier)))
+          ((error "Couldn't find the definition of '%s'" identifier))))
 
   (defun +xref-references (identifier)
     "Show a list of usages of IDENTIFIER (defaults to the symbol at point).
@@ -263,10 +263,11 @@ or the current buffer. Otherwise fall back on `find-file-at-point'."
     (interactive
      (progn
        (require 'ffap)
-       (or (ffap-guesser)
-           (ffap-read-file-or-url
-            (if ffap-url-regexp "Find file or URL: " "Find file: ")
-            (+xref--symbol-or-region)))))
+       (list
+        (or (ffap-guesser)
+            (ffap-read-file-or-url
+             (if ffap-url-regexp "Find file or URL: " "Find file: ")
+             (+xref--symbol-or-region))))))
     (require 'ffap)
     (cond ((not path)
            (call-interactively #'find-file-at-point))
@@ -292,7 +293,7 @@ or the current buffer. Otherwise fall back on `find-file-at-point'."
                                               (projectile-current-project-files)
                                               :initial-input path)))
                                    (find-file (expand-file-name (+projectile-project-root)))
-                                   (run-hook 'projectile-find-file-hook))))))
+                                   (run-hooks 'projectile-find-file-hook))))))
                            (#'+projectile-project-browse))))
                (find-file-at-point path))))))
 
@@ -357,3 +358,4 @@ reuses it on consecutive calls. If BANG, always prompt for the search engine."
   (setq xref-show-xrefs-function #'helm-xref-show-xrefs))
 
 (provide 'config-xref)
+;;; config-xref.el ends here
