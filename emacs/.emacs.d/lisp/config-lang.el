@@ -485,15 +485,31 @@ will trigger electric reindentation."
   :config
   (setq flycheck-popup-tip-error-prefix "x "))
 
-(use-package lsp-mode)
+(use-package lsp-mode
+  :init
+  (setq lsp-prefer-flymake nil)
+
+  (defun +lsp-init ()
+    (add-hook 'hack-local-variables-hook #'lsp nil t)))
 
 (use-package lsp-ui
-  :init
-  (add-hook 'lsp-mode-hook #'lsp-ui-mode)
-  (setq lsp-ui-sideline-show-symbol nil))
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  (define-key! lsp-ui-mode-map
+    [remap xref-find-definitions] #'lsp-ui-peek-find-definitions
+    [remap xref-find-references]  #'lsp-ui-peek-find-references)
+  (+xref-set-lookup-handlers 'lsp-ui-mode
+    :definition #'lsp-ui-peek-find-definitions
+    :references #'lsp-ui-peek-find-references)
+  (setq lsp-ui-sideline-show-symbol nil
+        lsp-ui-doc-max-height 8
+        lsp-ui-doc-max-width 35
+        lsp-ui-sideline-ignore-duplicate t))
 
 (use-package company-lsp
-  :after company)
+  :after lsp-mode
+  :config
+  (+company-set-backends 'lsp-mode 'company-lsp))
 
 (provide 'config-lang)
 ;;; config-lang.el ends here

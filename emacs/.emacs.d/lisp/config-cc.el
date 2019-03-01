@@ -111,12 +111,12 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
 (use-package clang-format)
 
 (use-package ccls
-  :disabled
   :when (executable-find "ccls")
+  :hook ((c-mode c++-mode) . +ccls-maybe-init)
   :init
   (defconst +ccls-cache-dir ".ccls_cache")
   (defconst +ccls-project-root-files
-    '("commpile_commands.json"
+    '("compile_commands.json"
       ".ccls")
     "List of file to add to Projectile that help determine the LSP workspace.")
 
@@ -127,10 +127,9 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
                                         (getenv "TEMP")
                                       "/tmp"))
                                    "/ccls.log"))
-        cquery-extra-init-params '(:index
-                                   (:comments 3)
-                                   :completion
-                                   (:detailedLabel t))
+        ccls-extra-init-params '(:index (:comments 2)
+                                 :cacheFormat "msgpack"
+                                 :completion (:detailedLabel t))
         ccls-cache-dir +ccls-cache-dir
         ;; TODO: try to get overlays working (requires patches to Emacs)
         ccls-sem-highlight-method 'font-lock)
@@ -138,20 +137,22 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
   (after! projectile
     ;; ignore CCLS cache
     (add-to-list 'projectile-globally-ignored-directories +ccls-cache-dir)
-
-    ;; add ".ccls" configuration file as a project root 
+    ;; add ".ccls" configuration file as a project root
     (add-to-list 'projectile-project-root-files-bottom-up
                  +ccls-project-root-files))
 
-  (defun +cc-enable-ccls-maybe ()
+  (defun +ccls-maybe-init ()
     "Enable CCLS if `ccls-project-root-files' are found in the project root."
     (let ((default-directory (+projectile-project-root)))
       (when (cl-some #'file-exists-p +ccls-project-root-files)
         (require 'lsp)
-        (lsp)
-        (+company-set-backends '(c-mode c++-mode) 'company-lsp))))
-  (add-hook! '(c-mode-hook c++-mode-hook) #'+cc-enable-ccls-maybe)
+        (setq-local company-transformers nil)
+        (setq-local company-lsp-cache-candidates nil)
+        (condition-case nil
+            (lsp)
+          (user-error nil)))))
 
+  :config
   (defun +ccls-callee ()
     (interactive)
     (lsp-ui-peek-find-custom "$ccls/call" '(:callee t)))

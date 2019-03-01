@@ -104,9 +104,9 @@ properties:
                (unintern fn nil))
               ((fset fn
                      (lambda ()
-                       (when (or (eq major-mode mode)
-                                 (and (boundp mode)
-                                      (symbol-value mode)))
+                       (when (or (eq major-mode `mode)
+                                 (and (boundp `mode)
+                                      (symbol-value `mode)))
                          (cl-destructuring-bind
                              (&key definition references documentation file xref-backend)
                              plist

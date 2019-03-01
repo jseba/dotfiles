@@ -422,6 +422,8 @@ Shamelessly lifted from Doom Emacs."
         [(control ?i)] [control-i]
         [(control ?I)] [(shift control-i)]))
 
+(map! "C-c" nil)
+
 (after! eshell
   (map! :keymap eshell-mode-map
         "C-s"   #'+eshell-search-history
