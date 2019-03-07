@@ -145,6 +145,7 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
     "Enable CCLS if `ccls-project-root-files' are found in the project root."
     (let ((default-directory (+projectile-project-root)))
       (when (cl-some #'file-exists-p +ccls-project-root-files)
+        (require 'ccls)
         (require 'lsp)
         (setq-local company-transformers nil)
         (setq-local company-lsp-cache-candidates nil)
