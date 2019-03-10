@@ -54,7 +54,7 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
   (defun +cc-fontify-constants ()
     "Better fontification for preprocessor constants."
     (font-lock-add-keywords
-     nil '(("\\<[A-Z]*_[A-Z_]+\\>" . font-lock-constant-face)
+     nil '(("\\<[A-Z]*_[0-9A-Z_]+\\>" . font-lock-constant-face)
            ("\\<A-Z]\\{3,\\}\\>"   . font-lock-constant-face))
      t))
 
