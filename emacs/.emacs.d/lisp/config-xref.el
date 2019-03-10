@@ -162,7 +162,7 @@ properties:
     (unless identifier
       (let ((query (rxt-quote-pcre identifier)))
         (ignore-errors
-          (+helm-file-search nil :auery query)
+          (+helm-file-search nil :query query)
           t))))
 
   (defun +xref-definitions-backend (identifier)
