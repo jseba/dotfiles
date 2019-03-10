@@ -246,9 +246,9 @@
 (defun apply-ansi-color-to-compilation-buffer ()
   (with-silent-modifications
     (ansi-color-apply-on-region compilation-filter-start (point))))
+(add-hook 'compilation-filter-hook #'apply-ansi-color-to-compilation-buffer)
 
 (defun setup-ui ()
-  (add-hook 'compilation-filter-hook #'apply-ansi-color-to-compilation-buffer)
   (run-hook-wrapped 'init-ui-hook #'try-run-hook))
 (add-hook 'init-hook #'setup-ui t)
 
