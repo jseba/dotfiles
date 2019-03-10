@@ -3,11 +3,29 @@
 ## Check for Stow
 type stow >/dev/null 2>&1 || { echo "Stow not found"; exit 1; }
 
-## Add list of folders to be managed by stow
-STOWED_DIRS=( alacritty bin compton dircolors emacs fonts fzf git herbstluft i3 nvim polybar rofi terminfo tmux urxvt vim xorg zsh )
+## Add list of folders to be managed by Stow
+STOWED_DIRS=( alacritty     \
+              bin           \
+              compton       \
+              dircolors     \
+              emacs         \
+              fonts         \
+              git           \
+              herbstluft    \
+              i3            \
+              nvim          \
+              polybar       \
+              rofi          \
+              terminfo      \
+              tmux          \
+              urxvt         \
+              vim           \
+              xorg          \
+              zsh           \
+            )
 
 #
-# Pre-Stow warmup
+# Pre-Stow warm-up
 #
 
 ## Load submodules
