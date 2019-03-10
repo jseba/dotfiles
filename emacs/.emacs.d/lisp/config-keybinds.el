@@ -54,9 +54,9 @@
   "The leader prefix for Evil mode.")
 (defvar +map-leader-alt-key "M-SPC"
   "An alternative leader prefix key, used for Insert and Emacs states.")
-(defvar +map-localleader-key (concat +map-leader-key " m")
+(defvar +map-localleader-key "SPC m"
   "The local-leader prefix key (for major-mode specific commands).")
-(defvar +map-localleader-alt-key (concat +map-leader-alt-key " m")
+(defvar +map-localleader-alt-key "M-SPC m"
   "The local-leader prefix key (for major-mode specific commands).")
 (defvar +map-leader-map (make-sparse-keymap)
   "The overriding keymap for `leader' keys.")
@@ -74,7 +74,7 @@
     :prefix +map-leader-key
     :non-normal-prefix +map-leader-alt-key
     ,@args))
-(general-create-definer define-localleader!
+(general-create-definer define-localleader-key!
   :states '(normal visual motion insert emacs)
   :major-modes t
   :wk-full-keys nil
@@ -311,6 +311,7 @@ Shamelessly lifted from Doom Emacs."
       (:prefix ("b" . "Buffer")
         :desc "Toggle Narrowing"            "-"         #'+clone-and-narrow-buffer
         :desc "Sudo Edit This File"         "!"         #'+sudo-edit-this-file
+        :desc "Search This Buffer"          "/"         #'swiper
         :desc "Open Scratch Buffer"         "x"         #'+open-scratch-buffer
         :desc "Bury This Buffer"            "z"         #'bury-buffer)
       :desc "Eshell"                        "e"         #'+eshell-open
@@ -385,8 +386,7 @@ Shamelessly lifted from Doom Emacs."
 
 (map! :localleader
       (:keymap (c-mode-map c++-mode-map)
-        (:after ccls
-          :prefix ("x" . "ccls")
+        :prefix ("x" . "ccls")
           :desc "Variable Addresses"    "A" #'+ccls-references-address
           :desc "Function Addresses"    "F" #'+ccls-references-not-call
           :desc "Macro References"      "P" #'+ccls-references-macro
@@ -409,8 +409,8 @@ Shamelessly lifted from Doom Emacs."
           :desc "Local Variables"       "v" (lambda! (+ccls-vars 3))
           :desc "All Variables"         "V" (lambda! (+ccls-vars 7))
           :desc "Fields"                "k" (lambda! (+ccls-vars 1))
-          :desc "Go To Type Definition" "t" #'lsp-goto-type-definition
-          :desc "Code Lens Mode"        "l" #'ccls-code-lens-mode)))
+          :desc "Code Lens Mode"        "l" #'ccls-code-lens-mode
+          :desc "Go To Type Definition" "t" #'lsp-goto-type-definition))
 
 (when %IS-MACOS
   (map! :keymap input-decode-map
@@ -436,11 +436,12 @@ Shamelessly lifted from Doom Emacs."
         [remap backward-kill-to-bol-or-indent] #'eshell-kill-input))
 
 (after! helm
-  (map! (:keymap helm-map
-          [left]    #'left-char
-          [right]   #'right-char
-          "C-S-n"   #'helm-next-source
-          "C-S-p"   #'helm-prev)))
+  (map! :keymap helm-map
+        [left]      #'left-char
+        [right]     #'right-char
+        "C-S-n"     #'helm-next-source
+        "C-S-p"     #'helm-previous-source))
+
 (after! smartparens
   (map!
     "C-M-a"     #'sp-beginning-of-sexp
