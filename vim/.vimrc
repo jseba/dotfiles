@@ -22,9 +22,12 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-abolish'
-Plug 'wellle/targets.vim'
+" Plug 'wellle/targets.vim'
+Plug 'haya14busa/is.vim'
 Plug 'justinmk/vim-sneak'
 Plug 'nlknguyen/papercolor-theme'
+Plug 'joshdick/onedark.vim'
+Plug 'itchyny/lightline.vim'
 
 " Local plugins
 if filereadable(expand("$HOME/.vim/local/plugs.vim"))
@@ -47,7 +50,6 @@ set backupdir=$HOME/.vim/tmp/backup
 set belloff=all
 set breakindent
 set cmdheight=2
-set colorcolumn=+1
 set complete=.,w,b,u,t,d
 set completeopt=longest,menuone
 set diffopt+=vertical
@@ -217,7 +219,7 @@ inoremap <C-u> <esc>mzgUiw`za
 nnoremap J mzJ`z
 
 " split line (inverse of join)
-nnoremap S i<cr><esc>^mwgk:silent! s/\v +$//<cr>:noh<cr>`w
+nnoremap S i<cr><esc>^mwgk:silent! s/\v +$//<cr>:silent! noh<cr>`w
 
 " select current line (excluding indentation)
 nnoremap vv ^vg_
@@ -231,8 +233,10 @@ nnoremap <Space>vt :edit $HOME/.tmux.conf<CR>
 nnoremap <Space>vs :Scratch<cr>
 
 " stay in place on */#
-nnoremap <silent> * :let sv=winsaveview()<cr>*:call winrestview(sv)<cr>
-nnoremap <silent> # :let sv=winsaveview()<cr>#:call winrestview(sv)<cr>
+nnoremap <silent> z* :let sv=winsaveview()<cr>*:call winrestview(sv)<cr>
+nnoremap <silent> z# :let sv=winsaveview()<cr>#:call winrestview(sv)<cr>
+nnoremap <silent> gz* :let sv=winsaveview()<cr>g*:call winrestview(sv)<cr>
+nnoremap <silent> gz# :let sv=winsaveview()<cr>g#:call winrestview(sv)<cr>
 
 " center search matches after jumping
 nnoremap n nzzzv
@@ -361,6 +365,8 @@ if !has('gui_running')
 else
   if !has('gui_macvim')
     set guifont=Source\ Code\ Pro\ 9
+  else
+    set guifont=Iosevka:h11
   endif
   set guioptions-=T
   set guioptions-=e
@@ -375,40 +381,26 @@ endif
 colorscheme PaperColor
 
 " statusline setup
-function! ModeForStatusline()
-  let mode_status = {
-        \ 'i': 'Insert',
-        \ 'n': 'Normal',
-        \ 'v': 'Visual',
-        \ 'V': 'V-Line',
-        \ "\<C-v>": 'V-Block',
-        \ 'c': 'Command',
-        \ 's': 'Select',
-        \ 'S': 'S-Line',
-        \ "\<C-s>": 'S-Block',
-        \ 't': 'Terminal',
-  \ }
-  return get(mode_status, mode(), '')
-endfunction
-
-set noshowmode
 set laststatus=2
-set statusline=
-set statusline+=\ %{ModeForStatusline()}
-set statusline+=\ %#LineNr#
-set statusline+=\ %f
-set statusline+=\ %m
-set statusline+=%=
-set statusline+=\ %#TabLine#
-set statusline+=\ %y
-set statusline+=\ %{&fileformat}
-set statusline+=\ %#StatusLine#
-set statusline+=\ %P
-set statusline+=\ %v
-set statusline+=\:%l
-set statusline+=\/%L
-set statusline+=\ %{winnr()}
-set statusline+=\ %#StatusLine#
+set noshowmode
+let g:lightline = {
+            \ 'colorscheme': 'one',
+            \ 'active': {
+            \   'left': [[ 'mode', 'paste' ],
+            \            [ 'readonly', 'modified', 'filename' ]],
+            \ },
+            \ 'inactive': {
+            \   'left':  [[ 'modified', 'filename' ]],
+            \   'right': [[ ]],
+            \ },
+            \ 'separator': {
+            \   'left': '',
+            \   'right': '',
+            \ },
+            \ 'component': {
+            \   'modified': '%M',
+            \ }
+            \ }
 
 " Tags
 set tags=./tags;./TAGS
