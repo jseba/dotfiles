@@ -396,7 +396,7 @@
            (this-buffer (current-buffer))
            (that-window (windmove-find-other-window direction nil this-window))
            (that-buffer (window-buffer that-window)))
-      (whe+n (or (minibufferp that-buffer)
+      (when (or (minibufferp that-buffer)
                 (window-dedicated-p this-window))
         (setq that-buffer nil
               that-window nil))
@@ -610,13 +610,13 @@
     (define-key view-mode-map
       [escape] #'View-quit-all))
 
-  (add-transient-hook 'Buffer-menu-mode
+  (add-transient-hook! 'Buffer-menu-mode
     (+evil-collection-init '(buff-menu "buff-menu")))
-  (add-transient-hook 'image-mode
+  (add-transient-hook! 'image-mode
     (+evil-collection-init 'image))
-  (add-transient-hook 'emacs-lisp-mode
+  (add-transient-hook! 'emacs-lisp-mode
     (+evil-collection-init 'elisp-mode))
-  (add-transient-hook 'occur-mode
+  (add-transient-hook! 'occur-mode
     (+evil-collection-init 'replace)))  
 
 (use-package evil-commentary
