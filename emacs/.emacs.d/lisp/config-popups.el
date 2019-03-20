@@ -828,6 +828,7 @@ vice versa)."
 ;; or not so subtle ways.
 
 ;; Don't try to resize popup windows
+(advice-add #'balance-windows :around #'+popup-save)
 
 (after! company
   (advice-add #'company-show-doc-buffer :around #'+popup-dont-select-me))
