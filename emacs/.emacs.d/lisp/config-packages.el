@@ -35,7 +35,6 @@
 
 (setq use-package-always-defer t
 	  use-package-always-ensure t
-	  use-package-debug nil
 	  use-package-verbose %debug-mode
 	  use-package-minimum-reported-time (if %debug-mode 0 0.1))
 
@@ -69,19 +68,20 @@
 		   (if (functionp hook)
 			   (advice-remove hook #',fn)
 			 (remove-hook hook #',fn)))
-		 (delq (assq ',name use-package--deferred-packages-alist)
-			   use-package--deferred-packages-alist)
+		 (setq use-package--deferred-packages-alist
+               (delq (assq ',name use-package--deferred-packages-alist)
+			         use-package--deferred-packages-alist))
 		 (fmakunbound ',fn))))
 	   (let (forms)
-	 (dolist (hook hooks forms)
-	   (push (if (functionp hook)
-			 `(advice-add #',hook :before #',fn)
-		   `(add-hook #',hook #',fn))
-		 forms)))
+	     (dolist (hook hooks forms)
+	       (push (if (functionp hook)
+			         `(advice-add #',hook :before #',fn)
+		           `(add-hook #',hook #',fn))
+		         forms)))
 	   `((unless (assq ',name use-package--deferred-packages-alist)
-	   (push '(,name) use-package--deferred-packages-alist))
-	 (nconc (assq ',name use-package--deferred-packages-alist)
-		'(,@hooks)))
+	       (push '(,name) use-package--deferred-packages-alist))
+	     (nconc (assq ',name use-package--deferred-packages-alist)
+		        '(,@hooks)))
 	   (use-package-process-keywords name rest state)))))
 
 ;;
@@ -103,7 +103,7 @@
    `((use-package--load-packages-incrementally
       ',(if (equal targets '(t))
             (list name)
-          targets)))
+          (append targets (list name)))))
    (use-package-process-keywords name rest state)))
 
 (defvar use-package--incremental-packages-list '(t)
@@ -127,19 +127,21 @@ If NOW is non-nil, load PACKAGES incrementally, in
     (when packages
       (let ((gc-cons-threshold (* 256 1024 1024))
             file-name-handler-alist)
-        (let* ((reqs (cl-remove-if #'featurep packages))
+        (let* ((reqs (cl-delete-if #'featurep packages))
                (req (ignore-errors (pop reqs))))
           (when req
             (when use-package-debug
               (message "Incrementally loading %s" req))
-            (unless (require req nil t)
-              (message "Failed to load '%s' package incrementally" req))
-            (when reqs
-              (run-with-idle-timer
-               use-package-incremental-idle-timer
-               nil
-               #'use-package--load-packages-incrementally
-               reqs t))))))))
+            (condition-case e
+                (require req nil t)
+              ((error debug)
+               (message "Failed to load '%s' package incrementally:"
+                        req e)))
+            (if reqs
+                (run-with-idle-timer use-package-incremental-idle-timer nil
+                                     #'use-package--load-packages-incrementally
+                                     reqs t)
+              (message "Finished incremental loading"))))))))
 
 (defun use-package-load-packages-incrementally ()
   "Begin incrementally loading packages in `use-package--incremental-packages'.
@@ -148,12 +150,9 @@ If this is a daemon session, load them all immediately."
   (if (daemonp)
       (mapc #'require (cdr use-package--incremental-packages))
     (when (integerp use-package-incremental-first-idle-timer)
-      (run-with-idle-timer
-       use-package-incremental-first-idle-timer
-       nil
-       #'use-package--load-packages-incrementally
-       (cdr use-package--incremental-packages-list)
-       t))))
+      (run-with-idle-timer use-package-incremental-first-idle-timer
+                           nil #'use-package--load-packages-incrementally
+                           (cdr use-package--incremental-packages-list) t))))
 (add-hook 'emacs-startup-hook #'use-package-load-packages-incrementally)
 
 (provide 'config-packages)
