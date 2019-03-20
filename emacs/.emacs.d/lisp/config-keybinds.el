@@ -4,7 +4,7 @@
   (interactive)
   (cond ((minibuffer-window-active-p (minibuffer-window))
          (abort-recursive-edit))
-        ((cl-find-if #'funcall global-escape-hook))
+        ((run-hook-with-args-until-success 'global-escape-hook))
         ((or defining-kbd-macro executing-kbd-macro) nil)
         ((keyboard-quit))))
 (global-set-key [remap keyboard-quit] #'global-escape)
@@ -367,6 +367,8 @@ Shamelessly lifted from Doom Emacs."
       :desc "Kill This Buffer"              "k"         #'kill-this-buffer
       :desc "Kill Other Buffers"            "K"         #'kill-other-buffers
       :desc "New Buffer"                    "n"         #'new-buffer
+      :desc "Quit Emacs"                    "q"         #'save-buffers-kill-emacs
+      :desc "Quit Emacs without saving"     "Q"         #'kill-emacs
       :desc "Recent Project Files"          "r"         #'projectile-recentf
       :desc "Recent Files"                  "R"         #'recentf-open-files
       :desc "Universal Argument"            "u"         #'universal-argument

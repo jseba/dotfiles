@@ -250,7 +250,7 @@
 
 (defun setup-ui ()
   (run-hook-wrapped 'init-ui-hook #'try-run-hook))
-(add-hook 'init-hook #'setup-ui t)
+(add-hook 'after-init-hook #'setup-ui)
 
 (defun +split-window-vertically-other-buffer (&optional size)
   "Split the selected window vertically and switch to the new window."

@@ -33,6 +33,7 @@
         helm-display-buffer-default-height 0.25
         helm-imenu-execute-action-at-once-if-one nil
         helm-ff-lynx-style-map nil
+        helm-split-window-inside-p t
         helm-default-prompt-display-function #'+helm--set-prompt-display)
 
   :init
@@ -53,36 +54,6 @@
           helm-projectile-fuzzy-match fuzzy
           helm-recentf-fuzzy-match fuzzy
           helm-semantic-fuzzy-match fuzzy))
-
-  (defun +helm-fix-get-font-height (orig-fn position)
-    (ignore-errors (funcall orig-fn position)))
-  (advice-add #'posframe--get-font-height :around #'+helm-fix-get-font-height)
-
-  (defun +helm--set-prompt-display (pos)
-    (let (beg state region-active m)
-      (with-selected-window (minibuffer-window)
-        (setq beg (save-excursion (vertical-motion 0 (helm-window)) (point))
-              state (if (boundp evil-state) evil-state)
-              region-active (region-active-p)
-              m (mark t)))
-      (when region-active
-        (setq m (- m beg))
-        (put-text-property
-         (1+ (min m pos))
-         (+ 2 (max m pos))
-         'face
-         (list :background (face-background 'region))
-         header-line-format))
-      (put-text-property
-       (+ 1 pos)
-       (+ 2 pos)
-       'face
-       (if (eq state 'insert)
-           'underline
-         (list :inverse-video t
-               :foreground (face-background 'cursor)
-               :background (face-background 'default)))
-       header-line-format)))
 
   (defun +helm-replace-prompt (plist)
     (cond ((not +helm-global-prompt) plist)

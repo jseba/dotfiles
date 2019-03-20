@@ -1,4 +1,4 @@
-;; init.el
+;; init.el -*- lexical-binding: t -*-
 
 (eval-when-compile
   (and (version< emacs-version "25")
