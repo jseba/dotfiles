@@ -130,7 +130,7 @@ If NOW is non-nil, load PACKAGES incrementally, in
         (let* ((reqs (cl-delete-if #'featurep packages))
                (req (ignore-errors (pop reqs))))
           (when req
-            (when use-package-debug
+            (when use-package-verbose
               (message "Incrementally loading %s" req))
             (condition-case e
                 (require req nil t)
