@@ -486,10 +486,14 @@ will trigger electric reindentation."
 
 (use-package lsp-mode
   :init
-  (setq lsp-prefer-flymake nil)
+  (setq lsp-prefer-flymake nil
+        lsp-session-file (concat %etc-dir "lsp-session")
+        lsp-keep-workspace-alive nil)
 
   (defun +lsp-init ()
-    (add-hook 'hack-local-variables-hook #'lsp nil t)))
+    (add-hook 'hack-local-variables-hook #'lsp nil t))
+
+  (setq-hook! 'kill-emacs-hook lsp-restart 'ignore))
 
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
