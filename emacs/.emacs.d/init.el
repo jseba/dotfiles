@@ -68,6 +68,7 @@
   (require-init 'config-lang)
   (require-init 'config-cc)
   (require-init 'config-elisp)
+  (require-init 'config-lua)
   (require-init 'config-snippets)
   (require-init 'config-pdf)
   ;;(require-init 'config-treemacs)
