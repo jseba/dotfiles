@@ -388,33 +388,32 @@ if nothing is selected."
   "A list of 'electric' words. Typing these will trigger reindentation of the
 current line.")
 
-(after! electric
-  (setq-default electric-indent-chars '(?\n ?\^?))
+(setq-default electric-indent-chars '(?\n ?\^?))
 
-  (defun +electric-char (_c)
-    (when (and (eolp) +electric-indent-words)
-      (save-excursion
-        (backward-word)
-        (looking-at-p (concat "\\<" (regexp-opt +electric-indent-words))))))
-  (add-to-list 'electric-indent-functions #'+electric-char nil #'eq)
+(defun +electric-char (_c)
+  (when (and (eolp) +electric-indent-words)
+    (save-excursion
+      (backward-word)
+      (looking-at-p (concat "\\<" (regexp-opt +electric-indent-words))))))
+(add-to-list 'electric-indent-functions #'+electric-char nil #'eq)
 
-  (defun +electric-set (modes &rest plist)
-    "Declare :words (list of strings) or :chars (lists of chars) in MODES that
+(defun +electric-set (modes &rest plist)
+  "Declare :words (list of strings) or :chars (lists of chars) in MODES that
 will trigger electric reindentation."
-    (declare (indent defun))
-    (dolist (mode (enlist modes))
-      (let ((hook (intern (format "%s-hook" mode)))
-            (fn   (intern (format "+electric-init-%s" mode))))
-        (cond ((null (car-safe plist))
-               (remove-hook hook fn)
-               (unintern fn nil))
-              ((fset fn
-                     (lambda!
-                      (cl-destructuring-bind (&key chars words) plist
-                        (electric-indent-local-mode +1)
-                        (if chars (setq electric-indent-chars chars))
-                        (if words (setq +electric-indent-words words)))))
-               (add-hook hook fn)))))))
+  (declare (indent defun))
+  (dolist (mode (enlist modes))
+    (let ((hook (intern (format "%s-hook" mode)))
+          (fn   (intern (format "+electric-init-%s" mode))))
+      (cond ((null (car-safe plist))
+              (remove-hook hook fn)
+              (unintern fn nil))
+            ((fset fn
+                    (lambda!
+                    (cl-destructuring-bind (&key chars words) plist
+                      (electric-indent-local-mode +1)
+                      (if chars (setq electric-indent-chars chars))
+                      (if words (setq +electric-indent-words words)))))
+              (add-hook hook fn))))))
 
 (use-package highlight-numbers
   :hook (prog-mode . highlight-numbers-mode)
