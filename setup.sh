@@ -5,6 +5,7 @@ type stow >/dev/null 2>&1 || { echo "Stow not found"; exit 1; }
 
 ## Add list of folders to be managed by Stow
 STOWED_DIRS=( alacritty     \
+              awesome       \
               bin           \
               compton       \
               dircolors     \
