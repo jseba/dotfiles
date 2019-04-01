@@ -14,6 +14,7 @@ STOWED_DIRS=( alacritty     \
               git           \
               herbstluft    \
               i3            \
+              kitty         \
               nvim          \
               polybar       \
               rofi          \
