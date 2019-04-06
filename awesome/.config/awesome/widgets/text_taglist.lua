@@ -11,11 +11,11 @@ local capi = { screen = screen, client = client }
 
 -- Assume that all screens have the same number of tags
 local s = awful.screen.focused()
-local ntags = 5
+local ntags = beautiful.ntags
 local tag_text = {}
 
 for i = 1, ntags do
-    table.insert(tag_text, wibox.widget.textbox())
+    table.insert(tag_text, wibox.widget.textbox(tostring(i)))
     tag_text[i]:buttons(gears.table.join(
                             -- Left click: tag back and forth
                             awful.button({}, 1, function()
@@ -35,18 +35,26 @@ for i = 1, ntags do
                                     end
                             end)
                        ))
+    -- tag_text[i].markup = helpers.colorize_text(tostring(i), beautiful.taglist_text_color_empty)
     tag_text[i].font = beautiful.taglist_text_font
     tag_text[i].forced_width = dpi(25)
     tag_text[i].align = "center"
     tag_text[i].valign = "center"
 end
 
+-- FIXME: dynamically add tag widgets
 local text_taglist = wibox.widget {
     tag_text[1],
     tag_text[2],
     tag_text[3],
     tag_text[4],
-    tag_text[5]
+    tag_text[5],
+    tag_text[6],
+    tag_text[7],
+    tag_text[8],
+    tag_text[9],
+    tag_text[10],
+    layout = wibox.layout.fixed.horizontal
 }
 
 text_taglist:buttons(gears.table.join(
@@ -70,25 +78,25 @@ local function update_widget()
             tag_clients = s.tags[i]:clients()
         end
         if s.tags[i] and s.tags[i].selected then
-            tag_text[i].markup = helpers.colorize_text(beautiful.taglist_text_focused[i],
-                                                       beautiful.taglist_text_color_focused[i])
+            tag_text[i].markup = helpers.colorize_text(beautiful.taglist_text_focused,
+                                                       beautiful.taglist_text_color_focused)
         elseif s.tags[i] and s.tags[i].urgent then
-            tag_text[i].markup = helpers.colorize_text(beautiful.taglist_text_urgent[i],
-                                                       beautiful.taglist_text_color_urgent[i])
+            tag_text[i].markup = helpers.colorize_text(beautiful.taglist_text_urgent,
+                                                       beautiful.taglist_text_color_urgent)
         elseif tag_clients and #tag_clients > 0 then
-            tag_text[i].markup = helpers.colorize_text(beautiful.taglist_text_occupied[i],
-                                                       beautiful.taglist_text_color_occupied[i])
+            tag_text[i].markup = helpers.colorize_text(beautiful.taglist_text_occupied,
+                                                       beautiful.taglist_text_color_occupied)
         else
-            tag_text[i].markup = helpers.colorize_text(beautiful.taglist_text_empty[i],
-                                                       beautiful.taglist_text_color_empty[i])
+            tag_text[i].markup = helpers.colorize_text(beautiful.taglist_text_empty,
+                                                       beautiful.taglist_text_color_empty)
         end
     end
 end
 
-client.connect_signal("unmanage", function(_) update_widget() end)
-client.connect_signal("untagged", function(_) update_widget() end)
-client.connect_signal("tagged",   function(_) update_widget() end)
-client.connect_signal("screen",   function(_) update_widget() end)
+client.connect_signal("unmanaged", function(_) update_widget() end)
+client.connect_signal("untagged",  function(_) update_widget() end)
+client.connect_signal("tagged",    function(_) update_widget() end)
+client.connect_signal("screen",    function(_) update_widget() end)
 
 awful.tag.attached_connect_signal(s, "property::selected",  function() update_widget() end)
 awful.tag.attached_connect_signal(s, "property::hide",      function() update_widget() end)

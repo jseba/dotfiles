@@ -275,20 +275,8 @@ awful.screen.connect_for_each_screen(
     function(s)
         set_wallpaper(s)
 
-        -- Tag layouts
-        -- TODO: decide on tag layouts
-        local layouts = {
-            awful.layout.suit.max,
-            awful.layout.suit.max,
-            awful.layout.suit.tile,
-            awful.layout.suit.tile,
-            awful.layout.suit.max,
-            awful.layout.suit.max,
-            awful.layout.suit.max,
-            awful.layout.suit.max,
-            awful.layout.suit.tile,
-            awful.layout.suit.max
-        }
+        -- Tag layouts (for convenience)
+        local layouts = awful.layout.suit
 
         -- Tag names
         local tagnames = beautiful.tagnames or {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}
@@ -296,21 +284,23 @@ awful.screen.connect_for_each_screen(
         -- Create tags
         local tags = {{}}
         -- FIXME: some way of determining multple monitors
+        -- FIXME: make machine specific helper
+        -- TODO: decide on tag layouts
+        awful.tag.add(tagnames[1],  {layout = layouts.max,  screen = s, selected = true})
+        awful.tag.add(tagnames[2],  {layout = layouts.max,  screen = s})
+        awful.tag.add(tagnames[3],  {layout = layouts.tile, screen = s, master_width_factor = 0.65})
+        awful.tag.add(tagnames[4],  {layout = layouts.tile, screen = s, master_width_factor = 0.65})
+        awful.tag.add(tagnames[5],  {layout = layouts.max,  screen = s})
+        awful.tag.add(tagnames[6],  {layout = layouts.max,  screen = s})
+        awful.tag.add(tagnames[7],  {layout = layouts.max,  screen = s})
+        awful.tag.add(tagnames[8],  {layout = layouts.max,  screen = s})
+        awful.tag.add(tagnames[9],  {layout = layouts.tile, screen = s})
+        awful.tag.add(tagnames[10], {layout = layouts.max,  screen = s})
         -- awful.tag.add(tagnames[1], {layout = layouts[1], screen = s, selected = true})
         -- awful.tag.add(tagnames[2], {layout = layouts[2], screen = s})
         -- awful.tag.add(tagnames[3], {layout = layouts[3], screen = s, master_width_factor = 0.65})
         -- awful.tag.add(tagnames[4], {layout = layouts[4], screen = s, master_width_factor = 0.65})
         -- awful.tag.add(tagnames[5], {layout = layouts[5], screen = s})
-        -- awful.tag.add(tagnames[6], {layout = layouts[6], screen = s})
-        -- awful.tag.add(tagnames[7], {layout = layouts[7], screen = s})
-        -- awful.tag.add(tagnames[8], {layout = layouts[8], screen = s})
-        -- awful.tag.add(tagnames[9], {layout = layouts[9], screen = s})
-        -- awful.tag.add(tagnames[10], {layout = layouts[10], screen = s})
-        awful.tag.add(tagnames[1], {layout = layouts[1], screen = s, selected = true})
-        awful.tag.add(tagnames[2], {layout = layouts[2], screen = s})
-        awful.tag.add(tagnames[3], {layout = layouts[3], screen = s, master_width_factor = 0.65})
-        awful.tag.add(tagnames[4], {layout = layouts[4], screen = s, master_width_factor = 0.65})
-        awful.tag.add(tagnames[5], {layout = layouts[5], screen = s})
     end
 )
 

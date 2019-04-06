@@ -12,16 +12,19 @@ local playerctl_button_size = dpi(48)
 local icon_size = 36
 local progress_bar_width = dpi(215)
 
-local exit_icon = wibox.widget.imagebox(beautiful.poweroff_icon)
-exit_icon.resize = true
-exit_icon.forced_width = icon_size
+local nerd_font_icon_font = "DroidSansMono Nerd Font 18"
+
+local exit_icon = wibox.widget.textbox()
+exit_icon.font = nerd_font_icon_font
 exit_icon.forced_height = icon_size
+exit_icon.markup = helpers.colorize_text(beautiful.nerd_font_power_icon, beautiful.xcolor5)
 local exit_text = wibox.widget.textbox("Exit")
 exit_text.font = "Noto Sans 14"
 
 local exit =
     wibox.widget {
     exit_icon,
+    pad(1),
     exit_text,
     layout = wibox.layout.fixed.horizontal
 }
@@ -38,10 +41,10 @@ exit:buttons(
     )
 )
 
-local temperature_icon = wibox.widget.imagebox(beautiful.temperature_icon)
-temperature_icon.resize = true
-temperature_icon.forced_width = icon_size
+local temperature_icon = wibox.widget.textbox()
+temperature_icon.font = nerd_font_icon_font
 temperature_icon.forced_height = icon_size
+temperature_icon.markup = helpers.colorize_text(beautiful.nerd_font_temperature_icon, beautiful.temperature_bar_active_color)
 local temperature_bar = require("widgets.temperature_bar")
 temperature_bar.forced_width = progress_bar_width
 
@@ -60,23 +63,23 @@ local temperature =
     layout = wibox.layout.align.horizontal
 }
 
-local battery_icon = wibox.widget.imagebox(beautiful.battery_icon)
-battery_icon.resize = true
-battery_icon.forced_width = icon_size
+local battery_icon = wibox.widget.textbox()
+battery_icon.font = nerd_font_icon_font
 battery_icon.forced_height = icon_size
+battery_icon.markup = helpers.colorize_text(beautiful.nerd_font_battery_icon, beautiful.battery_bar_active_color)
 local battery_bar = require("widgets.battery_bar")
 battery_bar.forced_width = progress_bar_width
 
 awesome.connect_signal(
     "battery_plugged",
     function(_)
-        battery_icon.image = beautiful.battery_charging_icon
+        battery_icon.markup = beautiful.nerd_font_battery_charging_icon
     end
 )
 awesome.connect_signal(
     "battery_unplugged",
     function(_)
-        battery_icon.image = beautiful.battery_icon
+        battery_icon.image = beautiful.nerd_font_battery_icon
     end
 )
 
@@ -95,10 +98,10 @@ local battery =
     layout = wibox.layout.align.horizontal
 }
 
-local cpu_icon = wibox.widget.imagebox(beautiful.cpu_icon)
-cpu_icon.resize = true
-cpu_icon.forced_width = icon_size
+local cpu_icon = wibox.widget.textbox()
+cpu_icon.font = nerd_font_icon_font
 cpu_icon.forced_height = icon_size
+cpu_icon.markup = helpers.colorize_text(beautiful.nerd_font_chip_icon, beautiful.cpu_bar_active_color)
 local cpu_bar = require("widgets.cpu_bar")
 cpu_bar.forced_width = progress_bar_width
 
@@ -145,10 +148,10 @@ cpu:buttons(
     )
 )
 
-local ram_icon = wibox.widget.imagebox(beautiful.ram_icon)
-ram_icon.resize = true
-ram_icon.forced_width = icon_size
+local ram_icon = wibox.widget.textbox()
+ram_icon.font = nerd_font_icon_font
 ram_icon.forced_height = icon_size
+ram_icon.markup = helpers.colorize_text(beautiful.nerd_font_memory_icon, beautiful.ram_bar_active_color)
 local ram_bar = require("widgets.ram_bar")
 ram_bar.forced_width = progress_bar_width
 
@@ -195,10 +198,10 @@ ram:buttons(
     )
 )
 
-local playerctl_toggle_icon = wibox.widget.imagebox(beautiful.playerctl_toggle_icon)
-playerctl_toggle_icon.resize = true
-playerctl_toggle_icon.forced_width = playerctl_button_size
+local playerctl_toggle_icon = wibox.widget.textbox()
+playerctl_toggle_icon.font = "DroidSansMono Nerd Font 24"
 playerctl_toggle_icon.forced_height = playerctl_button_size
+playerctl_toggle_icon.markup = helpers.colorize_text(beautiful.nerd_font_playerctl_toggle_icon, beautiful.xcolor3)
 playerctl_toggle_icon:buttons(
     gears.table.join(
         awful.button(
@@ -218,10 +221,10 @@ playerctl_toggle_icon:buttons(
     )
 )
 
-local playerctl_prev_icon = wibox.widget.imagebox(beautiful.playerctl_prev_icon)
-playerctl_prev_icon.resize = true
-playerctl_prev_icon.forced_width = playerctl_button_size
+local playerctl_prev_icon = wibox.widget.textbox()
+playerctl_prev_icon.font = "DroidSansMono Nerd Font 24"
 playerctl_prev_icon.forced_height = playerctl_button_size
+playerctl_prev_icon.markup = helpers.colorize_text(beautiful.nerd_font_playerctl_prev_icon, beautiful.xcolor3)
 playerctl_prev_icon:buttons(
     gears.table.join(
         awful.button(
@@ -241,10 +244,10 @@ playerctl_prev_icon:buttons(
     )
 )
 
-local playerctl_next_icon = wibox.widget.imagebox(beautiful.playerctl_next_icon)
-playerctl_next_icon.resize = true
-playerctl_next_icon.forced_width = playerctl_button_size
+local playerctl_next_icon = wibox.widget.textbox()
+playerctl_next_icon.font = "DroidSansMono Nerd Font 24"
 playerctl_next_icon.forced_height = playerctl_button_size
+playerctl_next_icon.markup = helpers.colorize_text(beautiful.nerd_font_playerctl_next_icon, beautiful.xcolor3)
 playerctl_next_icon:buttons(
     gears.table.join(
         awful.button(
@@ -270,7 +273,9 @@ local playerctl_buttons =
     {
         playerctl_prev_icon,
         pad(1),
+        pad(1),
         playerctl_toggle_icon,
+        pad(1),
         pad(1),
         playerctl_next_icon,
         layout = wibox.layout.fixed.horizontal
@@ -289,6 +294,24 @@ local date = wibox.widget.textclock("%A, %B %d")
 date.align = "center"
 date.valign = "center"
 date.font = "Noto Sans Medium 18"
+
+local weather_widget = require("widgets.text_weather")
+weather_widget.align = "center"
+weather_widget.valign = "center"
+
+local weather_widget_children = weather_widget:get_all_children()
+local weather_icon = weather_widget_children[1]
+local weather_text = weather_widget_children[2]
+weather_icon.font = "DroidSansMono Nerd Font 18"
+weather_text.font = "Noto Sans Medium 14"
+
+local weather = wibox.widget {
+    nil,
+    weather_widget,
+    nil,
+    layout = wibox.layout.align.horizontal,
+    expand = "none"
+}
 
 local mpd_song = require("widgets.mpd_song")
 local mpd_widget_children = mpd_song:get_all_children()
@@ -334,16 +357,17 @@ mpd_song:buttons(
 
 local disk_space = require("widgets.disk")
 disk_space.font = "sans 14"
-local disk_icon = wibox.widget.imagebox(beautiful.files_icon)
-disk_icon.resize = true
-disk_icon.forced_width = icon_size
+local disk_icon = wibox.widget.textbox()
+disk_icon.font = nerd_font_icon_font
 disk_icon.forced_height = icon_size
+disk_icon.markup = helpers.colorize_text(beautiful.nerd_font_folder_icon, beautiful.xcolor11)
 
 local disk =
     wibox.widget {
     nil,
     {
         disk_icon,
+        pad(1),
         disk_space,
         layout = wibox.layout.fixed.horizontal
     },
@@ -363,16 +387,17 @@ disk:buttons(
     )
 )
 
-local search_icon = wibox.widget.imagebox(beautiful.search_icon)
-search_icon.resize = true
-search_icon.forced_width = icon_size
+local search_icon = wibox.widget.textbox()
+search_icon.font = nerd_font_icon_font
 search_icon.forced_height = icon_size
+search_icon.markup = helpers.colorize_text(beautiful.nerd_font_search_icon, beautiful.xcolor4)
 local search_text = wibox.widget.textbox("Search")
 search_text.font = "Noto Sans 14"
 
 local search =
     wibox.widget {
     search_icon,
+    pad(1),
     search_text,
     layout = wibox.layout.fixed.horizontal
 }
@@ -397,10 +422,10 @@ search:buttons(
     )
 )
 
-local volume_icon = wibox.widget.imagebox(beautiful.volume_icon)
-volume_icon.resize = true
-volume_icon.forced_width = icon_size
+local volume_icon = wibox.widget.textbox()
+volume_icon.font = nerd_font_icon_font
 volume_icon.forced_height = icon_size
+volume_icon.markup = helpers.colorize_text(beautiful.nerd_font_volume_icon, beautiful.volume_bar_active_color)
 local volume_bar = require("widgets.volume_bar")
 volume_bar.forced_width = progress_bar_width
 
@@ -538,7 +563,9 @@ sidebar:setup {
         time,
         date,
         pad(1),
-        fancy_date,
+        -- fancy_date,
+        -- pad(1),
+        weather,
         pad(1),
         pad(1),
         layout = wibox.layout.fixed.vertical
@@ -556,8 +583,8 @@ sidebar:setup {
         pad(1),
         volume,
         cpu,
-        temperature,
         ram,
+        temperature,
         battery,
         pad(1),
         disk,

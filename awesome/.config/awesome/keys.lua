@@ -5,7 +5,7 @@ local xresources = require("beautiful.xresources")
 local naughty = require("naughty")
 local helpers = require("helpers")
 
-local dpi = xresources.dpi
+local dpi = xresources.apply_dpi
 
 local keys = {}
 
@@ -152,7 +152,7 @@ keys.globalkeys =
             local client = client.focus
             if client ~= nil and helpers.is_floating(client) then
                 -- move client to edge
-                helpers.move_to_edge(c, "down")
+                helpers.move_to_edge(client, "down")
             else
                 awful.client.swap.bydirection("down", c, nil)
             end
@@ -166,7 +166,7 @@ keys.globalkeys =
             local client = client.focus
             if client ~= nil and helpers.is_floating(client) then
                 -- move client to edge
-                helpers.move_to_edge(c, "up")
+                helpers.move_to_edge(client, "up")
             else
                 awful.client.swap.bydirection("up", c, nil)
             end
@@ -180,7 +180,7 @@ keys.globalkeys =
             local client = client.focus
             if client ~= nil and helpers.is_floating(client) then
                 -- move client to edge
-                helpers.move_to_edge(c, "left")
+                helpers.move_to_edge(client, "left")
             else
                 awful.client.swap.bydirection("left", c, nil)
             end
@@ -194,7 +194,7 @@ keys.globalkeys =
             local client = client.focus
             if client ~= nil and helpers.is_floating(client) then
                 -- move client to edge
-                helpers.move_to_edge(c, "right")
+                helpers.move_to_edge(client, "right")
             else
                 awful.client.swap.bydirection("right", c, nil)
             end
@@ -456,7 +456,7 @@ keys.globalkeys =
 
 -- Tags {{{
 -- Assume that all screens have the same number of tags
-local ntags = #awful.screen.focused().tags
+local ntags = beautiful.ntags
 for i = 1, ntags do
     keys.globalkeys =
         gears.table.join(
@@ -764,7 +764,7 @@ keys.clientkeys =
     -- Minimize
     awful.key(
         {superkey, shiftkey},
-        "n",
+        "y",
         -- The client is currently focused, as minimized clients cannot have focus
         function(c)
             c.minimized = true
@@ -774,7 +774,7 @@ keys.clientkeys =
     -- Maximize
     awful.key(
         {superkey},
-        "n",
+        "y",
         function(c)
             c.maximized = not c.maximized
             c:raise()
@@ -783,7 +783,7 @@ keys.clientkeys =
     ),
     awful.key(
         {superkey, ctrlkey},
-        "n",
+        "y",
         function(c)
             c.maximized_vertical = not c.maximized_vertical
             c:raise()
@@ -792,7 +792,7 @@ keys.clientkeys =
     ),
     awful.key(
         {superkey, ctrlkey, shiftkey},
-        "n",
+        "y",
         function(c)
             c.maximized_horizontal = not c.maximized_horizontal
             c:raise()

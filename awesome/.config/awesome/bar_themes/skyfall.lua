@@ -150,19 +150,12 @@ awful.screen.connect_for_each_screen(
         )
 
         -- Create custom taglist
-        local icon_taglist = require("widgets.icon_taglist")
-
-        -- Create custom text weather widget
-        local text_weather = require("widgets.text_weather")
-        local weather_widget_icon = text_weather:get_all_children()[1]
-        weather_widget_icon.font = "Typicons 11"
-        local weather_widget_text = text_weather:get_all_children()[2]
-        weather_widget_text.font = "Noto Sans 9"
+        local text_taglist = require("widgets.text_taglist")
 
         -- Create a widget that displays window buttons (close, minimize, maximize)
         local close_button = wibox.widget.textbox()
-        close_button.font = "FontAwesome 11"
-        close_button.markup = helpers.colorize_text("", beautiful.xcolor1)
+        close_button.font = "DroidSansMono Nerd Font 11"
+        close_button.markup = helpers.colorize_text(beautiful.nerd_font_close_icon, beautiful.xcolor5)
         close_button.align = "center"
         close_button.valign = "center"
         close_button:buttons(
@@ -180,8 +173,8 @@ awful.screen.connect_for_each_screen(
         )
 
         local maximize_button = wibox.widget.textbox()
-        maximize_button.font = "FontAwesome 11"
-        maximize_button.markup = helpers.colorize_text("", beautiful.xcolor5)
+        maximize_button.font = "DroidSansMono Nerd Font 11"
+        maximize_button.markup = helpers.colorize_text(beautiful.nerd_font_maximize_icon, beautiful.xcolor5)
         maximize_button.align = "center"
         maximize_button.valign = "center"
         maximize_button:buttons(
@@ -199,8 +192,8 @@ awful.screen.connect_for_each_screen(
         )
 
         local minimize_button = wibox.widget.textbox()
-        minimize_button.font = "FontAwesome 11"
-        minimize_button.markup = helpers.colorize_text("", beautiful.xcolor5)
+        minimize_button.font = "DroidSansMono Nerd Font 11"
+        minimize_button.markup = helpers.colorize_text(beautiful.nerd_font_minimize_icon, beautiful.xcolor5)
         minimize_button.align = "center"
         minimize_button.valign = "center"
         minimize_button:buttons(
@@ -263,20 +256,20 @@ awful.screen.connect_for_each_screen(
                 screen = s,
                 width = beautiful.wibar_width,
                 height = beautiful.wibar_height,
-                shape = helpers.rrect(beautiful.wibar_border_radius)
+                shape = helpers.rrect(beautiful.wibar_border_radius),
+                bg = beautiful.wibar_bg
             }
         )
         s.mywibox:setup {
+            text_taglist,
             {
                 {
                     -- Space padding
                     layout = wibox.layout.fixed.horizontal
                 },
-                text_weather,
                 spacing = dpi(12),
                 layout = wibox.layout.fixed.horizontal
             },
-            icon_taglist,
             window_buttons,
             expand = "none",
             layout = wibox.layout.align.horizontal

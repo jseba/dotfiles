@@ -78,7 +78,7 @@ local function update_widget()
                     end
                 end
             else
-                title = "Not playing"
+                title = "<span style='italic'>Not playing</span>"
                 artist = ""
 
                 artist_fg = paused_color

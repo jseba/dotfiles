@@ -21,6 +21,7 @@ local icon_size = dpi(40)
 start_screen = wibox({x = 0, y = 0, visible = false, ontop = true, type = "dock", height = screen_height, width = screen_width})
 start_screen.fg = beautiful.start_screen_fg or beautiful.exit_screen_fg or beautiful.wibar_fg or "#111111"
 start_screen.bg = beautiful.start_screen_bg or beautiful.exit_screen_bg or beautiful.wibar_bg or "#FEFEFE"
+start_screen.opacity = beautiful.start_screen_opacity or beautiful.exit_screen_opacity or 1
 
 start_screen:buttons(
     gears.table.join(
@@ -137,7 +138,7 @@ styles.header = {
     fg_color = beautiful.xcolor7,
     bg_color = beautiful.xcolor1 .. "00",
     markup = function(t)
-        return helpers.fontify_text(t, "sans bold 24")
+        return helpers.fontify_text(t, "sans bold 14")
     end
 }
 styles.normal = {}
@@ -176,7 +177,7 @@ local current_date = os.date("*t")
 calendar_widget =
     wibox.widget {
     date = current_date,
-    font = "sans 16",
+    font = "Noto Sans 12",
     long_weekdays = false,
     spacing = dpi(3),
     fn_embed = decorate_cell,
@@ -226,7 +227,7 @@ calendar_widget:buttons(
     )
 )
 
-local calendar_box = create_boxed_widget(calendar_widget, dpi(300), dpi(400), beautiful.xbackground)
+local calendar_box = create_boxed_widget(calendar_widget, dpi(300), dpi(300), beautiful.xbackground)
 
 local hours = wibox.widget.textclock("%H")
 hours.font = "sans bold 30"
@@ -282,7 +283,7 @@ local function create_bookmark(name, path)
     local hover_color = beautiful.xcolor9
 
     local bookmark = wibox.widget.textbox()
-    bookmark.font = "sans bold 16"
+    bookmark.font = "Noto Sans bold 16"
     bookmark.markup = helpers.colorize_text(name, orig_color)
     bookmark.align = "center"
     bookmark.valign = "center"
@@ -348,7 +349,7 @@ local function create_url(name, path)
     local hover_color = beautiful.xcolor12
 
     local url = wibox.widget.textbox()
-    url.font = "sans bold 16"
+    url.font = "Noto Sans bold 16"
     url.markup = helpers.colorize_text(name, orig_color)
     url.align = "center"
     url.valign = "center"

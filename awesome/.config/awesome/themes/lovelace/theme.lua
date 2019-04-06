@@ -74,7 +74,7 @@ theme.border_focus = theme.xcolor0
 theme.border_radius = dpi(6) -- Rounded corners
 
 -- Titlebars
-theme.titlebars_enabled = true
+theme.titlebars_enabled = false
 theme.titlebar_size = dpi(35)
 theme.titlebar_title_enabled = true
 theme.titlebar_font = theme.font
@@ -109,7 +109,8 @@ else
 end
 --them.snapper_gap = theme.useless_gap
 
--- Tag names
+-- Tag info
+theme.ntags = 10
 theme.tagnames = {
     "1",
     "2",
@@ -161,7 +162,7 @@ theme.tasklist_align = "center"
 theme.sidebar_bg = theme.xbackground
 theme.sidebar_bg_alt = theme.xcolor0
 theme.sidebar_fg = theme.xcolor7
-theme.sidebar_opacity = 1
+theme.sidebar_opacity = 0.8
 theme.sidebar_position = "left"
 theme.sidebar_width = dpi(300)
 theme.sidebar_height = screen_height
@@ -169,12 +170,56 @@ theme.sidebar_y = 0
 theme.sidebar_border_radius = dpi(0)
 theme.sidebar_hide_on_mouse_leave = true
 theme.sidebar_show_on_mouse_edge = true
+theme.hide_sidebar_on_mouse_leave = true
+
+-- Start screen
+theme.start_screen_bg = theme.xcolor0 .. "CC"
+theme.start_screen_fg = theme.xcolor7
+theme.start_screen_font = "Noto Sans 20"
+theme.start_screen_opacity = 0.9
+theme.start_screen_icon_size = dpi(180)
 
 -- Exit screen
 theme.exit_screen_bg = theme.xcolor0 .. "CC"
 theme.exit_screen_fg = theme.xcolor7
 theme.exit_screen_font = "Noto Sans 20"
 theme.exit_screen_icon_size = dpi(180)
+theme.exit_screen_opacity = 0.95
+
+-- Nerd Font icons
+theme.nerd_font_minimize_icon = ""
+theme.nerd_font_maximize_icon = ""
+theme.nerd_font_close_icon = ""
+theme.nerd_font_cloud_icon = " "
+theme.nerd_font_dcloud_icon = " "
+theme.nerd_font_ncloud_icon = " "
+theme.nerd_font_sun_icon = " "
+theme.nerd_font_stars_icon = " "
+theme.nerd_font_rain_icon = " "
+theme.nerd_font_snow_icon = " "
+theme.nerd_font_storm_icon = " "
+theme.nerd_font_mist_icon = " "
+theme.nerd_font_whatever_icon = " "
+theme.nerd_font_circle_icon = ""
+theme.nerd_font_dot_icon = ""
+theme.nerd_font_circle_dot_icon = ""
+theme.nerd_font_bell_icon = ""
+theme.nerd_font_search_icon = ""
+theme.nerd_font_chip_icon = "﬙"
+theme.nerd_font_memory_icon = ""
+theme.nerd_font_temperature_icon = "﨎"
+theme.nerd_font_battery_icon = ""
+theme.nerd_font_battery_charging_icon = ""
+theme.nerd_font_disk_icon = ""
+theme.nerd_font_volume_icon = ""
+theme.nerd_font_music_icon = "ﱘ"
+theme.nerd_font_playerctl_prev_icon = "玲"
+theme.nerd_font_playerctl_next_icon = "怜"
+theme.nerd_font_playerctl_toggle_icon = "懶"
+theme.nerd_font_power_icon = "襤"
+theme.nerd_font_search_icon = ""
+theme.nerd_font_folder_icon = ""
+-- theme.nerd_font__icon = ""
 
 -- Application icons
 theme.playerctl_toggle_icon = icon_path .. "playerctl_toggle.png"
@@ -224,6 +269,19 @@ theme.storm_weather_icon = weather_icon_path .. "storm.png"
 theme.mist_weather_icon = weather_icon_path .. "mist.png"
 theme.whatever_weather_icon = weather_icon_path .. "whatever.png"
 
+-- Weather text
+theme.weather_text_font = "DroidSansMono Nerd Font 14"
+theme.cloud_weather_text = theme.nerd_font_cloud_icon
+theme.dcloud_weather_text = theme.nerd_font_dcloud_icon
+theme.ncloud_weather_text = theme.nerd_font_ncloud_icon
+theme.sun_weather_text = theme.nerd_font_sun_icon
+theme.stars_weather_text = theme.nerd_font_stars_icon
+theme.rain_weather_text = theme.nerd_font_rain_icon
+theme.snow_weather_text = theme.nerd_font_snow_icon
+theme.storm_weather_text = theme.nerd_font_storm_icon
+theme.mist_weather_text = theme.nerd_font_mist_icon
+theme.whatever_weather_text = theme.nerd_font_whatever_icon
+
 -- Exit screen icons
 theme.exit_icon = icon_path .. "exit.png"
 theme.poweroff_icon = icon_path .. "poweroff.png"
@@ -232,12 +290,11 @@ theme.suspend_icon = icon_path .. "suspend.png"
 theme.lock_icon = icon_path .. "lock.png"
 
 -- Icon taglist
-local ntags = #theme.tagnames
 theme.taglist_icons_empty = {}
 theme.taglist_icons_occupied = {}
 theme.taglist_icons_focused = {}
 theme.taglist_icons_urgent = {}
-for i = 1, ntags do
+for i = 1, theme.ntags do
     theme.taglist_icons_empty[i] = taglist_icon_path .. tostring(i) .. "_empty.png"
     theme.taglist_icons_occupied[i] = taglist_icon_path .. tostring(i) .. "_occupied.png"
     theme.taglist_icons_focused[i] = taglist_icon_path .. tostring(i) .. "_focused.png"
@@ -248,23 +305,18 @@ end
 theme.prompt_fg = accent_color
 
 -- Text taglist
-theme.taglist_font = "Iosevka Nerd Font 12"
-theme.taglist_bg_focus = theme.xcolor0 .. "00"
-theme.taglist_fg_focus = theme.xcolor14
-theme.taglist_bg_occupied = theme.xcolor0 .. "00"
-theme.taglist_fg_occupied = theme.xcolor4
-theme.taglist_bg_empty = theme.xcolor0 .. "00"
-theme.taglist_fg_empty = theme.xcolor8
-theme.taglist_bg_urgent = urgent_color
-theme.taglist_fg_urgent = theme.xcolor0 .. "00"
+theme.taglist_text_font = "DroidSansMono Nerd Font 12"
+theme.taglist_text_empty = theme.nerd_font_circle_icon
+theme.taglist_text_occupied = theme.nerd_font_dot_icon
+theme.taglist_text_focused = theme.nerd_font_circle_dot_icon
+theme.taglist_text_urgent = theme.nerd_font_bell_icon
+theme.taglist_text_color_focused = theme.xcolor10
+theme.taglist_text_color_occupied = theme.xcolor10
+theme.taglist_text_color_empty = theme.xcolor10
+theme.taglist_text_color_urgent = urgent_color
 theme.taglist_disable_icon = true
 theme.taglist_spacing = dpi(0)
 theme.taglist_item_roundness = theme.border_radius
-
--- Generate taglist squares
-local taglist_square_size = dpi(0)
-theme.taglist_squares_sel = theme_assets.taglist_squares_sel(taglist_square_size, theme.fg_focus)
-theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(taglist_square_size, theme.fg_normal)
 
 -- Variables set for theming the menu
 theme.menu_submenu_icon = icon_path .. "submenu.png"
@@ -347,7 +399,7 @@ theme.minimal_tasklist_hidden_clients_text = " - "
 -- MPD song
 theme.mpd_song_title_color = theme.xcolor7
 theme.mpd_song_artist_color = theme.xcolor7
-theme.mpd_song_paused_color = theme.xcolor8
+theme.mpd_song_paused_color = theme.xcolor7
 
 -- Volume bar
 theme.volume_bar_active_color = theme.xcolor6

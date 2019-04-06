@@ -3,6 +3,7 @@ local gears = require("gears")
 local wibox = require("wibox")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
+local helpers = require("helpers")
 
 local key = ""
 local city_id = "5809844" -- TODO
@@ -18,11 +19,11 @@ local weather_text =
     widget = wibox.widget.textbox
 }
 
-local weather_icon = wibox.widget.imagebox(beautiful.whatever_weather_icon)
+local weather_icon = wibox.widget.textbox()
 weather_icon.resize = true
-weather_icon.forced_width = 40 -- FIXME: dpi
-weather_icon.forced_width = 40 -- FIXME: dpi
-
+weather_icon.font = beautiful.weather_text_font
+weather_icon.markup = helpers.colorize_text(beautiful.whatever_weather_text,
+                                            beautiful.xcolor4)
 local weather =
     wibox.widget {
     weather_icon,
@@ -31,27 +32,28 @@ local weather =
 }
 
 local function update_widget(icon_code, weather_details)
+    local markup = beautiful.whatever_weather_text
     if string.find(icon_code, "01d") then
-        weather_icon.image = beautiful.sun_weather_icon
+        markup = beautiful.sun_weather_text
     elseif string.find(icon_code, "01n") then
-        weather_icon.image = beautiful.star_weather_icon
+        markup = beautiful.star_weather_text
     elseif string.find(icon_code, "02d") then
-        weather_icon.image = beautiful.dcloud_weather_icon
+        markup = beautiful.dcloud_weather_text
     elseif string.find(icon_code, "02n") then
-        weather_icon.image = beautiful.ncloud_weather_icon
+        markup = beautiful.ncloud_weather_text
     elseif string.find(icon_code, "03") or string.find(icon_code, "04") then
-        weather_icon.image = beautiful.cloud_weather_icon
+        markup = beautiful.cloud_weather_text
     elseif string.find(icon_code, "09") or string.find(icon_code, "10") then
-        weather_icon.image = beautiful.rain_weather_icon
+        markup = beautiful.rain_weather_text
     elseif string.find(icon_code, "11") then
-        weather_icon.image = beautiful.storm_weather_icon
+        markup = beautiful.storm_weather_text
     elseif string.find(icon_code, "13") then
-        weather_icon.image = beautiful.snow_weather_icon
+        markup = beautiful.snow_weather_text
     elseif string.find(icon_code, "40") or string.find(icon_code, "50") then
-        weather_icon.image = beautiful.mist_weather_icon
-    else
-        weather_icon.image = beautiful.whatever_weather_icon
+        markup = beautiful.mist_weather_text
     end
+
+    weather_icon.markup = helpers.colorize_text(markup.." ", beautiful.xcolor4)
 
     weather_details = string.gsub(weather_details, "%-0", "0")
     weather_details = weather_details:sub(1, 1):upper() .. weather_details:sub(2)

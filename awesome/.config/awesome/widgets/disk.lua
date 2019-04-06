@@ -17,7 +17,7 @@ local function update_widget(disk_space)
     disk.markup = disk_space .. "B free"
 end
 
-local disk_script = [[ sh -c "df -k -h /dev/nvme0n1p5 | tail -1 | awk '{print $4}'" ]]
+local disk_script = [[ sh -c "df -k -h /dev/nvme0n1p2 | tail -1 | awk '{print $4}'" ]]
 awful.widget.watch(
     disk_script,
     update_interval,

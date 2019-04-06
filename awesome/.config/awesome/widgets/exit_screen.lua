@@ -227,6 +227,7 @@ exit_screen =
     wibox({x = 0, y = 0, visible = false, ontop = true, type = "dock", height = screen_height, width = screen_width})
 exit_screen.bg = beautiful.exit_screen_bg or beautiful.wibar_bg or "#111111"
 exit_screen.fg = beautiful.exit_screen_fg or beautiful.wibar_fg or "#FEFEFE"
+exit_screen.opacity = beautiful.exit_screen_opacity or 1
 
 local exit_screen_grabber
 function exit_screen_hide()

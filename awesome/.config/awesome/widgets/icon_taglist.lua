@@ -11,7 +11,7 @@ local capi = { screen = screen, client = client }
 
 -- Assume that all screens have the same number of tags
 local s = awful.screen.focused()
-local ntags = 5
+local ntags = beautiful.ntags
 local tag_icons = {}
 
 for i = 1, ntags do

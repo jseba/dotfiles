@@ -32,7 +32,7 @@ local volume_bar =
 
 local function update_widget()
     awful.spawn.easy_async_with_shell(
-        {"pactl list sinks"},
+        "pactl list sinks",
         function(stdout)
             local volume = stdout:match("(%d+)%% /")
             local muted = stdout:match("Mute:(%s+)[yes]")
