@@ -16,7 +16,7 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 require("awful.hotkeys_popup.keys")
 
-local theme_name = "lovelace"
+local theme_name = "l2"
 local bar_theme_name = "skyfall"
 
 local home_dir = os.getenv("HOME")
@@ -222,32 +222,35 @@ naughty.config.presets.warn = naughty.config.presets.normal
 
 -- Create a launcher widget and a main menu
 myawesomemenu = {
-    {"hotkeys", function()
+    {
+        beautiful.nerd_font_keyboard_icon.."  hotkeys",
+        function()
             return false, hotkeys_popup.show_help
-        end, beautiful.keyboard_icon},
-    {"restart", awesome.restart, beautiful.reboot_icon},
-    {"quit", function()
+        end
+    },
+    {
+        beautiful.nerd_font_restart_icon.."  restart",
+        function()
+            awesome.restart()
+        end
+    },
+    {
+        beautiful.nerd_font_power_icon.."  quit",
+        function()
             exit_screen_show()
-        end, beautiful.poweroff_icon}
+        end
+    }
 }
 
 mymainmenu =
     awful.menu(
     {
         items = {
-            {"awesome", myawesomemenu, beautiful.home_icon},
-            {"browser", browser, beautiful.firefox_icon},
-            {"terminal", terminal, beautiful.terminal_icon},
-            {"search", search, beautiful.search_icon}
+            {beautiful.nerd_font_home_icon.."  awesome",        myawesomemenu},
+            {beautiful.nerd_font_firefox_icon.."  browser",     browser},
+            {beautiful.nerd_font_terminal_icon.."  terminal",   terminal},
+            {beautiful.nerd_font_search_icon.."  search",       search}
         }
-    }
-)
-
-mylauncher =
-    awful.widget.launcher(
-    {
-        image = beautiful.awesome_icon,
-        menu = mymainmenu
     }
 )
 

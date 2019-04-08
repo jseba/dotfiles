@@ -1,4 +1,4 @@
-local theme_name = "lovelace"
+local theme_name = "l2"
 local theme_assets = require("beautiful.theme_assets")
 local xresources = require("beautiful.xresources")
 local gfs = require("gears.filesystem")
@@ -109,7 +109,7 @@ else
 end
 --theme.snapper_gap = theme.useless_gap
 
--- Tag info
+-- Tag names
 theme.ntags = 10
 theme.tagnames = {
     "1",
@@ -129,17 +129,17 @@ theme.separator_text = "|"
 theme.separator_fg = theme.xcolor8
 
 -- Wibar(s) (customized in bars.lua)
-theme.wibar_position = "bottom"
+theme.wibar_position = "top"
 theme.wibar_detached = false
-theme.wibar_height = dpi(32)
 theme.wibar_fg = theme.xcolor7
 theme.wibar_bg = theme.xcolor0 .. "00"
---theme.wibar_opacity = 0.7
+theme.wibar_opacity = 0.7
 theme.wibar_border_color = theme.xcolor0
 theme.wibar_border_width = dpi(0)
 theme.wibar_border_height = dpi(0)
 theme.wibar_border_radius = theme.border_radius
-theme.wibar_width = dpi(565)
+theme.wibar_height = dpi(32)
+-- theme.wibar_width = dpi(565)
 
 -- Widgets
 theme.prefix_fg = theme.xcolor8
@@ -162,7 +162,7 @@ theme.tasklist_align = "center"
 theme.sidebar_bg = theme.xbackground
 theme.sidebar_bg_alt = theme.xcolor0
 theme.sidebar_fg = theme.xcolor7
-theme.sidebar_opacity = 0.8
+theme.sidebar_opacity = 1
 theme.sidebar_position = "left"
 theme.sidebar_width = dpi(300)
 theme.sidebar_height = screen_height
@@ -170,7 +170,6 @@ theme.sidebar_y = 0
 theme.sidebar_border_radius = dpi(0)
 theme.sidebar_hide_on_mouse_leave = true
 theme.sidebar_show_on_mouse_edge = true
-theme.hide_sidebar_on_mouse_leave = true
 
 -- Start screen
 theme.start_screen_bg = theme.xcolor0 .. "CC"
@@ -183,8 +182,8 @@ theme.start_screen_icon_size = dpi(180)
 theme.exit_screen_bg = theme.xcolor0 .. "CC"
 theme.exit_screen_fg = theme.xcolor7
 theme.exit_screen_font = "Noto Sans 20"
-theme.exit_screen_icon_size = dpi(180)
 theme.exit_screen_opacity = 0.95
+theme.exit_screen_icon_size = dpi(180)
 
 -- Nerd Font icons
 theme.nerd_font_minimize_icon = ""
@@ -219,6 +218,13 @@ theme.nerd_font_playerctl_toggle_icon = "懶"
 theme.nerd_font_power_icon = "襤"
 theme.nerd_font_search_icon = ""
 theme.nerd_font_folder_icon = ""
+theme.nerd_font_firefox_icon = ""
+theme.nerd_font_terminal_icon = ""
+theme.nerd_font_home_icon = ""
+theme.nerd_font_menu_icon = ""
+theme.nerd_font_keyboard_icon = ""
+theme.nerd_font_restart_icon = "ﯩ"
+theme.nerd_font_double_right_angle_icon = ""
 -- theme.nerd_font__icon = ""
 
 -- Application icons
@@ -319,12 +325,13 @@ theme.taglist_spacing = dpi(0)
 theme.taglist_item_roundness = theme.border_radius
 
 -- Variables set for theming the menu
-theme.menu_submenu_icon = icon_path .. "submenu.png"
-theme.menu_height = dpi(35)
-theme.menu_width = dpi(180)
+theme.menu_submenu_icon = nil
+theme.menu_submenu = theme.nerd_font_double_right_angle_icon.."  "
+theme.menu_height = dpi(32)
+theme.menu_width = dpi(128)
 theme.menu_bg_normal = theme.xcolor0
 theme.menu_fg_normal = theme.xcolor7
-theme.menu_bg_focus = theme.xcolor8 .. "55"
+theme.menu_bg_focus = theme.xcolor8 .. "CC"
 theme.menu_fg_focus = theme.xcolor7
 theme.menu_border_width = dpi(0)
 theme.menu_border_color = theme.xcolor0
@@ -399,7 +406,7 @@ theme.minimal_tasklist_hidden_clients_text = " - "
 -- MPD song
 theme.mpd_song_title_color = theme.xcolor7
 theme.mpd_song_artist_color = theme.xcolor7
-theme.mpd_song_paused_color = theme.xcolor7
+theme.mpd_song_paused_color = theme.xcolor8
 
 -- Volume bar
 theme.volume_bar_active_color = theme.xcolor6

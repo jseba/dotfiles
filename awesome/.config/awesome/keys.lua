@@ -456,8 +456,7 @@ keys.globalkeys =
 
 -- Tags {{{
 -- Assume that all screens have the same number of tags
-local ntags = beautiful.ntags
-for i = 1, ntags do
+for i = 1, beautiful.ntags do
     keys.globalkeys =
         gears.table.join(
         keys.globalkeys,
@@ -739,9 +738,18 @@ keys.clientkeys =
         {superkey},
         "o",
         function(c)
-            c:move_to_screen()
+            c:move_to_screen(c.screen.index+1)
         end,
         {description = "move to next screen", group = "client"}
+    ),
+    -- Move to previous screen
+    awful.key(
+        {superkey, shiftkey},
+        "o",
+        function(c)
+            c:move_to_screen(c.screen.index-1)
+        end,
+        {description = "move to previous screen", group = "client"}
     ),
     -- Toggle on-top
     awful.key(
@@ -809,6 +817,8 @@ keys.clientbuttons =
         {},
         1,
         function(c)
+            mymainmenu:hide()
+            sidebar.visible = false
             client.focus = c
             c:raise()
         end

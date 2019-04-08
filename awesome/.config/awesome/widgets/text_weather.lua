@@ -7,8 +7,8 @@ local helpers = require("helpers")
 
 local key = ""
 local city_id = "5809844" -- TODO
-local units = "metric" -- TODO
-local symbol = "°C" -- TODO
+local units = "imperial"
+local symbol = "°F"
 
 local update_interval = 1200 -- in seconds
 
@@ -57,28 +57,21 @@ local function update_widget(icon_code, weather_details)
 
     weather_details = string.gsub(weather_details, "%-0", "0")
     weather_details = weather_details:sub(1, 1):upper() .. weather_details:sub(2)
-    weather_text.markup = weather_details
+    weather_text.markup = helpers.colorize_text(weather_details, beautiful.xcolor7)
 end
 
-local weather_details_script =
-    [[
+local weather_details_script = [[
     sh -c '
-    KEY="]] ..
-    key ..
-    [["
-    CITY="]] ..
-    city_id ..
-    [["
-    UNITS="]] ..
-    units ..
-    [["
-    SYMBOL="]] ..
-    symbol ..
-    [["
-    weather=$(curl -sf "http://api.openweathermap.org/data/2.5/weather?APPID=$KEY&id=$CITY&units=UNITS")
+    KEY="]] .. key .. [["
+    CITY="]] .. city_id .. [["
+    UNITS="]] .. units .. [["
+    SYMBOL="]] .. symbol .. [["
+
+    weather=$(curl -sf "http://api.openweathermap.org/data/2.5/weather?APPID=$KEY&id=$CITY&units=$UNITS")
+
     if [ ! -z "$weather" ]; then
         weather_temp=$(echo "$weather" | jq ".main.temp" | cut -d "." -f1)
-        weather_icon=$(echo "$weather" | jq ".weather[].icon" | head -n1)
+        weather_icon=$(echo "$weather" | jq -r ".weather[].icon" | head -n1)
         weather_desc=$(echo "$weather" | jq -r ".weather[].description" | head -n1)
         echo "$weather_icon" "$weather_desc" "$weather_temp$SYMBOL"
     else
