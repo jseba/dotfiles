@@ -49,9 +49,4 @@ done
 # Post-Stow after-party
 #
 
-## Download FZF
-pushd ${HOME}/.fzf/
-./install --bin --64 || exit 1
-popd
-
 exit 0
