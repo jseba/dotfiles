@@ -3,7 +3,6 @@
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.cl\\'" . opencl-mode))
 
-
 ;;
 ;; Library
 
@@ -106,34 +105,54 @@ simpler."
 ;; Commands
 
 ;;;###autoload
-(defun +cc/reload-compile-db ()
-  "Reload the current project's JSON compilation database."
+(defun +ccls-callee ()
   (interactive)
-  (unless (memq major-mode '(c-mode c++-mode objc-mode))
-    (user-error "Not a C/C++/ObjC buffer"))
-  ;; first rtag
-  (when (and (featurep 'rtags)
-             rtags-enabled
-             (executable-find rtags-rc-binary-name))
-    (with-temp-buffer
-      (message "Reloaded compile commands for rtags daemon")
-      (rtags-call-rc :silent t "-J" (or (doom-project-root) default-directory))))
-  ;; then irony
-  (when (and (featurep 'irony) irony-mode)
-    (+cc|irony-init-compile-options)))
-
+  (lsp-ui-peek-find-custom "$ccls/call" '(:callee t)))
 ;;;###autoload
-(defun +cc/imenu ()
-  "Invoke `rtags-imenu' if a running rdm process is available, otherwise invoke
-`imenu'."
+(defun +ccls-caller ()
   (interactive)
-  (call-interactively
-   (if (and (processp rtags-rdm-process)
-            (not (eq (process-status rtags-rdm-process) 'exit))
-            (not (eq (process-status rtags-rdm-process) 'signal)))
-       #'rtags-imenu
-     #'imenu)))
-
+  (lsp-ui-peek-find-custom "$ccls/call"))
+;;;###autoload
+(defun +ccls-vars (kind)
+  (lsp-ui-peek-find-custom "$ccls/vars" `(:kind ,kind)))
+;;;###autoload
+(defun +ccls-base (levels)
+  (lsp-ui-peek-find-custom "$ccls/inheritance" `(:levels ,levels)))
+;;;###autoload
+(defun +ccls-derived (levels)
+  (lsp-ui-peek-find-custom "$ccls/inheritance" `(:levels ,levels :derived t)))
+;;;###autoload
+(defun +ccls-member (kind)
+  (lsp-ui-peek-find-custom "$ccls/member" `(:kind ,kind)))
+;;;###autoload
+(defun +ccls-references-address ()
+  (interactive)
+  (lsp-ui-peek-find-custom "textDocument/references"
+                           (plist-put (lsp--text-document-position-params) :role 128)))
+;;;###autoload
+(defun +ccls-references-macro ()
+  (interactive)
+  (lsp-ui-peek-find-custom "textDocument/references"
+                           (plust-put (lsp--text-document-position-params) :role 64)))
+;;;###autoload
+(defun +ccls-references-read ()
+  (interactive)
+  (lsp-ui-peek-find-custom "textDocument/references"
+                           (plist-put (lsp--text-document-position-params) :role 8)))
+;;;###autoload
+(defun +ccls-references-write ()
+  (interactive)
+  (lsp-ui-peek-find-custom "textDocument/references"
+                           (plist-put (lsp--text-document-position-params) :role 16)))
+;;;###autoload
+(defun +ccls-references-not-call ()
+  (interactive)
+  (lsp-ui-peek-find-custom "textDocument/references"
+                           (plist-put (lsp--text-document-position-params) :excludeRole 32)))
+;;;###autoload
+(defun +ccls-references-in-project ()
+  (lsp-ui-peek-find-references nil
+                               (list :folders (vector (+projectile-project-root)))))
 
 ;;
 ;; Hooks
@@ -148,42 +167,6 @@ simpler."
      t)))
 
 (defvar +cc--project-includes-alist nil)
-;;;###autoload
-(defun +cc|init-irony-compile-options ()
-  "Initialize compiler options for irony-mode. It searches for the nearest
-compilation database and initailizes it, otherwise falling back on
-`+cc-default-compiler-options' and `+cc-default-include-paths'.
-
-See https://github.com/Sarcasm/irony-mode#compilation-database for details on
-compilation dbs."
-  (when (memq major-mode '(c-mode c++-mode objc-mode))
-    (require 'irony-cdb)
-    (unless (irony-cdb-autosetup-compile-options)
-      (let ((project-root (doom-project-root))
-            (include-paths (+cc-resolve-include-paths)))
-        (setf (alist-get project-root +cc--project-includes-alist)
-              include-paths)
-        (irony-cdb--update-compile-options
-         (append (delq nil (cdr-safe (assq major-mode +cc-default-compiler-options)))
-                 (cl-loop for path in include-paths
-                          collect (format "-I%s" path)))
-         project-root)))))
-
-;; ;;;###autoload
-;; (defun +cc|init-ccls-compile-options ()
-;;   "TODO"
-;;   (when (memq major-mode '(c-mode c++-mode objc-mode))
-;;     (when-let* ((include-paths (+cc-resolve-include-paths)))
-;;       (let ((args (delq nil (cdr-safe (assq major-mode +cc-default-compiler-options)))))
-;;         (setf (alist-get (or (lsp-workspace-root)
-;;                              (lsp--suggest-project-root)
-;;                              (doom-project-root))
-;;                          +cc--project-includes-alist)
-;;               include-paths)
-;;         (setq ccls-initialization-options
-;;               `(:clang (:extraArgs
-;;                         [,@(cl-loop for path in include-paths
-;;                                     collect (format "-I%s" path))])))))))
 
 ;;;###autoload
 (defun +cc|init-ffap-integration ()

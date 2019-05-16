@@ -12,6 +12,10 @@
   (defalias 'cpp-mode 'c++-mode)
   (defvaralias 'cpp-mode-map 'c++-mode-map)
 
+  (defvar +cc-default-header-file-mode 'c-mode
+    "Fallback major mode for .h files if all other heuristics fail (see
+`+cc-c-c++-objc-mode').")
+
   ;; Try to determine the appropriate language for headers
   (add-to-list 'auto-mode-alist '("\\.h\\'" . +cc-c-c++-objc-mode))
 
@@ -30,18 +34,7 @@
     :symbols '(("public" "protected" "private")
                ("class" "struct")))
 
-  (set-pretty-symbols! '(c-mode c++-mode)
-    :null "nullptr"
-    :true "true"
-    :false "false"
-    :int "int"
-    :float "float"
-    :bool "bool"
-    :not "!"
-    :and "&&"
-    :or "||"
-    :for "for"
-    :return "return")
+  (set-pretty-symbols! '(c-mode c++-mode))
 
   (add-hook 'c-mode-common-hook #'rainbow-delimiters-mode)
   (add-hook! '(c-mode-hook c++-mode-hook)
