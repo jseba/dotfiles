@@ -1,42 +1,40 @@
 ;;; config-packages.el
 
-(setq load-prefer-newer t
-	  package--init-file-ensured t
-	  package-enable-at-startup nil
-	  package-user-dir (concat %package-dir emacs-version "/")
-      package-archives
-      '(("gnu" . "https://elpa.gnu.org/packages/")
-        ("melpa" . "https://melpa.org/packages/")
-        ("org" . "https://orgmode.org/elpa/")))
-
-(require 'package)
-
-(package-initialize)
-(unless (file-directory-p package-user-dir)
-  (make-directory package-user-dir t)
-  (package-refresh-contents))
-
-(defun +package-install-ensure-refreshed (&rest _)
-  (package-refresh-contents)
-  (advice-remove #'package-install #'+package-install-ensure-refreshed))
-(advice-add #'package-install :before #'+package-install-ensure-refreshed)
+;;
+;; Straight.el
+(defvar bootstrap-version 5)
+(let ((bootstrap-file
+       (expand-file-name
+	"straight/repos/straight.el/bootstrap.el"
+	user-emacs-directory)))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+	(url-retrieve-synchronously
+	 "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+	 'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
 ;;
 ;; Use-Package
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package)
-  (unless (package-installed-p 'use-package)
-	(error "Unable to install `use-package'")))
-
+(straight-use-package 'use-package)
 (eval-when-compile (require 'use-package))
 (require 'bind-key)
 
 (setq use-package-always-defer t
-	  use-package-always-ensure t
-	  use-package-verbose %debug-mode
-	  use-package-minimum-reported-time (if %debug-mode 0 0.1))
+      use-package-verbose t
+      straight-use-package-by-default t)
+
+(defmacro use-feature (name &rest args)
+  "Like `use-package' but with `straight-use-package-by-default' disabled.
+
+NAME and ARGS are as in `use-package'."
+  (declare (indent defun))
+  `(use-package ,name
+     :straight nil
+     ,@args))
 
 ;;
 ;; :after-call
@@ -48,7 +46,7 @@
 (add-to-list 'use-package-deferring-keywords :after-call nil #'eq)
 
 (setq use-package-keywords
-	  (use-package-list-insert :after-call use-package-keywords :after))
+      (use-package-list-insert :after-call use-package-keywords :after))
 
 (defalias 'use-package-normalize/:after-call
   'use-package-normalize-symlist)
@@ -60,29 +58,28 @@
 	  (use-package-concat
 	   `((fset ',fn
 		   (lambda (&rest _)
-		 (message "Loading deferred package %s from %s" ',name ',fn)
-		 (condition-case e (require ',name)
-		   ((debug error)
+		     (condition-case e
+			 (let ((default-directory user-emacs-directory))
+			   (require ',name))
+		       ((debug error)
 			(message "Failed to load deferred package %s: %s" ',name e)))
-		 (dolist (hook (cdr (assq ',name use-package--deferred-packages-alist)))
-		   (if (functionp hook)
-			   (advice-remove hook #',fn)
-			 (remove-hook hook #',fn)))
-		 (setq use-package--deferred-packages-alist
-               (delq (assq ',name use-package--deferred-packages-alist)
-			         use-package--deferred-packages-alist))
-		 (fmakunbound ',fn))))
-	   (let (forms)
-	     (dolist (hook hooks forms)
-	       (push (if (functionp hook)
-			         `(advice-add #',hook :before #',fn)
-		           `(add-hook #',hook #',fn))
-		         forms)))
-	   `((unless (assq ',name use-package--deferred-packages-alist)
-	       (push '(,name) use-package--deferred-packages-alist))
-	     (nconc (assq ',name use-package--deferred-packages-alist)
-		        '(,@hooks)))
-	   (use-package-process-keywords name rest state)))))
+		     (when-let (deferral-list (assq ',name use-package--deferred-packages-alist))
+		       (dolist (hook (cdr deferral-list))
+			 (advice-remove hook #'fn)
+			 (remove-hook hook #'fn))
+		       (delq! deferral-list use-package--deferred-packages-alist)
+		       (unintern ',fn nil)))))
+	     (let (forms)
+	       (dolist (hook hooks forms)
+		 (push (if (string-match-p "-\\(?:functions\\|hook\\)$" (symbol-name hook))
+			   `(add-hook ',hook #',fn)
+			 `(advice-add #',hook :before #',fn))
+		       forms)))
+	     `((unless (assq ',name use-package--deferred-packages-alist)
+		 (push '(,name) use-package--deferred-packages-alist))
+	       (nconc (assq ',name use-package--deferred-packages-alist)
+		      '(,@hooks)))
+	     (use-package-process-keywords name rest state)))))
 
 ;;
 ;; :defer-incrementally
@@ -154,6 +151,24 @@ If this is a daemon session, load them all immediately."
                            nil #'use-package--load-packages-incrementally
                            (cdr use-package--incremental-packages-list) t))))
 (add-hook 'emacs-startup-hook #'use-package-load-packages-incrementally)
+
+;;
+;; `no-littering' overrides many common paths to keep .emacs.d clean
+;;
+;; Load it here so that it gets set early on in the init process.
+(use-package no-littering
+  :demand t
+  :init
+  (setq no-littering-etc-directory %etc-dir
+	no-littering-var-directory %var-dir)
+  :config
+  (setq auto-save-file-name-transforms
+	`((".*" ,(expand-file-name "auto-save" %var-dir) t)))
+  (eval-when-compile
+    (require 'recentf))
+  (after! 'recentf
+    (push no-littering-etc-directory recentf-exclude)
+    (push no-littering-var-directory recentf-exclude)))
 
 (provide 'config-packages)
 ;;; config-packages.el ends here

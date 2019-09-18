@@ -1,6 +1,7 @@
-;;; early-init.el
+;;; early-init.el --- -*- lexical-binding: t -*-
 
-(setq ;; gc-cons-threshold (* 256 1024 1024)
+(setq
+ package--init-file-ensured t
  package-enable-at-startup nil
  inhibit-startup-screen t
  inhibit-startup-message t

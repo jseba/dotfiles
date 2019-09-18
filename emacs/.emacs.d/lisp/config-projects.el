@@ -2,11 +2,15 @@
 
 (use-package projectile
   :commands (projectile-mode projectile-project-root projectile-project-p)
+  :bind
+  (([remap find-tag] . projectile-find-tag)
+   (:map projectile-mode-map
+         ("C-c p" . projectile-command-map)))
   :init
-  (setq	projectile-enable-caching t
-	      projectile-cache-file (concat %var-dir "projectile.cache")
-	      projectile-indexing-method 'alien
-	      projectile-find-dir-includes-top-level t)
+  (setq projectile-enable-caching t
+        projectile-cache-file (concat %var-dir "projectile.cache")
+        projectile-indexing-method 'alien
+        projectile-find-dir-includes-top-level t)
   (when (executable-find "fd")
     (setq projectile-git-command "fd . --type f -0 -H -E .git"
           projectile-generic-command projectile-git-command))
@@ -49,8 +53,7 @@
   (add-hook 'init-hook #'projectile-mode)
 
   :config
-  ;; add ".cquery" and ".ccls" configuration file as a project root
-  (push ".cquery" projectile-project-root-files-bottom-up)
+  ;; add ".ccls" configuration file as a project root
   (push ".ccls" projectile-project-root-files-bottom-up)
 
   (run-with-idle-timer 10 nil #'projectile-cleanup-known-projects))

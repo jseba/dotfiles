@@ -335,27 +335,25 @@ for the provider."
     (let ((current-prefix-arg t))
       (call-interactively #'+xref-online)))
 
-  (after! evil
-    (evil-set-command-property '+xref-definition :jump t)
-    (evil-set-command-property '+xref-references :jump t)
-    (evil-set-command-property '+xref-documentation :jump t)
-    (evil-set-command-property '+xref-file :jump t)
-
-    (evil-define-command +xref-ex-online (query &optional bang)
-      "Look up QUERY online. Prompts for search engine on the first call, then
-reuses it on consecutive calls. If BANG, always prompt for the search engine."
-      (interactive "<a><!>")
-      (+xref-online query (+xref--online-provider bang 'evil-ex))))
-
   (defun +xref-projectile-find-tag (orig-fn)
     (let ((xref-backend-functions '(etags--xref-backend t)))
       (funcall orig-fn)))
   (advice-add #'projectile-find-tag :around #'+xref-projectile-find-tag))
 
-(use-package helm-xref
-  :after xref
-  :config
-  (setq xref-show-xrefs-function #'helm-xref-show-xrefs))
+;; (use-package helm-xref
+;;   :after xref
+;;   :config
+;;   (setq xref-show-xrefs-function #'helm-xref-show-xrefs))
+
+(after! elisp-mode
+  (+xref-set-lookup-handlers 'emacs-lisp-mode
+  :definition #'elisp-def
+  :documentation #'+elisp-lookup-documentation))
+
+(after! lsp-ui
+  (+xref-set-lookup-handlers 'lsp-ui-mode
+    :definition #'lsp-ui-peek-find-definitions
+    :references #'lsp-ui-peek-find-references))
 
 (provide 'config-xref)
 ;;; config-xref.el ends here

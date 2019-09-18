@@ -1,24 +1,26 @@
 ;;; config-helm.el
 
-(use-package helm-mode
+(use-feature helm-mode
   :defer t
-  :ensure helm
   :after-call pre-command-hook
   :preface
   (defvar +helm-global-prompt ">>> ")
   (defvar helm-generic-files-map (make-sparse-keymap))
-
-  :init
-  (map! [remap apropos] #'helm-apropos
-        [remap find-library] #'helm-locate-library
-        [remap bookmark-jump] #'helm-bookmarks
-        [remap execute-extended-command] #'helm-M-x
-        [remap find-file] #'helm-find-files
-        [remap imenu-anywhere] #'helm-imenu-anywhere
-        [remap imenu] #'helm-semantic-or-imenu
-        [remap noop-show-kill-ring] #'helm-show-kill-ring
-        [remap switch-to-buffer] #'helm-buffers-list
-        [remap recentf-open-files] #'helm-recentf))
+  :bind
+  (([remap apropos] . helm-apropos)
+   ([remap find-library] . helm-locate-library)
+   ([remap bookmark-jump] . helm-bookmarks)
+   ([remap execute-extended-command] . helm-M-x)
+   ([remap find-file] . helm-find-files)
+   ([remap imenu-anywhere] . helm-imenu-anywhere)
+   ([remap imenu] . helm-semantic-or-imenu)
+   ([remap noop-show-kill-ring] . helm-show-kill-ring)
+   ([remap switch-to-buffer] . helm-buffers-list)
+   ([remap recentf-open-files] . helm-recentf))
+  :config
+  (helm-mode +1)
+  (add-to-list 'helm-completing-read-handlers-alist
+               (cons #'find-file-at-point nil)))
 
 (use-package helm
   :after helm-mode
@@ -33,9 +35,35 @@
         helm-display-buffer-default-height 0.25
         helm-imenu-execute-action-at-once-if-one nil
         helm-ff-lynx-style-map nil
-        helm-split-window-inside-p t
-        helm-default-prompt-display-function #'+helm--set-prompt-display)
-
+        helm-split-window-inside-p t)
+  :bind
+  ((:map helm-map
+         ([left]     . left-char)
+         ([right]    . right-char)
+         ("C-S-n"    . helm-next-source)
+         ("C-S-p"    . helm-previous-source)
+         ("C-f"      . helm-next-page)
+         ("C-S-f"    . helm-previous-page)
+         ("C-u"      . helm-delete-minibuffer-contents)
+         ("C-w"      . backward-kill-word)
+         ("C-s"      . helm-minibuffer-history)
+         ("C-b"      . backward-word)
+         ("TAB"      . helm-execute-persistent-action)
+         ("C-z"      . helm-select-action))
+   (:map helm-find-files-map
+         ([M-return] . helm-ff-run-switch-other-window)
+         ("C-w"      . helm-find-files-up-one-level))
+   (:map helm-read-file-map
+         ([M-return] . helm-ff-run-switch-other-window)
+         ("C-w"      . helm-find-files-up-one-level))
+   (:map helm-generic-files-map
+         ([M-return] . helm-ff-run-switch-other-window))
+   (:map helm-buffer-map
+         ([M-return] . helm-buffer-switch-other-window))
+   (:map helm-occur-map
+         ([M-return] . helm-moccur-run-goto-line-ow))
+   (:map helm-grep-map
+         ([M-return] . helm-grep-run-other-window-action)))
   :init
   (let ((fuzzy t))
     (setq helm-M-x-fuzzy-match fuzzy
@@ -80,33 +108,6 @@
   (advice-add #'helm-describe-function :around #'+helm-use-helpful)
   
   :config
-  (helm-mode +1)
-
-  (map! (:keymap helm-map
-          [left]     #'left-char
-          [right]    #'right-char
-          "C-S-n"    #'helm-next-source
-          "C-S-p"    #'helm-previous-source
-          "C-f"      #'helm-next-page
-          "C-S-f"    #'helm-previous-page
-          "C-u"      #'helm-delete-minibuffer-contents
-          "C-w"      #'backward-kill-word
-          "C-s"      #'helm-minibuffer-history
-          "C-b"      #'backward-word
-          "TAB"      #'helm-execute-persistent-action
-          "C-z"      #'helm-select-action)
-        (:keymap (helm-find-files-map helm-read-file-map)
-          [M-return] #'helm-ff-run-switch-other-window
-          "C-w"      #'helm-find-files-up-one-level)
-        (:keymap helm-generic-files-map
-          [M-return] #'helm-ff-run-switch-other-window)
-        (:keymap helm-buffer-map
-          [M-return] #'helm-buffer-switch-other-window)
-        (:keymap helm-moccur-map
-          [M-return] #'helm-moccur-run-goto-line-ow)
-        (:keymap helm-grep-map
-          [M-return] #'helm-grep-run-other-window-action))
-
   (after! helm-bookmark
     (setq helm-bookmark-show-location t))
 
@@ -117,24 +118,21 @@
 
   (after! helm-locate
     (set-keymap-parent helm-generic-files-map helm-map))
-  
-  (add-to-list 'helm-completing-read-handlers-alist
-               (cons #'find-file-at-point nil))
 
   (+popup-set-rule "^\\*helm" :vslot -100 :size 0.22))
 
 (use-package helm-ag
-  :init
+  :preface
   (defvar +helm-project-search-tools '(rg ag))
-
-  (map! (:keymap helm-ag-map
-          [backtab] #'helm-ag-edit
-          [left]    nil
-          [right]   nil)
-        (:keymap helm-ag-edit-map
-          [remap quit-window] #'helm-ag--edit-abort
-          "RET" #'compile-goto-error))
-
+  :bind
+  ((:map helm-ag-map
+         ([backtab] . helm-ag-edit)
+         ([left]    . nil)
+         ([right]   . nil))
+   (:map helm-ag-edit-map
+         ([remap quit-window] . helm-ag--edit-abort)
+         ("RET"               . compile-goto-error)))
+  :init
   (defun +helm-ag-search-args (all-files-p recursivep)
     (list (concat "ag "
                   (if %-IS-WIN32 "--vimgrep" "--nocolor --nogroup"))
@@ -330,6 +328,10 @@
   (helm-projectile-find-file
    helm-projectile-switch-project
    helm-projectile-switch-to-buffer)
+  :bind
+  (([remap projectile-find-file] . helm-projectile-find-file)
+   ([remap projectile-switch-project] . helm-projectile-switch-project)
+   ([remap projectile-switch-to-buffer] . helm-projectile-switch-to-buffer))
   :init
   (defun +helm-projectile-find-file ()
     (interactive)
@@ -342,11 +344,7 @@
 
   (setq projectile-completion-system 'helm)
   (defvar helm-projectile-find-file-map (make-sparse-keymap))
-  (set-keymap-parent helm-projectile-find-file-map helm-map)
-
-  (map! [remap projectile-find-file] #'helm-projectile-find-file
-        [remap projectile-switch-project] #'helm-projectile-switch-project
-        [remap projectile-switch-to-buffer] #'helm-projectile-switch-to-buffer))
+  (set-keymap-parent helm-projectile-find-file-map helm-map))
 
 (use-package swiper-helm
   :config

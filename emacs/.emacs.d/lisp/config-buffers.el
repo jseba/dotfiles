@@ -1,50 +1,5 @@
 ;;; config-buffers.el
 
-(defvar exit-buffer-hook nil)
-(defvar enter-buffer-hook nil)
-(defvar inhibit-switch-buffer-hooks nil)
-
-(defvar exit-window-hook nil)
-(defvar enter-window-hook nil)
-(defvar inhibit-switch-window-hooks nil)
-
-(defun switch-buffer-hooks (orig-fn buffer-or-name &rest args)
-  (if (or inhibit-switch-buffer-hooks
-          (eq (get-buffer buffer-or-name) (current-buffer)))
-      (apply orig-fn buffer-or-name args)
-    (let ((inhibit-switch-buffer-hooks t))
-      (run-hooks 'exit-buffer-hook)
-      (prog1 (apply orig-fn buffer-or-name args)
-        (with-current-buffer buffer-or-name
-          (run-hooks 'enter-buffer-hook))))))
-
-(defun switch-window-hooks (orig-fn window &optional norecord)
-  (if (or inhibit-switch-window-hooks
-          (null window)
-          (eq window (selected-window))
-          (window-minibuffer-p)
-          (window-minibuffer-p window))
-      (funcall orig-fn window norecord)
-    (let ((inhibit-switch-window-hooks t))
-      (run-hooks 'exit-window-hook)
-      (prog1 (funcall orig-fn window norecord)
-        (with-selected-window window
-            (run-hooks 'enter-window-hook))))))
-
-(defun setup-switch-buffer-hooks (&optional disable)
-  (dolist (fn '(switch-to-buffer display-buffer pop-to-buffer))
-    (if disable
-        (advice-remove fn #'switch-buffer-hooks)
-      (advice-add fn :around #'switch-buffer-hooks))))
-
-(defun setup-switch-window-hooks (&optional disable)
-  (if disable
-      (advice-remove 'select-window #'switch-window-hooks)
-    (advice-add 'select-window :around #'switch-window-hooks)))
-
-(add-hook! '%-init-hook #'(setup-switch-buffer-hooks
-                           setup-switch-window-hooks))
-
 (defvar real-buffer-functions #'(dired-buffer-p))
 
 (defvar unreal-buffer-functions
@@ -172,6 +127,13 @@ If PROJECTP, only kill buffers that belong to the current project."
         (kill-buffer-and-windows buf)))
     (when (called-interactively-p 'interactive)
       (message "Killed %s buffers" (length buffers)))))
+
+(bind-keys
+ ("C-c <" . previous-buffer)
+ ("C-c >" . next-buffer)
+ ("C-c k" . kill-this-buffer)
+ ("C-c K" . kill-other-buffers)
+ ("C-c C-k" . kill-all-buffers))
 
 (provide 'config-buffers)
 ;;; config-buffers.el ends here

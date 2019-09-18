@@ -1,45 +1,47 @@
 ;;; config-editor.el
 
-(setq-default auto-save-list-file-name (concat %var-dir "autosave")
-              auto-save-default nil
-              bookmark-default-file (concat %etc-dir "bookmarks")
-              bookmark-save-flag t
-              create-lockfiles nil
-              make-backup-files nil
-              ring-bell-function #'ignore
-              save-interprogram-paste-before-kill t
-              tooltip-delay 1.5
-              buffers-menu-max-size 30
-              case-fold-search t
-              column-number-mode t
-              delete-selection-mode t
-              delete-trailing-lines nil
-              fill-column 140
-              indicate-empty-lines t
-              sentence-end-double-space nil
-              word-wrap t
-              hscroll-margin 1
-              hscroll-step 1
-              scroll-conservatively 1001
-              scroll-margin 0
-              scroll-preserve-screen-position t
-              mouse-wheel-scroll-amount '(1)
-              mouse-wheel-progressive-speed nil
-              mouse-yank-at-point t
-              indent-tabs-mode nil
-              require-final-newline nil
-              tab-always-indent 'complete
-              tab-width 4
-              tabify-regex "^\t [ \t]+"
-              truncate-lines t
-              truncate-partial-width-windows 50
-              show-trailing-whitespace nil
-              whitespace-line-column fill-column
-              whitespace-style '(face indentation tab-mark spaces space-mark
-                                      newline newline-mark trailing lines-tail)
-              whitespace-display-mappings '((tab-mark ?\t [?� ?\t])
-                                            (newline-mark ?\n [?� ?\n])
-                                            (space-mark ?\  [?�] [?.])))
+(setq-default
+ auto-save-list-file-name (no-littering-expand-var-file-name "autosave")
+ auto-save-default nil
+ bookmark-default-file (no-littering-expand-etc-file-name "bookmarks")
+ bookmark-save-flag t
+ create-lockfiles nil
+ make-backup-files nil
+ ring-bell-function #'ignore
+ save-interprogram-paste-before-kill t
+ tooltip-delay 1.5
+ buffers-menu-max-size 30
+ case-fold-search t
+ column-number-mode t
+ delete-selection-mode t
+ delete-trailing-lines nil
+ fill-column 140
+ indicate-empty-lines t
+ sentence-end-double-space nil
+ word-wrap t
+ hscroll-margin 1
+ hscroll-step 1
+ scroll-conservatively 1001
+ scroll-margin 0
+ scroll-preserve-screen-position t
+ mouse-wheel-scroll-amount '(1)
+ mouse-wheel-progressive-speed nil
+ mouse-yank-at-point t
+ indent-tabs-mode nil
+ require-final-newline nil
+ tab-always-indent 'complete
+ tab-width 4
+ tabify-regex "^\t [ \t]+"
+ truncate-lines t
+ truncate-partial-width-windows nil
+ show-trailing-whitespace nil
+ whitespace-line-column fill-column
+ whitespace-style '(face indentation tab-mark spaces space-mark
+                         newline newline-mark trailing lines-tail)
+ whitespace-display-mappings '((tab-mark ?\t [?� ?\t])
+                               (newline-mark ?\n [?� ?\n])
+                               (space-mark ?\  [?�] [?.]))
+ word-wrap t)
 
 ;; Bring back region casing
 (put 'upcase-region   'disabled nil)
@@ -71,6 +73,7 @@
            (goto-char indent))
           ((<= pos indent)
            (beginning-of-visual-line)))))
+(global-set-key [remap move-beginning-of-line] #'backward-to-bol-or-indent)
 
 (defun forward-to-last-non-comment-or-eol ()
   (interactive)
@@ -98,6 +101,7 @@
                (goto-char eol))
               ((/= bol boc)
                (goto-char boc)))))))
+(global-set-key [remap move-end-of-line] #'forward-to-last-non-comment-or-eol)
 
 (defun backward-delete-whitespace-to-column ()
   (interactive)
@@ -211,6 +215,7 @@
   (if indent-tabs-mode
       (tabify beg end)
     (untabify beg end)))
+;;(global-set-key "" #'retab)
 
 (defun set-indirect-buffer-file-name  (orig-fn base-buffer name &optional clone)
   (let ((file-name (buffer-file-name base-buffer))
@@ -229,12 +234,14 @@
   (beginning-of-line)
   (save-excursion (newline))
   (indent-according-to-mode))
-
 (defun newline-below-and-indent ()
   "Insert an indented newline after the current one."
   (interactive)
   (end-of-line)
   (newline-and-indent))
+(bind-keys
+ ("<C-return>" . newline-below-and-indent)
+ ("<M-return>" . newline-above-and-indent))
 
 (defalias '+newline #'newline)
 
@@ -250,6 +257,7 @@
       (set-window-buffer nil)
       (with-current-buffer buffer
         (funcall (default-value 'major-mode))))))
+(global-set-key (kbd "C-x C-n") #'new-buffer) ;; more useful than `set-goal-column'
 
 (use-package autorevert
   :after-call after-find-file
@@ -301,59 +309,22 @@
 (use-package smartparens
   :after-call (after-find-file pre-command-hook)
   :commands (sp-pair sp-local-pair sp-with-modes)
+  :bind
+  (([remap beginning-of-sexp]     . sp-beginning-of-sexp)
+   ([remap end-of-sexp]           . sp-end-of-sexp)
+   ([remap forward-sexp]          . sp-forward-sexp)
+   ([remap backward-sexp]         . sp-backward-sexp)
+   ("C-M-a" . sp-beginning-of-sexp)
+   ("C-M-e" . sp-end-of-sexp)
+   ("C-M-f" . sp-forward-sexp)
+   ("C-M-b" . sp-backward-sexp)
+   ("C-M-k" . sp-kill-sexp)
+   ("C-M-t" . sp-transpose-sexp)
+   ("C-<right>" . sp-forward-slurp-sexp)
+   ("C-<left>"  . sp-backward-slurp-sexp)
+   ("M-<right>" . sp-forward-barf-sexp)
+   ("M-<left>"  . sp-backward-barf-sexp))
   :config
-  (defhydra +smartparens-hydra (:hint nil)
-    "
-Sexps (quit with _q_)		
- ^Nav^            ^Barf/Slurp^                  ^Depth^		
- ^---^------------^----------^------------------^-----^-----------------		
- _f_: forward     _→_:          slurp forward   _R_: splice		
- _b_: backward    _←_:          slurp backward  _r_: raise		
- _u_: backward ↑  _C-<right>_:   barf forward    _↑_: raise backward		
- _d_: forward ↓   _C-<left>_:    barf backward   _↓_: raise forward		
- _p_: backward ↓		
- _n_: forward ↑		
- ^Kill^           ^Misc^                        ^Wrap^		
- ^----^-----------^----^------------------------^----^------------------		
- _w_: copy        _j_: join                     _(_: wrap with ( )		
- _k_: kill        _s_: split                    _{_: wrap with { }		
- ^^               _t_: transpose                _'_: wrap with ' '		
- ^^               _c_: convolute                _\"_: wrap with \" \"		
- ^^               _i_: indent defun             _/_: unwrap"
-    ("q" nil)
-    ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
-    ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
-    ("[" (lambda (_) (interactive "P") (sp-wrap-with-pair "[")))
-    ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
-    ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
-    ("/" #'sp-unwrap-sexp)
-    ("f" #'sp-forward-sexp)
-    ("b" #'sp-backward-sexp)
-    ("u" #'sp-backward-up-sexp)
-    ("d" #'sp-down-sexp)
-    ("p" #'sp-backward-down-sexp)
-    ("n" #'sp-up-sexp)
-    ("w" #'sp-copy-sexp)
-    ("k" #'sp-kill-sexp)
-    ("t" #'sp-transpose-sexp)
-    ("j" #'sp-join-sexp)
-    ("s" #'sp-split-sexp)
-    ("c" #'sp-convolute-sexp)
-    ("i" #'sp-indent-defun)
-    ("R" #'sp-splice-sexp)
-    ("r" #'sp-splice-sexp-killing-around)
-    ("<up>" #'sp-splice-sexp-killing-backward)
-    ("<down>" #'sp-splice-sexp-killing-forward)
-    ("<right>" #'sp-forward-slurp-sexp)
-    ("C-<right>" #'sp-forward-barf-sexp)
-    ("<left>" #'sp-backward-slurp-sexp)
-    ("C-<left>" #'sp-backward-barf-sexp))
-
-  (map! [remap beginning-of-sexp]     #'sp-beginning-of-sexp
-        [remap end-of-sexp]           #'sp-end-of-sexp
-        [remap forward-sexp]          #'sp-forward-sexp
-        [remap backward-sexp]         #'sp-backward-sexp)
-
   (require 'smartparens-config)
   (setq sp-highlight-pair-overlay nil
         sp-highlight-wrap-overlay nil
@@ -365,6 +336,9 @@ Sexps (quit with _q_)
         sp-max-prefix-length 50
         sp-escape-quotes-after-insert nil)
 
+  (dolist (key '(:unmatched-expression :no-matching-tag))
+    (setf (cdr (assq key sp-message-alist)) nil))
+
   (defun +smartparens-disable-navigate-skip-match ()
     (setq sp-navigate-skip-match nil
           sp-navigate-consider-sgml-tags nil))
@@ -375,6 +349,7 @@ Sexps (quit with _q_)
       (smartparens-mode)))
   (add-hook 'minibuffer-setup-hook #'+smartparens-enable-in-eval-expression)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+  (sp-local-pair 'minibuffer-inactive-mode "`" nil :actions nil)
 
   ;; autopair quotes more conservatively
   (let ((unless-list '(sp-point-before-word-p
@@ -420,19 +395,6 @@ Sexps (quit with _q_)
 
   (smartparens-global-mode +1))
 
-(use-package dtrt-indent
-  :init
-  (defun detect-indentation ()
-    (unless (or (not after-init-time)
-                (member (substring (buffer-name) 0 1) '(" " "*"))
-                (eq major-mode 'fundamental-mode))
-      (dtrt-indent-mode +1)))
-  (add-hook! '(change-major-mode-after-body-hook read-only-mode-hook)
-    #'detect-indentation)
-  :config
-  (setq dtrt-indent-verbosity (if %debug-mode 2 0))
-  (add-to-list 'dtrt-indent-hook-generic-mapping-list '(t tab-width)))
-
 (use-package undo-tree
   :after-call after-find-file
   :config
@@ -442,18 +404,29 @@ Sexps (quit with _q_)
   (global-undo-tree-mode +1))
 
 (use-package helpful
+  :bind
+  (([remap describe-function] . helpful-callable)
+   ([remap describe-command]  . helpful-command)
+   ([remap describe-variable] . helpful-variable)
+   ([remap describe-key]      . helpful-key))
   :init
-  (map! [remap describe-function] #'helpful-callable
-        [remap describe-command]  #'helpful-command
-        [remap describe-variable] #'helpful-variable
-        [remap describe-key]      #'helpful-key))
+  (after! apropos
+    (dolist (fun-bt '(apropos-func apropos-macro apropos-command))
+      (button-type-put
+       fun-bt 'action
+       (lambda (button)
+	 (helpful-callable (button-get button 'apropos-symbol)))))
+    (dolist (var-bt '(apropos-variable apropos-user-option))
+      (button-type-put
+       var-bt 'action
+       (lambda (button)
+	 (helpful-variable (button-get button 'apropos-symbol)))))))
 
 (use-package ws-butler
   :after-call (after-find-file)
   :config
-  (setq ws-butler-global-exempt-modes
-        (append ws-butler-global-exempt-modes
-                '(special-mode comint-mode term-mode eshell-mode)))
+  (appendq! ws-butler-global-exempt-modes
+            '(special-mode comint-mode term-mode eshell-mode))
   (ws-butler-global-mode +1))
 
 (provide 'config-editor.el)

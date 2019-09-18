@@ -152,7 +152,7 @@ vice versa)."
             (cl-assert (integerp ttl) t)
             (if (= ttl 0)
                 (+popup--kill-buffer buffer 0)
-              (add-hook! :local 'kill-buffer-hook #'+popup-kill-buffer)
+              (add-hook 'kill-buffer-hook #'+popup-kill-buffer nil t)
               (setq +popup--timer
                     (run-at-time ttl nil #'+popup--kill-buffer buffer ttl)))))))))
 
@@ -744,12 +744,13 @@ vice versa)."
   :init-value nil
   :keymap +popup-buffer-mode-map
   (if (not +popup-buffer-mode)
-      (remove-hook! :local 'after-change-major-mode-hook
-                    #'+popup-set-modeline-on-enable)
-    (add-hook! :local 'after-change-major-mode-hook
-      #'popup|set-modeline-on-enable)
+      (remove-hook 'after-change-major-mode-hook
+                   #'+popup-set-modeline-on-enable t)
+    (add-hook 'after-change-major-mode-hook
+	      #'popup|set-modeline-on-enable
+	      nil t)
     (when (timerp +popup--timer)
-      (remove-hook! :local 'kill-buffer-hook #'+popup-kill-buffer)
+      (remove-hook 'kill-buffer-hook #'+popup-kill-buffer t)
       (cancel-timer +popup--timer)
       (setq +popup--timer nil))))
 

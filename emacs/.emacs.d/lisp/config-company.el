@@ -7,6 +7,20 @@
   :defer 2
   :after-call post-self-insert-hok
   :bind
+  (([remap dabbrev-expand] . +company-dabbrev)
+   ([control-i]            . +company-complete)
+   (:map company-active-map
+         ("C-n" . company-select-next)
+         ("C-p" . company-select-prev)
+         ("C-h" . company-show-doc-buffer)
+         ("C-s" . company-search-candidates)
+         ("M-s" . company-filter-candidates)
+         ([tab] . company-complete-common-or-cycle))
+   (:map company-search-map
+         ("C-n" . company-search-repeat-forward)
+         ("C-p" . company-search-repeat-backward)
+         ;; ("C-s" . (lambda! (company-search-abort) (company-filter-candidates)))
+         ([escape] . company-search-abort)))
   :init
   (defvar +company-backend-alist
     '((text-mode :derived (company-dabbrev company-yasnippet company-ispell))
@@ -131,7 +145,7 @@ everywhere else."
 (use-package company-prescient
   :hook (company-mode . company-prescient-mode)
   :config
-  (setq prescient-save-file (concat %var-dir "prescient-save.el"))
+  (setq prescient-save-file (no-littering-expand-var-file-name "prescient-save.el"))
   (prescient-persist-mode +1))
 
 (provide 'config-company)

@@ -10,11 +10,6 @@
   "Hooks run when `global-escape' is called.")
 (defvar cleanup-hook nil)
 
-(defconst %EMACS26+ (eval-when-compile
-					  (not (version< emacs-version "26"))))
-(defconst %EMACS27+ (eval-when-compile
-					  (not (version< emacs-version "27"))))
-
 (defconst %IS-LINUX (eq system-type 'gnu/linux))
 (defconst %IS-MACOS (eq system-type 'darwin))
 (defconst %IS-WIN32 (eq system-type 'windows-nt))
@@ -25,12 +20,6 @@
 (eval-when-compile (require 'cl-lib))
 (require 'map)
 (require 'subr-x)
-
-(eval-and-compile
-  (unless %EMACS26+
-    (with-no-warnings
-      (defalias 'if-let* #'if-let)
-      (defalias 'when-let* #'when-let))))
 
 (provide 'config-core)
 ;;; config-core.el ends here

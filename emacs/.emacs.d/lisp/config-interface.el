@@ -62,48 +62,10 @@
   (setq avy-all-windows nil
         avy-background t))
 
-(use-package doom-themes
-  :init
-  (setq %theme 'doom-one)
-  :config
-  (after! org
-    (doom-themes-org-config)))
-
-(use-package solaire-mode
-  :init
-  (defvar +solaire-themes
-    '((doom-city-lights . t)
-      (doom-dracula . t)
-      (doom-molokai . t)
-      (doom-nord . t)
-      (doom-nord-light . t)
-      (doom-nova)
-      (doom-one . t)
-      (doom-one-light . t)
-      (doom-opera . t)
-      (doom-solarized-light)
-      (doom-spacegrey)
-      (doom-vibrant)
-      (doom-tomorrow-night)
-      (doom-challenger-deep . t))
-    "A list of themes supporting `solaire-mode'.")
-
-  (defun +solaire-swap-bg-maybe ()
-    (when-let* ((rule (assq %theme +solaire-themes)))
-      (require 'solaire-mode)
-      (if (cdr rule) (solaire-mode-swap-bg))))
-  (add-hook 'load-theme-hook #'+solaire-swap-bg-maybe t)
-
-  :config
-  (add-hook 'change-major-mode-hook #'turn-on-solaire-mode)
-  (add-hook 'focus-in-hook #'solaire-mode-reset)
-  (add-hook 'load-theme-hook #'solaire-mode-reset t)
-  (add-hook 'org-capture-mode-hook #'turn-on-solaire-mode))
-
 (use-package ace-window
   :defer t
-  :init
-  (map! [remap other-window] #'ace-window)
+  :bind
+  (([remap other-window] . ace-window))
   :config
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
         aw-scope 'frame
@@ -118,10 +80,6 @@
           ("NOTE"  . ,(face-foreground 'success))
           ("XXX"   . ,(face-foreground 'shadow)))))
 
-(use-package restart-emacs
-  :init
-  (setq restart-emacs--args '("--restore")))
-
 (use-package visual-fill-column
   :init
   (setq visual-fill-column-center-text t
@@ -129,14 +87,14 @@
         (+ (if (boundp 'display-line-numbers) 6 0)
            fill-column)))
 
-(use-package winner
+(use-feature winner
   :defer 1
   :preface
   (defvar winner-dont-bind-my-keys t)
   :config
   (winner-mode +1))
 
-(use-package paren
+(use-feature paren
   :after-call after-find-file
   :init
   (defun disable-show-paren-mode ()
@@ -172,6 +130,28 @@
                                     (space-mark ?\ [?.] [?.])))
 
 ;;
+;; Fancy mode-line
+(use-package doom-modeline
+  :hook (after-init . doom-modeline-mode)
+  :init
+  (setq doom-modeline-buffer-file-name-style 'relative-from-project
+	doom-modeline-icon (display-graphic-p)
+	doom-modeline-major-mode-icon nil)
+  :config
+  (add-hook 'doom-modeline-mode-hook #'size-indication-mode)
+  (add-hook 'doom-modeline-mode-hook #'column-number-mode)
+  (add-hook 'load-theme-hook #'doom-modeline-refresh-bars)
+  
+  (doom-modeline-def-modeline 'main
+    '(bar matches buffer-info remote-host buffer-position selection-info)
+    '(misc-info debug lsp buffer-encoding major-mode process checker)))
+
+(use-package doom-themes
+  :init
+  (setq %theme 'doom-one
+        doom-themes-enable-bold t))
+
+;;
 ;; Fringes
 (defun disable-fringes-in-minibuffer (&rest _)
   (set-window-fringes (minibuffer-window) 0 0 nil))
@@ -185,14 +165,28 @@
   (advice-add #'which-key--show-buffer-side-window
               :after #'disable-fringes-in-which-key-buffer))
 
+(defun disable-bold-faces ()
+  (mapc (lambda (face)
+          (set-face-attribute face nil :weight 'normal))
+        (face-list)))
+(add-hook 'minibuffer-setup-hook #'disable-bold-faces)
+(add-hook 'change-major-mode-after-body-hook #'disable-bold-faces)
+
 ;;
 ;; Load theme/font
 (defun setup-fonts ()
   (condition-case ex
       (progn
-        (when (fontp %font)
-          (let ((xlfd (font-xlfd-name %font)))
-            (add-to-list 'default-frame-alist (cons 'font xlfd)))))
+        (cond (%font
+	           (add-to-list
+		        'default-frame-alist
+		        (cons
+		         'font
+		         (cond ((stringp %font) %font)
+		               ((fontp %font) (font-xlfd-name %font))
+		               ((signal 'wrong-type-argument (list '(fontp stringp) %font)))))))
+	          ((display-graphic-p)
+	           (setq %font (face-attribute 'default :font)))))
     ((debug error)
      (if (string-prefix-p "Font not available: " (error-message-string ex))
          (lwarn 'config-interface :warning

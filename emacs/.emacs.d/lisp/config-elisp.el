@@ -14,9 +14,6 @@
     (advice-remove #'emacs-lisp-mode #'+elisp-init)))
 (advice-add #'emacs-lisp-mode :before #'+elisp-init)
 
-(+pretty-code-set-symbols 'emacs-lisp-mode
-  :lambda "lambda")
-
 (add-hook! 'emacs-lisp-mode-hook
   #'(outline-minor-mode
      +elisp-extend-imenu
@@ -25,9 +22,6 @@
 (setq-hook! 'emacs-lisp-mode-hook
   mode-name "Elisp"
   outline-regexp "[ \t]*;;;;* [^ \t\n]")
-(+xref-set-lookup-handlers 'emacs-lisp-mode
-  :definition #'elisp-def
-  :documentation #'+elisp-lookup-documentation)
 
 (defun +elisp-extend-imenu ()
   "Improve Imenu support with better expression regexps."

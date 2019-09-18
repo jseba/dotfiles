@@ -7,7 +7,6 @@
   ;; The plusses in `c++-mode' are annoying to type in helm
   (defalias 'cpp-mode 'c++-mode)
   (defvaralias 'cpp-mode-map 'c++-mode-map)
-
   :init
   (setq-default c-basic-offset tab-width
                 c-backspace-function #'delete-backward-char
@@ -29,7 +28,7 @@
     (and (sp-in-code-p id action context)
          (save-excursion
            (goto-char (line-beginning-position))
-           (looking-at-p "[ 	]*#include[^<]+"))))
+           (looking-at-p "[     ]*#include[^<]+"))))
 
   (defun +cc-c++-lineup-inclass (langelem)
     "Indent `inclass' lines one level further than access modifier keywords."
@@ -58,7 +57,28 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
            ("\\<A-Z]\\{3,\\}\\>"   . font-lock-constant-face))
      t))
 
-  (add-hook! (c-mode c++-mode) #'(+cc-fontify-constants hs-minor-mode))
+  (defun +cc-reduce-maximum-decoration ()
+    "Maximum fontification of C++ code is slow, so reduce it by default."
+    (set (make-local-variable 'font-lock-maximum-decoration) 2))
+  (add-hook 'c++-mode-hook #'+cc-reduce-maximum-decoration)
+
+  (add-hook! '(c-mode-hook c++-mode-hook) #'(+cc-fontify-constants hs-minor-mode))
+
+  (defun +cc-lsp ()
+    (setq-local company-transformers nil)
+    (setq-local company-lsp-async t)
+    (setq-local company-lsp-cache-candidates nil)
+    (require 'lsp-mode)
+    (require 'lsp-clients)
+    (lsp))
+  (add-hook! '(c-mode-hook c++-mode-hook)
+             #'+cc-lsp)
+
+  (after! lsp-mode
+    (dolist (map '(c-mode-map c++-mode-map))
+      (bind-keys :map map
+       ("C-c l ." . lsp-goto-type-definition)
+       ("C-c l m" . lsp-goto-implementation))))
 
   :config
   (c-toggle-electric-state -1)
@@ -91,8 +111,6 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
             (c-block-comment-prefix . ""))
           c-style-alist))
 
-  ;; TODO: create a Microsoft style
-
   ;; Smartparens and cc-mode both try to autoclose angle-brackets
   ;; intelligently. The result is...less intelligent than they
   ;; think (redundant characters), so do it manually
@@ -103,94 +121,14 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
   (sp-with-modes '(c++-mode)
     (sp-local-pair "<" ">"
                    :when '(+cc-sp-point-is-template-p +cc-sp-point-after-include-p)
-                   :post-handlers '(("| " "SPC")))))
+                   :post-handlers '(("| " "SPC")))) )
 
 (use-package modern-cpp-font-lock
   :hook (c++-mode . modern-c++-font-lock-mode))
 
 (use-package clang-format)
 
-(use-package ccls
-  :when (executable-find "ccls")
-  :hook ((c-mode c++-mode) . +ccls-maybe-init)
-  :init
-  (defconst +ccls-cache-dir ".ccls_cache")
-  (defconst +ccls-project-root-files
-    '("compile_commands.json"
-      ".ccls")
-    "List of file to add to Projectile that help determine the LSP workspace.")
-
-  (setq ccls-executable (executable-find "ccls")
-        ccls-extra-args `(,(concat "--log-file="
-                                   (expand-file-name
-                                    (if %IS-WIN32
-                                        (getenv "TEMP")
-                                      "/tmp"))
-                                   "/ccls.log"))
-        ccls-extra-init-params '(:index (:comments 2)
-                                 :cacheFormat "msgpack"
-                                 :completion (:detailedLabel t))
-        ccls-cache-dir +ccls-cache-dir
-        ;; TODO: try to get overlays working (requires patches to Emacs)
-        ccls-sem-highlight-method 'font-lock)
-
-  (after! projectile
-    ;; ignore CCLS cache
-    (add-to-list 'projectile-globally-ignored-directories +ccls-cache-dir)
-    ;; add ".ccls" configuration file as a project root
-    (add-to-list 'projectile-project-root-files-bottom-up
-                 +ccls-project-root-files))
-
-  (defun +ccls-maybe-init ()
-    "Enable CCLS if `ccls-project-root-files' are found in the project root."
-    (let ((default-directory (+projectile-project-root)))
-      (when (cl-some #'file-exists-p +ccls-project-root-files)
-        (require 'ccls)
-        (require 'lsp)
-        (setq-local company-transformers nil)
-        (setq-local company-lsp-cache-candidates nil)
-        (condition-case nil
-            (lsp)
-          (user-error nil)))))
-
-  :config
-  (defun +ccls-callee ()
-    (interactive)
-    (lsp-ui-peek-find-custom "$ccls/call" '(:callee t)))
-  (defun +ccls-caller ()
-    (interactive)
-    (lsp-ui-peek-find-custom "$ccls/call"))
-  (defun +ccls-vars (kind)
-    (lsp-ui-peek-find-custom "$ccls/vars" `(:kind ,kind)))
-  (defun +ccls-base (levels)
-    (lsp-ui-peek-find-custom "$ccls/inheritance" `(:levels ,levels)))
-  (defun +ccls-derived (levels)
-    (lsp-ui-peek-find-custom "$ccls/inheritance" `(:levels ,levels :derived t)))
-  (defun +ccls-member (kind)
-    (lsp-ui-peek-find-custom "$ccls/member" `(:kind ,kind)))
-  (defun +ccls-references-address ()
-    (interactive)
-    (lsp-ui-peek-find-custom "textDocument/references"
-                             (plist-put (lsp--text-document-position-params) :role 128)))
-  (defun +ccls-references-macro ()
-    (interactive)
-    (lsp-ui-peek-find-custom "textDocument/references"
-                             (plust-put (lsp--text-document-position-params) :role 64)))
-  (defun +ccls-references-read ()
-    (interactive)
-    (lsp-ui-peek-find-custom "textDocument/references"
-                             (plist-put (lsp--text-document-position-params) :role 8)))
-  (defun +ccls-references-write ()
-    (interactive)
-    (lsp-ui-peek-find-custom "textDocument/references"
-                             (plist-put (lsp--text-document-position-params) :role 16)))
-  (defun +ccls-references-not-call ()
-    (interactive)
-    (lsp-ui-peek-find-custom "textDocument/references"
-                             (plist-put (lsp--text-document-position-params) :excludeRole 32)))
-  (defun +ccls-references-in-project ()
-    (lsp-ui-peek-find-references nil
-                                 (list :folders (vector (+projectile-project-root))))))
+(use-package clang-format)
 
 (use-package cmake-mode
   :init
@@ -199,7 +137,7 @@ preceeded by the opening brace or a comma (disregarding whitespace in between)."
      'cmake '("CMakeLists.txt")
      :compile "cmake --build build")))
 
-(use-package meson-mode) ;; TODO: Register project type with `projectile'
+(use-package meson-mode)
 
 (use-package demangle-mode)
 
