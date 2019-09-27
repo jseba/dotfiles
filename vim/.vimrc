@@ -15,19 +15,18 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'pboettch/vim-cmake-syntax'
-Plug 'romainl/vim-qf'
-Plug 'romainl/vim-qlist'
+Plug 'airblade/vim-gitgutter'
+Plug 'luochen1990/rainbow'
 Plug 'tpope/vim-git'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-abolish'
-" Plug 'wellle/targets.vim'
 Plug 'haya14busa/is.vim'
-Plug 'justinmk/vim-sneak'
-Plug 'nlknguyen/papercolor-theme'
-Plug 'joshdick/onedark.vim'
+Plug 'morhetz/gruvbox'
 Plug 'itchyny/lightline.vim'
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'do': './install --bin' }
 
 " Local plugins
 if filereadable(expand("$HOME/.vim/local/plugs.vim"))
@@ -171,27 +170,8 @@ augroup resume_edit
             \ endif
 augroup END
 
-" overcharge return key in command mode
-cnoremap <expr> <cr> helpers#ccr()
-
-" lightweight MRU
-command! -nargs=1 -complete=customlist,helpers#mru_complete
-            \ Medit    call helpers#mru('edit', fnameescape(<f-args>))
-command! -nargs=1 -complete=customlist,helpers#mru_complete
-            \ Msplit   call helpers#mru('split', fnameescape(<f-args>))
-command! -nargs=1 -complete=customlist,helpers#mru_complete
-            \ Mvsplit  call helpers#mru('vsplit', fnameescape(<f-args>))
-command! -nargs=1 -complete=customlist,helpers#mru_complete
-            \ Mtabedit call helpers#mru('tabedit', fnameescape(<f-args>))
-
 " don't close window when deleting a buffer
 command! Bclose call helpers#bufcloseit()
-
-" scratch buffer
-let g:scratch_buffer_name = '__scratch__'
-
-command! -nargs=0 Scratch call helpers#open_scratch_buffer(0)
-command! -nargs=0 SplitScratch call helpers#open_scratch_buffer(1)
 
 " disable paren matching in TeX, it's really slow
 augroup tex_nomatchparen
@@ -230,13 +210,6 @@ nnoremap <Space>vd :edit $HOME/.vim/words<CR>
 nnoremap <Space>vg :edit $HOME/.gitconfig<CR>
 nnoremap <Space>vz :edit $HOME/.zshrc<CR>
 nnoremap <Space>vt :edit $HOME/.tmux.conf<CR>
-nnoremap <Space>vs :Scratch<cr>
-
-" stay in place on */#
-nnoremap <silent> z* :let sv=winsaveview()<cr>*:call winrestview(sv)<cr>
-nnoremap <silent> z# :let sv=winsaveview()<cr>#:call winrestview(sv)<cr>
-nnoremap <silent> gz* :let sv=winsaveview()<cr>g*:call winrestview(sv)<cr>
-nnoremap <silent> gz# :let sv=winsaveview()<cr>g#:call winrestview(sv)<cr>
 
 " center search matches after jumping
 nnoremap n nzzzv
@@ -266,10 +239,6 @@ nnoremap gI `.i
 " select last inserted text
 nnoremap gV `[v`[
 
-" word-wise <c-y>
-inoremap <expr> <c-y> pumvisible ? "\<c-y>" :
-            \ matchstr(getline(line('.')-1), '\%' . virtcol('.') . 'v\%(\k\+\\|.\)')
-
 " current file directory
 noremap! <silent> <c-r><c-\> <c-r>=expand('%:p:h', 1)<cr>
 
@@ -290,16 +259,6 @@ nnoremap <left>  :cprev<cr>zvzz
 nnoremap <right> :cnext<cr>zvzz
 nnoremap <up>    :lprev<cr>zvzz
 nnoremap <down>  :lnext<cr>zvzz
-
-" grep
-if executable('rg')
-  set grepprg=rg\ --vimgrep\ --no-heading
-  set grepformat=%f:%l:%c:%m,%f:%l:%m,%f
-endif
-
-nnoremap <Space>a :grep<space>
-nnoremap <Space>g :set opfunc=helpers#operator_grep<cr>g@
-vnoremap <Space>g :<c-u> helpers#operator_grep(visualmode())<cr>
 
 nnoremap <Space>< :bp<CR>
 nnoremap <Space>> :bn<CR>
@@ -328,21 +287,6 @@ vnoremap < <gv
 set background=dark
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
-let g:PaperColor_Theme_Options = {
-            \ 'theme': {
-            \   'default': {
-            \     'transparent_background': 0,
-            \   },
-            \ 'language': {
-            \   'cpp': {
-            \     'highlight_standard_library': 1,
-            \   },
-            \   'c': {
-            \     'highlight_builtins': 1,
-            \   },
-            \  },
-            \ }
-            \}
 
 if !has('gui_running')
   if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
@@ -378,7 +322,7 @@ else
   set guioptions+=c
 endif
 
-colorscheme PaperColor
+colorscheme gruvbox
 
 " statusline setup
 set laststatus=2
@@ -416,6 +360,60 @@ set cinoptions+=w1     " ...but ignore whitespace after the open paren
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
+
+" Rainbow delimiters
+let g:rainbow_active = 1
+let g:rainbow_conf = {
+            \ 'separately': {
+            \   'cpp': {
+            \     'parentheses': [
+            \       'start=/(/ end=/)/ fold',
+            \       'start=/\[/ end=/\]/ fold',
+            \       'start=/{/ end=/}/ fold',
+            \       'start=/\(\(\<operator\>\)\@<!<\)\&[a-zA-Z0-9_]\@<=<\ze[^<]/ end=/>/']
+            \     }
+            \   }
+            \ }
+
+" FZF
+" Augment Rg command with fzf#vim#with_preview
+command! -bang -nargs=* Rg
+      \ call fzf#vim#grep(
+      \   'rg --column --line-number --no-heading --color=always --smart-case'.shellescape(<q-args>), 1,
+      \   <bang>0 ? fzf#vim#with_preview('up:60%')
+      \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+      \   <bang>0)
+
+" Prefer fd-find over standard find
+if executable('fd')
+  let $FZF_DEFAULT_COMMAND='fd --type f --hidden'
+endif
+
+let g:fzf_files_option = '--preview "cat {} 2>/dev/null | head -'.&lines.'"'
+let g:fzf_layout = { 'down': '~20%' }
+let g:fzf_colors = {
+      \ 'fg':       ['fg', 'Normal'],
+      \ 'bg':       ['bg', 'none'],
+      \ 'hl':       ['fg', 'Comment'],
+      \ 'fg+':      ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'bg+':      ['bg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'hl+':      ['fg', 'Statement'],
+      \ 'info':     ['fg', 'PreProc'],
+      \ 'prompt':   ['fg', 'Conditional'],
+      \ 'pointer':  ['fg', 'Exception'],
+      \ 'marker':   ['fg', 'Keyword'],
+      \ 'spinner':  ['fg', 'Label'],
+      \ 'header':   ['fg', 'Comment']
+      \ }
+nnoremap <C-p> :Files<cr>
+nnoremap <Space><Space> :GFiles<cr>
+nnoremap <Space>g :GFiles?<cr>
+nnoremap <Space>l :Commits<cr>
+nnoremap <Space>b :Buffer<cr>
+nnoremap <Space>t :Tags<cr>
+nnoremap <Space>h :Helptags<cr>
+nnoremap <space>\\ :Commands<cr>
+nnoremap <space>a :Rg<space>
 
 " Read local machine settings
 if filereadable(expand("~/.vim/local/vimrc.vim"))
