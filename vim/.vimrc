@@ -37,7 +37,9 @@ endif
 
 call plug#end()
 
-runtime macros/matchit.vim
+if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &rtp) ==#''
+  runtime! macros/matchit.vim
+endif
 
 " General settings
 syntax on
@@ -87,6 +89,7 @@ set shiftwidth=4
 set shortmess+=filmnrxoOtT
 set sidescroll=1
 set sidescrolloff=10
+set signcolumn=yes
 set smartcase
 set softtabstop=4
 set spell
@@ -95,10 +98,12 @@ set splitbelow
 set splitright
 set synmaxcol=200
 set tabstop=4
+set tags-=./tags tags-=./tags; tags^=./tags;
 set textwidth=140
 set title
 set undodir=$HOME/.vim/tmp/undo
 set undofile
+set updatetime=300
 set viminfo^=%
 set virtualedit=block,onemore
 set whichwrap=b,s,h,l,<,>,[,]
@@ -129,6 +134,9 @@ if has('clipboard')
     set clipboard=unnamed
   endif
 endif
+
+" use plain status for Ninja
+let $NINJA_STATUS='%u/%r/%f %o'
 
 " clear search pattern (useful for reloads)
 let @/ = ""
@@ -212,6 +220,7 @@ nnoremap <Space>vd :edit $HOME/.vim/words<CR>
 nnoremap <Space>vg :edit $HOME/.gitconfig<CR>
 nnoremap <Space>vz :edit $HOME/.zshrc<CR>
 nnoremap <Space>vt :edit $HOME/.tmux.conf<CR>
+nnoremap <Space>vl :edit $HOME/.vim/coc-settings.json<CR>
 
 " center search matches after jumping
 nnoremap n nzzzv
@@ -310,9 +319,9 @@ if !has('gui_running')
   endif
 else
   if !has('gui_macvim')
-    set guifont=Source\ Code\ Pro\ 9
+    set guifont=Fira\ Code\ Retina\ 9
   else
-    set guifont=Iosevka:h11
+    set guifont=Fira\ Code\ Retina:h12
   endif
   set guioptions-=T
   set guioptions-=e
@@ -345,7 +354,7 @@ let g:lightline = {
             \ },
             \ 'component': {
             \   'modified': '%M',
-            \ }
+            \ },
             \ }
 
 " Tags
@@ -381,7 +390,7 @@ let g:rainbow_conf = {
 " Augment Rg command with fzf#vim#with_preview
 command! -bang -nargs=* Rg
       \ call fzf#vim#grep(
-      \   'rg --column --line-number --no-heading --color=always --smart-case'.shellescape(<q-args>), 1,
+      \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
       \   <bang>0 ? fzf#vim#with_preview('up:60%')
       \           : fzf#vim#with_preview('right:50%:hidden', '?'),
       \   <bang>0)
@@ -407,7 +416,7 @@ let g:fzf_colors = {
       \ 'spinner':  ['fg', 'Label'],
       \ 'header':   ['fg', 'Comment']
       \ }
-nnoremap <C-p> :Files<cr>
+nnoremap <Space>f :Files<cr>
 nnoremap <Space><Space> :GFiles<cr>
 nnoremap <Space>g :GFiles?<cr>
 nnoremap <Space>l :Commits<cr>
