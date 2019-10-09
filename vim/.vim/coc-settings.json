@@ -1,19 +1,43 @@
 {
-    "coc.preferences.autoTrigger": "trigger",
+    "coc.preferences.hoverTarget": "float",
+    "codeLens.enable": true,
+    "diagnostic.checkCurrentLine": true,
+    "diagnostic.virtualText": true,
+    "signature.target": "float",
+    "suggest.echodocSupport": true,
+    "suggest.autoTrigger": "trigger",
+
+    "list.nextKeymap": "<C-n>",
+    "list.previousKeymap": "<C-p>",
+    "list.normalMappings": {
+        "<C-c>": "do:exit",
+        "<C-g>": "do:exit"
+    },
+
+    "list.insertMappings": {
+        "<C-c>": "do:exit",
+        "<C-g>": "do:exit"
+    },
+
     "languageserver": {
         "ccls": {
             "command": "ccls",
             "args": ["--log-file=/tmp/ccls.log"],
-            "revealOutputChannelOn": "never",
             "filetypes": ["c", "cpp"],
+            "trace.server": "verbose",
+            "rootPatterns": [ ".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/" ],
             "initializationOptions": {
-                "cacheDirectory": ".ccls_cache",
-                "compilationDatabaseDirectory": "build",
+                "highlight": {
+                    "lsRanges": true
+                },
+                "cache": {
+                    "directory": ".ccls-cache"
+                },
                 "completion": {
-                  "enableSnippets": false
+                    "enableSnippets": false
                 },
                 "index": {
-                  "comments": 2
+                    "comments": 2
                 }
             }
         }

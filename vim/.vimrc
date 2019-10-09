@@ -13,6 +13,8 @@ endif
 " Plugins
 call plug#begin('~/.vim/plugged')
 
+Plug 'neoclide/coc.nvim', { 'tag': '*', 'branch': 'release' }
+Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'airblade/vim-gitgutter'
@@ -414,6 +416,11 @@ nnoremap <Space>t :Tags<cr>
 nnoremap <Space>h :Helptags<cr>
 nnoremap <space>\\ :Commands<cr>
 nnoremap <space>a :Rg<space>
+
+" vim-lsp-cxx-highlight
+if !has('nvim')
+  let g:lsp_cxx_hl_use_text_props = 1
+endif
 
 " Read local machine settings
 if filereadable(expand("~/.vim/local/vimrc.vim"))
