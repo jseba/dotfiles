@@ -13,8 +13,6 @@ endif
 " Plugins
 call plug#begin('~/.vim/plugged')
 
-Plug 'neoclide/coc.nvim', { 'tag': '*', 'branch': 'release' }
-Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'airblade/vim-gitgutter'
@@ -24,6 +22,7 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-abolish'
+Plug 'romainl/vim-qf'
 Plug 'haya14busa/is.vim'
 Plug 'morhetz/gruvbox'
 Plug 'itchyny/lightline.vim'
@@ -31,7 +30,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': './install --bin' }
 
 " Local plugins
-if filereadable(expand("$HOME/.vim/local/plugs.vim"))
+if filereadable(expand('$HOME/.vim/local/plugs.vim'))
   so $HOME/.vim/local/plugs.vim
 endif
 
@@ -135,22 +134,11 @@ if has('clipboard')
   endif
 endif
 
-" use plain status for Ninja
-let $NINJA_STATUS='%u/%r/%f %o'
+" remove colors from $NINJA_STATUS output
+let $NINJA_STATUS = '%u/%r/%f %o '
 
 " clear search pattern (useful for reloads)
-let @/ = ""
-
-" highlight version control conflict markers
-match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
-
-" Highlight Interesting Words
-hi def InterestingWord1 ctermbg=214 ctermfg=16 guibg=#ffa724 guifg=#000000
-hi def InterestingWord2 ctermbg=154 ctermfg=16 guibg=#aeee00 guifg=#000000
-hi def InterestingWord3 ctermbg=121 ctermfg=16 guibg=#8cffba guifg=#000000
-hi def InterestingWord4 ctermbg=137 ctermfg=16 guibg=#b88853 guifg=#000000
-hi def InterestingWord5 ctermbg=211 ctermfg=16 guibg=#ff9eb8 guifg=#000000
-hi def InterestingWord6 ctermbg=195 ctermfg=16 guibg=#ff2c4b guifg=#000000
+let @/ = ''
 
 " automatically delete trailing whitespace
 augroup wsbutler
@@ -168,15 +156,15 @@ augroup END
 " automatically resize splits when vim is resized.
 augroup resize_trigger
   au!
-  au VimResized * exe "normal! \<C-W>="
+  au VimResized * exe 'normal! \<C-W>='
 augroup END
 
 " automatically return to last editing point
 augroup resume_edit
   au!
   au BufReadPost *
-            \ if line("'\"") > 0 && line("'\"") <= line("$") |
-            \   exe "normal! g`\"" |
+            \ if line("'\'") > 0 && line("'\'") <= line('$') |
+            \   exe "normal! g`\'" |
             \ endif
 augroup END
 
@@ -259,6 +247,10 @@ nnoremap k gk
 nnoremap gj j
 nnoremap gk k
 
+" run make
+nnoremap <C-CR> :make<CR>
+inoremap <C-CR> <C-o>:make<CR>
+
 " easier window navigation
 noremap <c-j> <c-w>j
 noremap <c-k> <c-w>k
@@ -282,6 +274,9 @@ nnoremap <Space>, #``cgN<ESC>
 
 noremap <Space>pp :setlocal paste!<CR>
 noremap <Space>ss :setlocal spell!<CR>
+
+" highlight version control conflict markers
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 noremap <Space>fc /\v^[<\|=>]{7}( .*\|$)<CR>
 
 if has('terminal') || has('nvim')
@@ -298,10 +293,11 @@ vnoremap < <gv
 set background=dark
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
+let g:gruvbox_improved_warnings = 1
 
 if !has('gui_running')
-  if !($TERM == "linux" || $OLDTERM == "putty-256color") && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
-    if $TERM_PROGRAM != "Apple_Terminal"
+  if !($TERM ==# 'linux' || $OLDTERM ==# 'putty-256color') && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
+    if $TERM_PROGRAM !=# 'Apple_Terminal'
       set termguicolors
     endif
     if !has('nvim')
@@ -310,6 +306,7 @@ if !has('gui_running')
       set t_se=[27m
       set t_ZH=[3m
       set t_ZR=[23m
+      let &t_ut = ''
       let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
       let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
       let &t_SI = "\<Esc>[5 q"
@@ -371,6 +368,7 @@ set cinoptions+=w1     " ...but ignore whitespace after the open paren
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
+let g:cpp_concepts_highlight = 1
 
 " Rainbow delimiters
 let g:rainbow_active = 1
@@ -426,18 +424,13 @@ nnoremap <Space>h :Helptags<cr>
 nnoremap <space>\\ :Commands<cr>
 nnoremap <space>a :Rg<space>
 
-" vim-lsp-cxx-highlight
-if !has('nvim')
-  let g:lsp_cxx_hl_use_text_props = 1
-endif
-
 " Read local machine settings
-if filereadable(expand("~/.vim/local/vimrc.vim"))
+if filereadable(expand('~/.vim/local/vimrc.vim'))
   so ~/.lvimrc
 endif
 
 " Read project specific settings from current directory
-if filereadable(".project.vim")
+if filereadable('.project.vim')
   so .project.vim
 endif
 
