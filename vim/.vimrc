@@ -13,7 +13,7 @@ endif
 " Plugins
 call plug#begin('~/.vim/plugged')
 
-Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'jseba/vim-cpp-enhanced-highlight'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'airblade/vim-gitgutter'
 Plug 'luochen1990/rainbow'
@@ -368,7 +368,7 @@ set cinoptions+=w1     " ...but ignore whitespace after the open paren
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
-let g:cpp_concepts_highlight = 1
+let g:cpp_concepts_highlight = 2
 
 " Rainbow delimiters
 let g:rainbow_active = 1
