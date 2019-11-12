@@ -14,6 +14,7 @@ endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'jseba/vim-cpp-enhanced-highlight'
+Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'airblade/vim-gitgutter'
 Plug 'luochen1990/rainbow'
@@ -22,9 +23,9 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-abolish'
-Plug 'romainl/vim-qf'
 Plug 'haya14busa/is.vim'
 Plug 'morhetz/gruvbox'
+Plug 'nlknguyen/PaperColor-theme'
 Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': './install --bin' }
@@ -143,8 +144,10 @@ let @/ = ''
 " automatically delete trailing whitespace
 augroup wsbutler
   au!
+  au BufWrite *.c :call helpers#delete_trailing_whitespace()
   au BufWrite *.cpp :call helpers#delete_trailing_whitespace()
   au BufWrite *.h :call helpers#delete_trailing_whitespace()
+  au BufWrite *.hpp :call helpers#delete_trailing_whitespace()
 augroup END
 
 " automatically set the cursor to first line when editing a git commit message
@@ -277,7 +280,7 @@ noremap <Space>ss :setlocal spell!<CR>
 
 " highlight version control conflict markers
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
-noremap <Space>fc /\v^[<\|=>]{7}( .*\|$)<CR>
+noremap <Space>c /\v^[<\|=>]{7}( .*\|$)<CR>
 
 if has('terminal') || has('nvim')
   tnoremap <C-j> <C-w>j
@@ -294,6 +297,16 @@ set background=dark
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
 let g:gruvbox_improved_warnings = 1
+let g:PaperColor_Theme_Options = {
+            \   'language': {
+            \     'cpp': {
+            \       'highlight_standard_library': 1,
+            \     },
+            \     'c': {
+            \       'highlight_builtins': 1,
+            \     },
+            \   },
+            \ }
 
 if !has('gui_running')
   if !($TERM ==# 'linux' || $OLDTERM ==# 'putty-256color') && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
@@ -330,13 +343,13 @@ else
   set guioptions+=c
 endif
 
-colorscheme gruvbox
+colorscheme PaperColor
 
 " statusline setup
 set laststatus=2
 set noshowmode
 let g:lightline = {
-            \ 'colorscheme': 'one',
+            \ 'colorscheme': 'PaperColor',
             \ 'active': {
             \   'left': [[ 'mode', 'paste' ],
             \            [ 'readonly', 'modified', 'filename' ]],
@@ -354,6 +367,12 @@ let g:lightline = {
             \ },
             \ }
 
+" gitgutter
+let g:gitgutter_map_keys = 0
+if executable('rg')
+    let g:gitgutter_grep = 'rg --color never'
+endif
+
 " Tags
 set tags=./tags;./TAGS
 set tagcase=smart
@@ -369,6 +388,17 @@ let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
 let g:cpp_concepts_highlight = 2
+
+" ClangFormat
+let g:clang_format#code_style = 'LLVM'
+let g:clang_format#detect_style = 1
+let g:clang_format#auto_formatexpr = 1
+augroup clangformatexpr
+  au!
+  au FileType c,cpp :set textwidth=0
+  au BufWritePost *.cpp :ClangFormat
+  au BufWritePost *.hpp :ClangFormat
+augroup END
 
 " Rainbow delimiters
 let g:rainbow_active = 1
