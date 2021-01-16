@@ -12,7 +12,6 @@ STOWED_DIRS=( alacritty     \
               emacs         \
               fonts         \
               git           \
-              herbstluft    \
               i3            \
               kitty         \
               nvim          \
@@ -20,7 +19,6 @@ STOWED_DIRS=( alacritty     \
               rofi          \
               terminfo      \
               tmux          \
-              urxvt         \
               vim           \
               xorg          \
               zsh           \

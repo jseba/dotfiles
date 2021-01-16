@@ -110,7 +110,7 @@
   enabled = true
 
 [user]
-  name = Josh Seba
+	name = Josh Seba
   email = sebajosh@outlook.com
 
 [include]
