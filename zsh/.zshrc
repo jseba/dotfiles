@@ -329,6 +329,16 @@ alias rsync-mv="rsync -avz --progress -h --remove-source-files"
 alias rsync-up="rsync -avzu --progress -h"
 alias rsync-sync="rsync -avzu --delete --progress -h"
 
+# cat images to the terminal
+alias icat="kitty +kitten icat"
+
+# better cat
+if command -v bat &>/dev/null; then
+    alias cat="bat"
+else
+    unalias cat
+fi
+
 # wrapper functions
 alias tmux=_tmux_wrapper
 alias man=_man_colored
