@@ -17,30 +17,6 @@
     "list.insertMappings": {
         "<C-c>": "do:exit",
         "<C-g>": "do:exit"
-    },
-
-    "languageserver": {
-        "ccls": {
-            "command": "ccls",
-            "args": ["--log-file=/tmp/ccls.log"],
-            "filetypes": ["c", "cpp"],
-            "trace.server": "verbose",
-            "rootPatterns": [ ".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/" ],
-            "initializationOptions": {
-                "highlight": {
-                    "lsRanges": true
-                },
-                "cache": {
-                    "directory": ".ccls-cache"
-                },
-                "completion": {
-                    "enableSnippets": false
-                },
-                "index": {
-                    "comments": 2
-                }
-            }
-        }
     }
 }
 
