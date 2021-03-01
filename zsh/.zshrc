@@ -4,6 +4,9 @@
 #
 ############################
 
+# make path a unique array
+typeset -u path
+
 # set the completion cache file location
 export ZSH_COMPDUMP="$ZSH"/.zcompdump
 
@@ -39,6 +42,12 @@ export HISTFILE="$HOME/.zsh_history"
 
 # amount of history to save (lots)
 export HISTSIZE=30000
+
+# Go path
+export GOPATH="$HOME/go"
+
+# add Go installation to path
+export PATH="$PATH:/usr/local/go/bin"
 
 ############################
 #
