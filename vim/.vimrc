@@ -71,7 +71,7 @@ set incsearch
 " set lazyredraw
 set linespace=0
 set list
-set listchars=tab:>>,trail:-,extends:#,nbsp:.
+set listchars=tab:\ \ ,trail:-,extends:#,nbsp:.
 set modeline
 set mouse=a
 set mousehide
