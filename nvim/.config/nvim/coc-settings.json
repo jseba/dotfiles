@@ -1,1 +1,13 @@
-../../../vim/.vim/coc-settings.json
+{
+    "suggest.floatEnable": false,
+    "languageserver": {
+        "golang": {
+            "command": "gopls",
+            "rootPatterns": ["go.mod", ".git/", ".hg/"],
+            "filetypes": ["go"],
+            "initializationOptions": {
+                "usePlaceholders": true
+            }
+        }
+    }
+}
