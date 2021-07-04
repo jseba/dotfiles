@@ -110,7 +110,7 @@
   enabled = true
 
 [user]
-	name = Josh Seba
+  name = Josh Seba
   email = sebajosh@outlook.com
 
 [include]
@@ -118,3 +118,6 @@
 
 [http]
   sslNoVerify = true
+
+[pull]
+  rebase = true
