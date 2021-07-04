@@ -13,24 +13,17 @@ endif
 " Plugins
 call plug#begin('~/.vim/plugged')
 
-Plug 'jseba/vim-cpp-enhanced-highlight'
-Plug 'rhysd/vim-clang-format'
-Plug 'pboettch/vim-cmake-syntax'
 Plug 'airblade/vim-gitgutter'
 Plug 'luochen1990/rainbow'
-Plug 'tpope/vim-git'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-abolish'
 Plug 'haya14busa/is.vim'
-Plug 'morhetz/gruvbox'
 Plug 'nlknguyen/PaperColor-theme'
 Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': './install --bin' }
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-Plug 'fatih/vim-go'
 
 " Local plugins
 if filereadable(expand('$HOME/.vim/local/plugs.vim'))
@@ -389,17 +382,6 @@ let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
 let g:cpp_concepts_highlight = 2
 
-" ClangFormat
-let g:clang_format#code_style = 'LLVM'
-let g:clang_format#detect_style = 1
-let g:clang_format#auto_formatexpr = 1
-augroup clangformatexpr
-  au!
-  au FileType c,cpp :set textwidth=0
-  au BufWritePost *.cpp :ClangFormat
-  au BufWritePost *.hpp :ClangFormat
-augroup END
-
 " Rainbow delimiters
 let g:rainbow_active = 1
 let g:rainbow_conf = {
@@ -453,47 +435,6 @@ nnoremap <Space>t :Tags<cr>
 nnoremap <Space>h :Helptags<cr>
 nnoremap <space>\\ :Commands<cr>
 nnoremap <space>a :Rg<space>
-
-" coc.nvim
-augroup coc
-  autocmd!
-
-  autocmd CursorHold * silent call CocActionAsync('highlight')
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup END
-
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
-
-inoremap <silent><expr> <C-Space> coc#refresh()
-
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-nnoremap <Space>k :call CocActionAsync('doHover')<CR>
-if has('nvim-0.4.0') || has('patch-8.2.0750')
-    nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-    nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-    inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<C-r>=coc#float#scroll(1)\<CR>" : "\<Right>"
-    inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<C-r>=coc#float#scroll(0)\<CR>" : "\<Left>"
-endif
-
-nnoremap <silent><nowait> <leader>a :<C-u>CocList diagnostics<CR>
-nnoremap <silent><nowait> <leader>e :<C-u>CocList extensions<CR>
-nnoremap <silent><nowait> <leader>c :<C-u>CocList commands<CR>
-nnoremap <silent><nowait> <leader>o :<C-u>CocList outline<CR>
-nnoremap <silent><nowait> <leader>s :<C-u>CocList -I symbols<CR>
-nnoremap <silent><nowait> <leader>p :<C-u>CocListResume<CR>
-
-command! -nargs=0 Format :call CocAction('format')
 
 " Read local machine settings
 if filereadable(expand('~/.vim/local/vimrc.vim'))
