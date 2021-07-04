@@ -1,6 +1,10 @@
 " vim: ff=unix fenc=utf-8
 scriptencoding utf-8
 
+" disable netrw
+let g:loaded_netrw = 1
+let g:loaded_netrwPlugin = 1
+
 " Plugins
 call plug#begin(stdpath('cache') . '/plugged')
 Plug 'neovim/nvim-lspconfig'
