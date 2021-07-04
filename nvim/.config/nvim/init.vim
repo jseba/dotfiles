@@ -3,22 +3,28 @@ scriptencoding utf-8
 
 " Plugins
 call plug#begin(stdpath('cache') . '/plugged')
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/lsp_extensions.nvim'
+Plug 'nvim-lua/completion-nvim'
+Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter'
+
+Plug 'itchyny/lightline.vim'
+Plug 'haya14busa/is.vim'
+Plug 'luochen1990/rainbow'
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', {'do': './install --bin'}
+Plug 'lewis6991/gitsigns.nvim', {'branch': 'main'}
+
 Plug 'jseba/vim-cpp-enhanced-highlight'
 Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
-Plug 'lewis6991/gitsigns.nvim', {'branch': 'main'}
-Plug 'luochen1990/rainbow'
-Plug 'haya14busa/is.vim'
+Plug 'fatih/vim-go'
+Plug 'rust-lang/rust.vim'
+
 Plug 'morhetz/gruvbox'
 Plug 'nlknguyen/PaperColor-theme'
 Plug 'sainnhe/sonokai'
-Plug 'itchyny/lightline.vim'
-Plug 'junegunn/fzf.vim'
-Plug 'junegunn/fzf', {'do': './install --bin'}
-Plug 'fatih/vim-go'
 call plug#end()
 
 " Load Lua configuration
@@ -37,7 +43,7 @@ set belloff=all
 set breakindent
 set cmdheight=2
 set complete=.,w,b,u,t,d
-set completeopt=longest,menuone
+set completeopt=longest,menuone,noinsert
 set diffopt+=vertical
 set expandtab
 set fillchars=diff:?,vert:¦
@@ -249,6 +255,10 @@ endif
 vnoremap > >gv
 vnoremap < <gv
 
+" use ' for leader and \ for marks
+nnoremap \ '
+let mapleader = "'"
+
 " Color scheme
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
@@ -377,33 +387,3 @@ nnoremap <Space>h :Helptags<cr>
 nnoremap <space>\\ :Commands<cr>
 nnoremap <space>a :Rg<space>
 
-" coc.nvim
-augroup coc
-  autocmd!
-
-  autocmd CursorHold * silent call CocActionAsync('highlight')
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup END
-
-inoremap <silent><expr> <C-Space> coc#refresh()
-
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-if has('nvim-0.4.0') || has('patch-8.2.0750')
-    nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-    nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-    inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<C-r>=coc#float#scroll(1)\<CR>" : "\<Right>"
-    inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<C-r>=coc#float#scroll(0)\<CR>" : "\<Left>"
-endif
-
-nnoremap <silent><nowait> <leader>a :<C-u>CocList diagnostics<CR>
-nnoremap <silent><nowait> <leader>e :<C-u>CocList extensions<CR>
-nnoremap <silent><nowait> <leader>c :<C-u>CocList commands<CR>
-nnoremap <silent><nowait> <leader>o :<C-u>CocList outline<CR>
-nnoremap <silent><nowait> <leader>s :<C-u>CocList -I symbols<CR>
-nnoremap <silent><nowait> <leader>p :<C-u>CocListResume<CR>
-
-command! -nargs=0 Format :call CocAction('format')
