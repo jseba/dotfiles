@@ -1,0 +1,32 @@
+live_config_reload: true
+
+font:
+    normal:
+        family: Fira Code
+    size: 14.0
+
+colors:
+    primary:
+        background: '0x0e1011'
+        foreground: '0x7c8fa4'
+
+    normal:
+        black:      '0x002831'
+        red:        '0xe63853'
+        green:      '0x5eb83c'
+        yellow:     '0xa57706'
+        blue:       '0x359ddf'
+        magenta:    '0xd75cff'
+        cyan:       '0x4b73a2'
+        white:      '0xdcdcdc'
+
+    bright:
+        black:      '0x001e27'
+        red:        '0xe1003f'
+        green:      '0x1d9000'
+        yellow:     '0xcd9409'
+        blue:       '0x006fc0'
+        magenta:    '0xa200da'
+        cyan:       '0x005794'
+        white:      '0xe2e2e2'
+
