@@ -150,7 +150,25 @@ augroup resume_edit
 augroup END
 
 " don't close window when deleting a buffer
-command! Bclose call helpers#bufcloseit()
+function! <SID>BufCloseIt()
+    let l:cbufnr = bufnr("%")
+    let l:abufnr = bufnr("#")
+
+    if buflisted(l:abufnr)
+        buffer #
+    else
+        bnext
+    endif
+
+    if bufnr("%") == l:cbufnr
+        new
+    endif
+
+    if buflisted(l:cbufnr)
+        execute("bdelete! ".l:cbufnr)
+    endif
+endfunction
+command! Bclose call <SID>BufCloseIt()
 
 " disable paren matching in TeX, it's really slow
 augroup tex_nomatchparen
@@ -184,7 +202,7 @@ nnoremap S i<cr><esc>^mwgk:silent! s/\v +$//<cr>:silent! noh<cr>`w
 nnoremap vv ^vg_
 
 " quick access to common files
-nnoremap <Space>ve :edit $HOME/.vimrc<CR>
+nnoremap <Space>ve :edit $MYVIMRC<CR>
 
 " center search matches after jumping
 nnoremap n nzzzv
