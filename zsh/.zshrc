@@ -46,8 +46,11 @@ export HISTSIZE=30000
 # Go path
 export GOPATH="$HOME/go"
 
+# set Go default version
+export GOVER="1.17"
+
 # add Go installation to path
-export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:/usr/local/go/$GOVER/bin:$GOPATH/bin"
 
 ############################
 #
@@ -57,9 +60,6 @@ export PATH="$PATH:/usr/local/go/bin"
 
 # add functions to fpath
 fpath=($ZSH/functions $ZSH/completions $fpath)
-
-# list of SSH identities
-ssh_identities=()
 
 ############################
 #
@@ -422,16 +422,19 @@ ${LAMBDA}\
 #
 ############################
 
+# list of additional SSH identities
+ssh_identities=(id_rsa)
+
 # load any existing config
 if [[ -f "$SSH_ENV" ]]; then
     source "$SSH_ENV"
 fi
 
 # check if ssh-agent is already running
-if grep ssh-agent =(ps x) | grep -q "$SSH_AGENT_PID"; then
+if ! grep -q -- "$SSH_AGENT_PID ssh-agent" =(ps -U $LOGNAME -o pid,ucomm); then
     # start ssh-agent and reload config
-    ssh-agent -s | sed -e '/^echo@/d' >! "$SSH_ENV"
+    eval "$(ssh-agent -s | sed -e '/^echo /d' | tee "$SSH_ENV")"
     chmod 0600 "$SSH_ENV"
-    ssh-add $SSH/${^ssh_identities}
+    ssh-add $SSH/${^ssh_identities[@]}
 fi
 
