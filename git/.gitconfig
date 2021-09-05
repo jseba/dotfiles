@@ -28,10 +28,10 @@
   b = branch -v             # branch verbose
 
   # commit
-  c  = commit -m            # commit with message
-  ca = commit -a            # commit all
-  ci = commit               # normal commit
-  amend = commit --amend    # amend previous commit
+  c  = commit -m                        # commit with message
+  ca = commit -a                        # commit all
+  ci = commit                           # normal commit
+  amend = commit --amend --date=now     # amend previous commit
 
   # checkout
   co = checkout             # normal checkout
