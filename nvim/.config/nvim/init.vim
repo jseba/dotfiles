@@ -12,12 +12,11 @@ Plug 'nvim-lua/lsp_extensions.nvim'
 Plug 'nvim-lua/completion-nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-telescope/telescope.nvim'
 
 Plug 'itchyny/lightline.vim'
 Plug 'haya14busa/is.vim'
 Plug 'luochen1990/rainbow'
-Plug 'junegunn/fzf.vim'
-Plug 'junegunn/fzf', {'do': './install --bin'}
 Plug 'lewis6991/gitsigns.nvim', {'branch': 'main'}
 
 Plug 'jseba/vim-cpp-enhanced-highlight'
@@ -369,43 +368,14 @@ let g:rainbow_conf = {
             \   }
             \ }
 
-" FZF
-" Augment Rg command with fzf#vim#with_preview
-command! -bang -nargs=* Rg
-      \ call fzf#vim#grep(
-      \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
-      \   <bang>0 ? fzf#vim#with_preview('up:60%')
-      \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-      \   <bang>0)
-
-" Prefer fd-find over standard find
-if executable('fd')
-  let $FZF_DEFAULT_COMMAND='fd --type f --hidden'
-endif
-
-let g:fzf_files_option = '--preview "cat {} 2>/dev/null | head -'.&lines.'"'
-let g:fzf_layout = { 'down': '~20%' }
-let g:fzf_colors = {
-      \ 'fg':       ['fg', 'Normal'],
-      \ 'bg':       ['bg', 'none'],
-      \ 'hl':       ['fg', 'Comment'],
-      \ 'fg+':      ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-      \ 'bg+':      ['bg', 'CursorLine', 'CursorColumn', 'Normal'],
-      \ 'hl+':      ['fg', 'Statement'],
-      \ 'info':     ['fg', 'PreProc'],
-      \ 'prompt':   ['fg', 'Conditional'],
-      \ 'pointer':  ['fg', 'Exception'],
-      \ 'marker':   ['fg', 'Keyword'],
-      \ 'spinner':  ['fg', 'Label'],
-      \ 'header':   ['fg', 'Comment']
-      \ }
-nnoremap <Space>f :Files<cr>
-nnoremap <Space><Space> :GFiles<cr>
-nnoremap <Space>g :GFiles?<cr>
-nnoremap <Space>l :Commits<cr>
-nnoremap <Space>b :Buffer<cr>
-nnoremap <Space>t :Tags<cr>
-nnoremap <Space>h :Helptags<cr>
-nnoremap <space>\\ :Commands<cr>
-nnoremap <space>a :Rg<space>
+" Telescope
+nnoremap <Space>f <cmd>Telescope find_files<cr>
+nnoremap <Space><Space> <cmd>Telescope git_files<cr>
+nnoremap <Space>g <cmd>Telescope git_status
+nnoremap <Space>l <cmd>Telescope git_commits<cr>
+nnoremap <Space>b <cmd>Telescope buffers<cr>
+nnoremap <Space>t <cmd>Telescope tags<cr>
+nnoremap <Space>h <cmd>Telescope help_tags<cr>
+nnoremap <space>\\ <cmd>Telescope commands<cr>
+nnoremap <space>a <cmd>Telescope live_grep<cr>
 
