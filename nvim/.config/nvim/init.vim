@@ -22,6 +22,7 @@ Plug 'lewis6991/gitsigns.nvim', {'branch': 'main'}
 Plug 'jseba/vim-cpp-enhanced-highlight'
 Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
+Plug 'dag/vim-fish'
 Plug 'fatih/vim-go'
 Plug 'rust-lang/rust.vim'
 
