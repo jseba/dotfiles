@@ -76,6 +76,11 @@ else
     unalias cat
 end
 
+# quit using sudo
+if command -sq doas
+    alias sudo="doas"
+end
+
 ############################
 #
 # Keybindings

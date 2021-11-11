@@ -8,5 +8,5 @@ function man -d "colorized man pages"
     set -lx LESS_TERMCAP_us (printf "\e[1;32m")
     set -lx PAGER (which less)
     set -lx _NROFF_U 1
-    command man "$argv"
+    command man $argv
 end
