@@ -23,6 +23,7 @@ Plug 'jseba/vim-cpp-enhanced-highlight'
 Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'dag/vim-fish'
+Plug 'saltstack/salt-vim'
 Plug 'fatih/vim-go'
 Plug 'rust-lang/rust.vim'
 
