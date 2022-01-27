@@ -46,7 +46,7 @@
   last = diff HEAD^         # diff with last commit
 
   # fetch
-  fa = fetch --all
+  fa = fetch --all --prune
 
   # log
   l = log --graph --date=short
