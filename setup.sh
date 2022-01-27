@@ -7,6 +7,7 @@ type stow >/dev/null 2>&1 || { echo "Stow not found"; exit 1; }
 STOWED_DIRS=( alacritty     \
               bin           \
               dircolors     \
+              fish          \
               fonts         \
               git           \
               i3            \
