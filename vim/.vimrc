@@ -13,6 +13,9 @@ endif
 " Plugins
 call plug#begin('~/.vim/plugged')
 
+Plug 'hashivim/vim-vagrant'
+Plug 'dag/vim-fish'
+Plug 'saltstack/salt-vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'luochen1990/rainbow'
 Plug 'tpope/vim-commentary'
