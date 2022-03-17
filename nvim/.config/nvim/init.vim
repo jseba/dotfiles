@@ -1,4 +1,3 @@
-" vim: ff=unix fenc=utf-8
 scriptencoding utf-8
 
 " disable netrw
@@ -7,9 +6,7 @@ let g:loaded_netrwPlugin = 1
 
 " Plugins
 call plug#begin(stdpath('cache') . '/plugged')
-Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/lsp_extensions.nvim'
-Plug 'nvim-lua/completion-nvim'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'nvim-telescope/telescope.nvim'
@@ -24,8 +21,6 @@ Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'dag/vim-fish'
 Plug 'saltstack/salt-vim'
-Plug 'fatih/vim-go'
-Plug 'rust-lang/rust.vim'
 
 Plug 'morhetz/gruvbox'
 Plug 'nlknguyen/PaperColor-theme'
@@ -381,3 +376,39 @@ nnoremap <Space>h <cmd>Telescope help_tags<cr>
 nnoremap <space>\\ <cmd>Telescope commands<cr>
 nnoremap <space>a <cmd>Telescope live_grep<cr>
 
+" coc.nvim
+set tagfunc=CocTagFunc
+
+inoremap <silent><expr> <C-Space> coc#refresh()
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<cr>\<C-r>=coc#on_enter()\<cr>"
+
+nnoremap <silent> K :call <SID>show_documentation()<cr>
+
+nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<C-r>=coc#float#scroll(1) : "\<Right>"
+inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<C-r>=coc#float#scroll(0) : "\<Left>"
+vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+
+nnoremap <silent><nowait> <leader>a :<C-u>CocList diagnostics<cr>
+nnoremap <silent><nowait> <leader>e :<C-u>CocList extensions<cr>
+nnoremap <silent><nowait> <leader>c :<C-u>CocList commands<cr>
+nnoremap <silent><nowait> <leader>o :<C-u>CocList outline<cr>
+nnoremap <silent><nowait> <leader>s :<C-u>CocList -I symbols<cr>
+
+augroup Coc
+    autocmd!
+    autocmd CursorHold * silent call CocActionAsync('highlight')
+    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup END
+
+function! s:show_documentation()
+    if (index(['vim', 'help'], &filetype) >= 0)
+        execute 'h '.expand('<cword>')
+    elseif (coc#rpc#ready())
+        call CocActionAsync('doHover')
+    else
+        execute '!' . &keywordprg . ' ' . expand('<cword>')
+    endif
+endfunction
