@@ -21,6 +21,7 @@ Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'dag/vim-fish'
 Plug 'saltstack/salt-vim'
+Plug 'fatih/vim-go'
 
 Plug 'morhetz/gruvbox'
 Plug 'nlknguyen/PaperColor-theme'
@@ -350,6 +351,15 @@ augroup clangformatexpr
   au BufWritePost *.cpp :ClangFormat
   au BufWritePost *.hpp :ClangFormat
 augroup END
+
+" Go
+let g:go_code_completion_enabled = 0
+let g:go_auto_type_info = 1
+let g:go_fmt_autosave = 1
+let g:go_imports_autosave = 1
+let g:go_doc_keywordprg_enabled = 0
+let g:go_metalinter_autosave = 0
+let g:go_def_mapping_enabled = 0
 
 " Rainbow delimiters
 let g:rainbow_active = 1
