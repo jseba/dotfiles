@@ -41,7 +41,7 @@ set -x HISTSIZE 30000
 set -x GOPATH "$HOME/go"
 
 # set Go default version
-set -x GOVER "1.17"
+set -x GOVER "1.18"
 
 # add Go installation to path
 set -x PATH $PATH /usr/local/go/$GOVER/bin $GOPATH/bin
