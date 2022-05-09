@@ -49,6 +49,9 @@ set -x PATH $PATH /usr/local/go/$GOVER/bin $GOPATH/bin
 # add Rust installation to path
 set -x PATH $PATH "$HOME/.cargo/bin"
 
+# add Doom bin to path
+set -x PATH $PATH "$HOME/.config/emacs/bin"
+
 ############################
 #
 # Aliases
