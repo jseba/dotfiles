@@ -1,4 +1,4 @@
-#include ".Xresources.d/wal"
+/*#include ".Xresources.d/wal"*/
 /*#include ".Xresources.d/urxvt"*/
 #include ".Xresources.d/xscreensaver"
 #include ".Xresources.d/xft"
