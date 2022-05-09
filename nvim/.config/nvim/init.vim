@@ -16,6 +16,7 @@ Plug 'haya14busa/is.vim'
 Plug 'luochen1990/rainbow'
 Plug 'lewis6991/gitsigns.nvim', {'branch': 'main'}
 
+Plug 'fatih/vim-go'
 Plug 'jseba/vim-cpp-enhanced-highlight'
 Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
@@ -359,7 +360,7 @@ let g:go_fmt_autosave = 1
 let g:go_imports_autosave = 1
 let g:go_doc_keywordprg_enabled = 0
 let g:go_metalinter_autosave = 0
-let g:go_def_mapping_enabled = 0
+let g:go_def_mapping_enabled = 1
 
 " Rainbow delimiters
 let g:rainbow_active = 1
@@ -387,8 +388,6 @@ nnoremap <space>\\ <cmd>Telescope commands<cr>
 nnoremap <space>a <cmd>Telescope live_grep<cr>
 
 " coc.nvim
-set tagfunc=CocTagFunc
-
 inoremap <silent><expr> <C-Space> coc#refresh()
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<cr>\<C-r>=coc#on_enter()\<cr>"
 
