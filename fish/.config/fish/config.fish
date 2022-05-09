@@ -46,6 +46,9 @@ set -x GOVER "1.18"
 # add Go installation to path
 set -x PATH $PATH /usr/local/go/$GOVER/bin $GOPATH/bin
 
+# add Rust installation to path
+set -x PATH $PATH "$HOME/.cargo/bin"
+
 ############################
 #
 # Aliases
