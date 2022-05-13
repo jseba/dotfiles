@@ -29,7 +29,7 @@
        vc-gutter
        vi-tilde-fringe
        ;;window-select
-       workspaces
+       ;;workspaces
        ;;zen
 
        :editor
@@ -43,7 +43,7 @@
        ;;objed
        ;;parinfer
        rotate-text
-       snippets
+       ;;snippets
        ;;word-wrap
 
        :emacs
