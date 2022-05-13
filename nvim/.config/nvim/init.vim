@@ -379,7 +379,7 @@ let g:rainbow_conf = {
 " Telescope
 nnoremap <Space>f <cmd>Telescope find_files<cr>
 nnoremap <Space><Space> <cmd>Telescope git_files<cr>
-nnoremap <Space>g <cmd>Telescope git_status
+nnoremap <Space>g <cmd>Telescope git_status<cr>
 nnoremap <Space>l <cmd>Telescope git_commits<cr>
 nnoremap <Space>b <cmd>Telescope buffers<cr>
 nnoremap <Space>t <cmd>Telescope tags<cr>
