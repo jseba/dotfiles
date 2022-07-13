@@ -16,6 +16,11 @@ call plug#begin('~/.vim/plugged')
 Plug 'hashivim/vim-vagrant'
 Plug 'dag/vim-fish'
 Plug 'saltstack/salt-vim'
+Plug 'fatih/vim-go'
+Plug 'jseba/vim-cpp-enhanced-highlight'
+Plug 'rhysd/vim-clang-format'
+Plug 'pboettch/vim-cmake-syntax'
+
 Plug 'airblade/vim-gitgutter'
 Plug 'luochen1990/rainbow'
 Plug 'tpope/vim-commentary'
@@ -23,8 +28,11 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-abolish'
 Plug 'haya14busa/is.vim'
+
 Plug 'nlknguyen/PaperColor-theme'
+Plug 'morhetz/gruvbox'
 Plug 'itchyny/lightline.vim'
+
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': './install --bin' }
 
@@ -45,16 +53,15 @@ filetype plugin indent on
 
 set autoindent
 set autowrite
+set background=dark
 set backspace=indent,eol,start
 set backup
-set backupdir=$HOME/.vim/tmp/backup
 set belloff=all
 set breakindent
 set cmdheight=2
 set complete=.,w,b,u,t,d
-set completeopt=longest,menuone
+set completeopt=longest,menuone,noinsert
 set diffopt+=vertical
-set directory=$HOME/.vim/tmp/swap
 set expandtab
 set fillchars=diff:?,vert:¦
 set formatoptions=qrn1j
@@ -64,6 +71,7 @@ set history=1000
 set hlsearch
 set ignorecase
 set incsearch
+set laststatus=2
 " set lazyredraw
 set linespace=0
 set list
@@ -90,7 +98,6 @@ set sidescrolloff=10
 set signcolumn=yes
 set smartcase
 set softtabstop=4
-set spellfile=$HOME/.vim/words.utf-8.add,$HOME/.vim/local/words.utf-8.add
 set splitbelow
 set splitright
 set synmaxcol=200
@@ -98,7 +105,6 @@ set tabstop=4
 set tags-=./tags tags-=./tags; tags^=./tags;
 set textwidth=140
 set title
-set undodir=$HOME/.vim/tmp/undo
 set undofile
 set updatetime=300
 set viminfo^=%
@@ -117,12 +123,6 @@ set wildignore+=*.DS_Store
 set wildignore+=*.luac,*.pyc
 set wildignore+=*.orig
 
-if has('win32')
-  set dictionary=
-else
-  set dictionary=/usr/share/dict/words
-endif
-
 if has('clipboard')
   if has ('unnamedplus')
     set clipboard=unnamed,unnamedplus
@@ -131,26 +131,33 @@ if has('clipboard')
   endif
 endif
 
+if exists('*mkdir')
+    let s:cachedir = expand('~').'/.cache/vim'
+    if !isdirectory(s:cachedir)
+        call mkdir(s:cachedir)
+    endif
+
+    let &backupdir = s:cachedir.'/backup'
+    if !isdirectory(&backupdir)
+        call mkdir(&backupdir)
+    endif
+
+    let &directory = s:cachedir.'/swap'
+    if !isdirectory(&directory)
+        call mkdir(&directory)
+    endif
+
+    let &undodir = s:cachedir.'/undo'
+    if !isdirectory(&undodir)
+        call mkdir(&undodir)
+    endif
+endif
+
 " remove colors from $NINJA_STATUS output
 let $NINJA_STATUS = '%u/%r/%f %o '
 
 " clear search pattern (useful for reloads)
 let @/ = ''
-
-" automatically delete trailing whitespace
-augroup wsbutler
-  au!
-  au BufWrite *.c :call helpers#delete_trailing_whitespace()
-  au BufWrite *.cpp :call helpers#delete_trailing_whitespace()
-  au BufWrite *.h :call helpers#delete_trailing_whitespace()
-  au BufWrite *.hpp :call helpers#delete_trailing_whitespace()
-augroup END
-
-" automatically set the cursor to first line when editing a git commit message
-augroup gitcommit_sob
-  au!
-  au FileType gitcommit au! BufEnter COMMIT_EDITMSG call setpos('.', [0, 1, 1, 0])
-augroup END
 
 " automatically resize splits when vim is resized.
 augroup resize_trigger
@@ -168,7 +175,25 @@ augroup resume_edit
 augroup END
 
 " don't close window when deleting a buffer
-command! Bclose call helpers#bufcloseit()
+function! <SID>BufCloseIt()
+    let l:cbufnr = bufnr("%")
+    let l:abufnr = bufnr("#")
+
+    if buflisted(l:abufnr)
+        buffer #
+    else
+        bnext
+    endif
+
+    if bufnr("%") == l:cbufnr
+        new
+    endif
+
+    if buflisted(l:cbufnr)
+        execute("bdelete! ".l:cbufnr)
+    endif
+endfunction
+command! Bclose call <SID>BufCloseIt()
 
 " disable paren matching in TeX, it's really slow
 augroup tex_nomatchparen
@@ -203,11 +228,10 @@ nnoremap vv ^vg_
 
 " quick access to common files
 nnoremap <Space>ve :edit $HOME/.vimrc<CR>
-nnoremap <Space>vd :edit $HOME/.vim/words<CR>
 nnoremap <Space>vg :edit $HOME/.gitconfig<CR>
+nnoremap <Space>vf :edit $HOME/.config/fish/config.fish<CR>
 nnoremap <Space>vz :edit $HOME/.zshrc<CR>
 nnoremap <Space>vt :edit $HOME/.tmux.conf<CR>
-nnoremap <Space>vl :edit $HOME/.vim/coc-settings.json<CR>
 
 " center search matches after jumping
 nnoremap n nzzzv
@@ -278,7 +302,7 @@ noremap <Space>ss :setlocal spell!<CR>
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 noremap <Space>c /\v^[<\|=>]{7}( .*\|$)<CR>
 
-if has('terminal') || has('nvim')
+if has('terminal')
   tnoremap <C-j> <C-w>j
   tnoremap <C-k> <C-w>k
   tnoremap <C-l> <C-w>l
@@ -288,8 +312,11 @@ endif
 vnoremap > >gv
 vnoremap < <gv
 
+" use ' for leader and \ for marks
+nnoremap \ '
+let mapleader = "'"
+
 " Color scheme
-set background=dark
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic = 1
 let g:gruvbox_improved_warnings = 1
@@ -305,23 +332,22 @@ let g:PaperColor_Theme_Options = {
             \ }
 
 if !has('gui_running')
-  if !($TERM ==# 'linux' || $OLDTERM ==# 'putty-256color') && (has('termguicolors') && (has('nvim') || v:version >= 800 || has('patch1942')))
+  if !($TERM ==# 'linux' || $OLDTERM ==# 'putty-256color') && (has('termguicolors') && (v:version >= 800 || has('patch1942')))
     if $TERM_PROGRAM !=# 'Apple_Terminal'
       set termguicolors
     endif
-    if !has('nvim')
-      set t_Co=256
-      set t_so=[7m
-      set t_se=[27m
-      set t_ZH=[3m
-      set t_ZR=[23m
-      let &t_ut = ''
-      let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-      let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-      let &t_SI = "\<Esc>[5 q"
-      let &t_SR = "\<Esc>[5 q"
-      let &t_EI = "\<Esc>[2 q"
-    endif
+
+    set t_Co=256
+    set t_so=[7m
+    set t_se=[27m
+    set t_ZH=[3m
+    set t_ZR=[23m
+    let &t_ut = ''
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    let &t_SI = "\<Esc>[5 q"
+    let &t_SR = "\<Esc>[5 q"
+    let &t_EI = "\<Esc>[2 q"
   endif
 else
   if !has('gui_macvim')
@@ -339,13 +365,11 @@ else
   set guioptions+=c
 endif
 
-colorscheme PaperColor
+colorscheme gruvbox
 
 " statusline setup
-set laststatus=2
-set noshowmode
 let g:lightline = {
-            \ 'colorscheme': 'PaperColor',
+            \ 'colorscheme': 'jellybeans',
             \ 'active': {
             \   'left': [[ 'mode', 'paste' ],
             \            [ 'readonly', 'modified', 'filename' ]],
@@ -384,6 +408,47 @@ let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
 let g:cpp_concepts_highlight = 2
+
+" ClangFormat
+let g:clang_format#code_style = 'LLVM'
+let g:clang_format#detect_style = 1
+let g:clang_format#auto_formatexpr = 1
+augroup clangformatexpr
+  au!
+  au FileType c,cpp :set textwidth=0
+  au BufWritePost *.cpp :ClangFormat
+  au BufWritePost *.hpp :ClangFormat
+augroup END
+
+" Go
+let g:go_code_completion_enabled = 1
+let g:go_auto_type_info = 1
+let g:go_auto_sameids = 0
+let g:go_fmt_autosave = 1
+let g:go_imports_autosave = 1
+let g:go_doc_keywordprg_enabled = 0
+let g:go_doc_balloon = 1
+let g:go_metalinter_autosave = 0
+let g:go_def_mapping_enabled = 1
+let g:go_diagnostics_level = 2
+let g:go_template_autocreate = 0
+let g:go_highlight_operators = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_parameters = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_format_strings = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_highlight_variable_assignments = 1
+let g:go_highlight_diagnostic_errors = 1
+let g:go_highlight_diagnostic_warnings = 1
+
+augroup golang
+  au!
+  au FileType go nnoremap <buffer> gK :GoDoc<cr>
+augroup END
 
 " Rainbow delimiters
 let g:rainbow_active = 1
