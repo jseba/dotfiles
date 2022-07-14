@@ -56,6 +56,9 @@
   shortnocolor = log --pretty=format:\"%h %cr %cn %s\"
   slog = log --pretty=format:\"-------------------------------------------------------------------------%n%C(yellow)%h%Creset | %C(magenta)%an%Creset | %C(cyan)%ad%Creset |%C(green)%d%Creset%n%s%n%n%b\" --name-status
 
+  # push
+  promote = push --set-upstream origin
+  ph = push --set-upstream origin HEAD
 
   # rebase
   rc = rebase --continue    # continue rebase
