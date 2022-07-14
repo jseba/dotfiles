@@ -6,7 +6,6 @@ let g:loaded_netrwPlugin = 1
 
 " Plugins
 call plug#begin(stdpath('cache') . '/plugged')
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'nvim-telescope/telescope.nvim'
@@ -22,7 +21,6 @@ Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'dag/vim-fish'
 Plug 'saltstack/salt-vim'
-Plug 'fatih/vim-go'
 
 Plug 'morhetz/gruvbox'
 Plug 'nlknguyen/PaperColor-theme'
@@ -302,17 +300,11 @@ if !has('gui_running')
   endif
 endif
 
-colorscheme sonokai
-
-" gitgutter
-let g:gitgutter_map_keys = 0
-if executable('rg')
-    let g:gitgutter_grep = 'rg --color never'
-endif
+colorscheme gruvbox
 
 " lightline
 let g:lightline = {
-            \ 'colorscheme': 'PaperColor',
+            \ 'colorscheme': 'jellybeans',
             \ 'active': {
             \   'left': [[ 'mode', 'paste' ],
             \            [ 'readonly', 'modified', 'filename' ]],
@@ -354,13 +346,22 @@ augroup clangformatexpr
 augroup END
 
 " Go
-let g:go_code_completion_enabled = 0
+let g:go_code_completion_enabled = 1
 let g:go_auto_type_info = 1
+let g:go_auto_sameids = 0
 let g:go_fmt_autosave = 1
 let g:go_imports_autosave = 1
 let g:go_doc_keywordprg_enabled = 0
+let g:go_doc_balloon = 1
 let g:go_metalinter_autosave = 0
 let g:go_def_mapping_enabled = 1
+let g:go_diagnostics_level = 2
+let g:go_template_autocreate = 0
+
+augroup golang
+  au!
+  au FileType go nnoremap <buffer> gK :GoDoc<cr>
+augroup END
 
 " Rainbow delimiters
 let g:rainbow_active = 1
@@ -377,47 +378,12 @@ let g:rainbow_conf = {
             \ }
 
 " Telescope
-nnoremap <Space>f <cmd>Telescope find_files<cr>
-nnoremap <Space><Space> <cmd>Telescope git_files<cr>
-nnoremap <Space>g <cmd>Telescope git_status<cr>
-nnoremap <Space>l <cmd>Telescope git_commits<cr>
-nnoremap <Space>b <cmd>Telescope buffers<cr>
-nnoremap <Space>t <cmd>Telescope tags<cr>
-nnoremap <Space>h <cmd>Telescope help_tags<cr>
-nnoremap <space>\\ <cmd>Telescope commands<cr>
-nnoremap <space>a <cmd>Telescope live_grep<cr>
-
-" coc.nvim
-inoremap <silent><expr> <C-Space> coc#refresh()
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<cr>\<C-r>=coc#on_enter()\<cr>"
-
-nnoremap <silent> K :call <SID>show_documentation()<cr>
-
-nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<C-r>=coc#float#scroll(1) : "\<Right>"
-inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<C-r>=coc#float#scroll(0) : "\<Left>"
-vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-
-nnoremap <silent><nowait> <leader>a :<C-u>CocList diagnostics<cr>
-nnoremap <silent><nowait> <leader>e :<C-u>CocList extensions<cr>
-nnoremap <silent><nowait> <leader>c :<C-u>CocList commands<cr>
-nnoremap <silent><nowait> <leader>o :<C-u>CocList outline<cr>
-nnoremap <silent><nowait> <leader>s :<C-u>CocList -I symbols<cr>
-
-augroup Coc
-    autocmd!
-    autocmd CursorHold * silent call CocActionAsync('highlight')
-    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup END
-
-function! s:show_documentation()
-    if (index(['vim', 'help'], &filetype) >= 0)
-        execute 'h '.expand('<cword>')
-    elseif (coc#rpc#ready())
-        call CocActionAsync('doHover')
-    else
-        execute '!' . &keywordprg . ' ' . expand('<cword>')
-    endif
-endfunction
+nnoremap <Space>f <cmd>Telescope find_files theme=ivy<cr>
+nnoremap <Space><Space> <cmd>Telescope git_files theme=ivy<cr>
+nnoremap <Space>g <cmd>Telescope git_status theme=ivy<cr>
+nnoremap <Space>l <cmd>Telescope git_commits theme=ivy<cr>
+nnoremap <Space>b <cmd>Telescope buffers theme=ivy<cr>
+nnoremap <Space>t <cmd>Telescope tags theme=ivy<cr>
+nnoremap <Space>h <cmd>Telescope help_tags theme=ivy<cr>
+nnoremap <space>\\ <cmd>Telescope commands theme=ivy<cr>
+nnoremap <space>a <cmd>Telescope live_grep theme=ivy<cr>
