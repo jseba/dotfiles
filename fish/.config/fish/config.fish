@@ -109,3 +109,5 @@ if test "$TERM" = "dumb"
     function fish_greeting; end
     function fish_title; end
 end
+
+fish_ssh_agent
