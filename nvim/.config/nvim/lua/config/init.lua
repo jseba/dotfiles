@@ -1,4 +1,15 @@
+local lazypath = vim.fn.stdpath("data") .. "/plugins/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system({
+        "git", "clone", "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim",
+        "--branch=stable", lazypath,
+    })
+end
+vim.opt.rtp:prepend(lazypath)
+
 local M = {}
+M.lazy_version = ">=9.1.0"
 
 local options = {
     colorscheme = function()
@@ -8,7 +19,7 @@ local options = {
         diags = {
             Error = " ",
             Warn = " ",
-        Hint = " ",
+            Hint = " ",
             Info = " ",
         },
         git = {
@@ -117,7 +128,7 @@ function M.load(name)
             end,
         })
     end
-    _load("config."..name)
+    _doload("config."..name)
     if vim.bo.filetype == "lazy" then
         -- XXX: lazy ui options may have been overwritten, reset it here
         vim.cmd([[do VimResized]])
@@ -135,10 +146,9 @@ function M.init()
 end
 
 setmetatable(M, {
-    __index = function(_, key)
-        ---@cast options VimConfig
-        return options[key]
-    end,
+        __index = function(_, key)
+                return options[key]
+        end,
 })
 
 return M

@@ -1,7 +1,2 @@
-local M = {}
-
-function M.setup
-    require("config").setup(opts)
-end
-
-return M
+require("config").setup()
+require("lazy").setup("plugins")
