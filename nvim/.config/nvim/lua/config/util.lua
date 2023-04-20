@@ -48,4 +48,38 @@ function M.telescope(builtin, opts)
     end
 end
 
+function M.lazy_notify()
+    local notifs = {}
+    local function temp_notify(...)
+        table.insert(notifs, vim.F.pack_len(...))
+    end
+
+    local orig_notify = vim.notify
+    vim.notify = temp_notify
+
+    local timer = vim.loop.new_timer()
+    local check = vim.loop.new_check()
+
+    local replay = function()
+        timer:stop()
+        check:stop()
+        if vim.notify == temp_notify then
+            vim.notify = orig_notify
+        end
+        vim.schedule(function()
+            for _, notif in ipairs(notifs) do
+                vim.notify(vim.F.unpack_len(notif))
+            end
+        end)
+    end
+
+    check:start(function()
+        if vim.notify ~= temp_notify then
+            replay()
+        end
+    end)
+
+    timer:start(500, 0, replay)
+end
+
 return M

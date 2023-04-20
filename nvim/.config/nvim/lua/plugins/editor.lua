@@ -2,6 +2,54 @@ local util = require("config.util")
 
 return {
     {
+        "nvim-treesitter/nvim-treesitter",
+        version = false, -- live at head
+        build = ":TSUpdate",
+        event = { "BufReadPost", "BufNewFile" },
+        opts = {
+            highlight = { enable = true },
+            indent = { enable = true },
+            context_commentstring = { enable = true, enable_autocmd = true },
+            ensure_installed = {
+                "bash",
+                "c",
+                "cpp",
+                "go",
+                "gomod",
+                "javascript",
+                "json",
+                "jsonc",
+                "lua",
+                "luadoc",
+                "luap",
+                "markdown",
+                "markdown_inline",
+                "python",
+                "rst",
+                "rust",
+                "toml",
+                "typescript",
+                "vim",
+                "vimdoc",
+                "yaml",
+            },
+        },
+        config = function(_, opts)
+            if type(opts.ensure_installed) == "table" then
+                local added = {}
+                opts.ensure_installed = vim.tbl_filter(function(lang)
+                    if added[lang] then
+                        return false
+                    end
+                    added[lang] = true
+                    return true
+                end, opts.ensure_installed)
+            end
+            require("nvim-treesitter.install").prefer_git = true
+            require("nvim-treesitter.configs").setup(opts)
+        end,
+    },
+    {
         "nvim-telescope/telescope.nvim",
         cmd = "Telescope",
         version = false, -- no tags/releases

@@ -11,10 +11,8 @@ vim.opt.rtp:prepend(lazypath)
 local M = {}
 M.lazy_version = ">=9.1.0"
 
-local options = {
-    colorscheme = function()
-        require("doom-one").load()
-    end,
+M.options = {
+    colorscheme = "doom-one",
     icons = {
         diags = {
             Error = " ",
@@ -67,7 +65,7 @@ local options = {
     },
 }
 
-function M.setup(opts)
+function M.setup()
     if not M.has() then
         require("lazy.core.util").error("lazy.vim required")
         error("exiting")
@@ -93,12 +91,14 @@ function M.setup(opts)
         if type(M.colorscheme) == "function" then
             M.colorscheme()
         else
+            print('loading colorscheme '..M.colorscheme)
             vim.cmd.colorscheme(M.colorscheme)
         end
     end, {
         msg = "could not load configured colorscheme",
         on_error = function(msg)
             require("lazy.core.util").error(msg)
+            print('colorscheme failed to load')
             -- load default built-in colorscheme
             vim.cmd.colorscheme("habamax")
         end,
@@ -140,14 +140,14 @@ function M.init()
     if not M.init_done then
         M.init_done = true
         -- delay notifications until vim.notify was replaced (or after 500ms)
-        require("util").lazy_notify()
-        require("config").load("options")
+        require("config.util").lazy_notify()
+        require("config.options").setup_vimopts()
     end
 end
 
 setmetatable(M, {
         __index = function(_, key)
-                return options[key]
+                return M.options[key]
         end,
 })
 
