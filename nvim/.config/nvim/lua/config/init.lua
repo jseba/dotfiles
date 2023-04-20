@@ -12,9 +12,8 @@ local M = {}
 M.lazy_version = ">=9.1.0"
 
 M.options = {
-    colorscheme = "doom-one",
     icons = {
-        diags = {
+        diagnostics = {
             Error = " ",
             Warn = " ",
             Hint = " ",
@@ -86,23 +85,6 @@ function M.setup()
         M.load("autocmds")
         M.load("keymaps")
     end
-
-    require("lazy.core.util").try(function()
-        if type(M.colorscheme) == "function" then
-            M.colorscheme()
-        else
-            print('loading colorscheme '..M.colorscheme)
-            vim.cmd.colorscheme(M.colorscheme)
-        end
-    end, {
-        msg = "could not load configured colorscheme",
-        on_error = function(msg)
-            require("lazy.core.util").error(msg)
-            print('colorscheme failed to load')
-            -- load default built-in colorscheme
-            vim.cmd.colorscheme("habamax")
-        end,
-    })
 end
 
 ---@param range? string
