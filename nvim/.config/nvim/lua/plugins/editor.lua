@@ -55,7 +55,7 @@ return {
         version = false, -- no tags/releases
         keys = {
             { "<space><space>", util.telescope("git_files"), desc = "Find Files" },
-            { "<space>f", util.telescope("files"), desc = "Find All Files" },
+            { "<space>f", util.telescope("find_files"), desc = "Find All Files" },
             { "<space>r", util.telescope("oldfiles"), desc = "Recent Files" },
             { "<space>b", util.telescope("buffers"), desc = "Buffers" },
             { "<space>a", util.telescope("live_grep"), desc = "Live Grep" },

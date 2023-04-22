@@ -28,9 +28,15 @@ return {
             servers = {
                 gopls = {},
             },
+            setup = {
+            },
         },
         config = function (_, opts)
-            -- TODO: set up formatting/keymaps
+            require("plugins.lsp.format").autoformat = opts.autoformat
+            require("config.util").on_attach(function(client, buffer)
+                require("plugins.lsp.format").on_attach(client, buffer)
+                --require("plugins.lsp.keymaps").on_attach(client, buffer)
+            end)
 
             for name, icon in pairs(require("config").icons.diagnostics) do
                 name = "DiagnosticSign"..name
@@ -99,6 +105,25 @@ return {
                 mlsp.setup_handlers({setup})
             end
         end,
+    },
+    {
+        "jose-elias-alvarez/null-ls.nvim",
+        event = { "BufReadPre", "BufNewFile" },
+        dependencies = { "mason.nvim" },
+        opts = function()
+            local nls = require("null-ls")
+            return {
+                root_dir = require("null-ls.utils").root_pattern(".null-ls-root", "Makefile", ".git", "Cargo.lock", "go.mod"),
+                sources = {
+                    nls.builtins.formatting.fish_indent,
+                    nls.builtins.diagnostics.fish,
+                    nls.builtins.formatting.gofmt,
+                    nls.builtins.formatting.goimports,
+                    nls.builtins.formatting.stylua,
+                    nls.builtins.formatting.sh,
+                },
+            }
+        end
     },
     {
         "williamboman/mason.nvim",

@@ -7,6 +7,14 @@ function M.has(plugin)
     return require("lazy.core.config").plugins[plugin] ~= nil
 end
 
+function M.opts(name)
+    local plugin = require("lazy.core.config").plugins[name]
+    if not plugin then
+        return {}
+    end
+    return require("lazy.core.plugin").values(plugin, "opts", false)
+end
+
 function M.root()
     local path = vim.api.nvim_buf_get_name(0)
     path = path ~= "" and vim.loop.fs_realpath(path) or nil
@@ -80,6 +88,23 @@ function M.lazy_notify()
     end)
 
     timer:start(500, 0, replay)
+end
+
+function M.on_attach(on_attach)
+    vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+            local buf = args.buf
+            local client = vim.lsp.get_client_by_id(args.data.client_id)
+            on_attach(client, buf)
+        end,
+    })
+end
+
+function M.buffer_not_empty()
+    if vim.fn.empty(vim.fn.expand("%:t")) ~= 1 then
+        return true
+    end
+    return false
 end
 
 return M
