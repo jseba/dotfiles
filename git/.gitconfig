@@ -31,6 +31,7 @@
   c  = commit -m                        # commit with message
   ca = commit -a                        # commit all
   ci = commit                           # normal commit
+  cs = commit -s                        # sign-off commit
   amend = commit --amend --date=now     # amend previous commit
 
   # checkout
@@ -54,15 +55,18 @@
   short = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\"
   simple = log --pretty=format:\" * %s\"
   shortnocolor = log --pretty=format:\"%h %cr %cn %s\"
-  slog = log --pretty=format:\"-------------------------------------------------------------------------%n%C(yellow)%h%Creset | %C(magenta)%an%Creset | %C(cyan)%ad%Creset |%C(green)%d%Creset%n%s%n%n%b\" --name-status
+  slog = log --pretty=format:\"-------------------------------------------------------------------------%n%C(yellow)%h%Creset | %C(magenta)%an <%ae>%Creset | %C(cyan)%ad%Creset |%C(green)%d%Creset%n%s%n%n%b\" --name-status
 
   # push
-  promote = push --set-upstream origin
+  pf = push --force
   ph = push --set-upstream origin HEAD
+  promote = push --set-upstream origin HEAD
 
   # rebase
   rc = rebase --continue    # continue rebase
   rs = rebase --skip        # skip rebase
+  ri = rebase -i            # interactive rebase
+  rbi = rebase -i -         # interactive rebase on previous HEAD
 
   # reset
   unstage = reset HEAD
@@ -117,10 +121,11 @@
   email = sebajosh@outlook.com
 
 [include]
-  path = .gitconfig.local
+  path = ~/.gitconfig.local
 
 [http]
   sslNoVerify = true
 
 [pull]
   rebase = true
+  recurse-submodules = yes
