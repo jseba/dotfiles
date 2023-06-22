@@ -21,12 +21,12 @@ Plug 'jseba/vim-cpp-enhanced-highlight'
 Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
 
-Plug 'airblade/vim-gitgutter'
 Plug 'luochen1990/rainbow'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-fugitive'
 Plug 'haya14busa/is.vim'
 
 Plug 'nlknguyen/PaperColor-theme'
@@ -35,6 +35,8 @@ Plug 'itchyny/lightline.vim'
 
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': './install --bin' }
+
+Plug 'dense-analysis/ale'
 
 " Local plugins
 if filereadable(expand('$HOME/.vim/local/plugs.vim'))
@@ -318,7 +320,7 @@ let mapleader = "'"
 
 " Color scheme
 let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_italic = 1
+"let g:gruvbox_italic = 1
 let g:gruvbox_improved_warnings = 1
 let g:PaperColor_Theme_Options = {
             \   'language': {
@@ -430,7 +432,7 @@ let g:go_doc_keywordprg_enabled = 0
 let g:go_doc_balloon = 1
 let g:go_metalinter_autosave = 0
 let g:go_def_mapping_enabled = 1
-let g:go_diagnostics_level = 2
+let g:go_diagnostics_level = 0
 let g:go_template_autocreate = 0
 let g:go_highlight_operators = 1
 let g:go_highlight_functions = 1
@@ -444,6 +446,9 @@ let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_diagnostic_errors = 1
 let g:go_highlight_diagnostic_warnings = 1
+
+" ALE
+set omnifunc=ale#completion#OmniFunc
 
 augroup golang
   au!
@@ -470,7 +475,7 @@ command! -bang -nargs=* Rg
       \ call fzf#vim#grep(
       \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
       \   <bang>0 ? fzf#vim#with_preview('up:60%')
-      \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+      \           : fzf#vim#with_preview('right:50%', '?'),
       \   <bang>0)
 
 " Prefer fd-find over standard find
