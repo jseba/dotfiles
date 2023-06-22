@@ -2,7 +2,7 @@ function tmux -d "Attaches to running tmux session if one exists, else starts a 
     if test -n "$argv"
         # run tmux directly if extra arguments
         command tmux $argv
+    else
+        command tmux attach; or command tmux new-session
     end
-
-    command tmux attach; or command tmux new-session
 end
