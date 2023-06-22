@@ -20,18 +20,19 @@ function M.setup_vimopts()
     opt.cursorline = false
     opt.diffopt:append({ vertical = true })
     opt.expandtab = true
-    opt.fillchars = "diff:?,vert:¦"
+    opt.fillchars = { diff = "?", vert = "¦" }
     opt.formatoptions = "qrn1j"
     opt.gdefault = true
     opt.hidden = true
     opt.history = 1000
     opt.hlsearch = true
+    opt.ignorecase = true
     opt.incsearch = true
     opt.joinspaces = false
     opt.laststatus = 2
     opt.linespace = 0
     opt.list = true
-    opt.listchars = "tab:  ,trail:-,extends:#,nbsp:."
+    opt.listchars = { tab = "  ", trail = "-", extends = "#", nbsp = "." }
     opt.modeline = true
     opt.mouse = "a"
     opt.number = false

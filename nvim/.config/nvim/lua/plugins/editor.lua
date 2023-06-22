@@ -67,7 +67,7 @@ return {
             { "<space>f", util.telescope("find_files"), desc = "Find All Files" },
             { "<space>r", util.telescope("oldfiles"), desc = "Recent Files" },
             { "<space>b", util.telescope("buffers", { show_all_buffers = true }), desc = "Buffers" },
-            { "<space>a", util.telescope("live_grep"), desc = "Live Grep" },
+            { "<space>a", util.telescope("live_grep", { cwd = vim.loop.cwd() }), desc = "Live Grep" },
             { "<space>g", util.telescope("git_status"), desc = "Git Status" },
             { "<space>l", util.telescope("git_commits"), desc = "Git Commits" },
             { "<space>h", util.telescope("help_tags"), desc = "Help" },
