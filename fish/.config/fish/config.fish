@@ -29,16 +29,13 @@ set -x LESS -MIFXR
 set -x SSH "$HOME/.ssh"
 
 # path to ssh-agent socket (managed by systemd)
-set -x SSH_AUTH_SOCK "/run/user/$UID/ssh-agent.sock"
+set -x SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/ssh-agent.sock"
 
-# Go path
+# Go local path
 set -x GOPATH "$HOME/go"
 
-# set Go default version
-set -x GOVER "1.20"
-
-# add Go installation to path
-set -x PATH $PATH /usr/local/go/$GOVER/bin $GOPATH/bin
+# add Go toolchain to path
+set -x PATH $PATH /usr/local/go/bin $GOPATH/bin
 
 # add Rust installation to path
 set -x PATH $PATH "$HOME/.cargo/bin"
@@ -106,3 +103,5 @@ if test "$TERM" = "dumb"
     function fish_greeting; end
     function fish_title; end
 end
+
+set fish_greeting
