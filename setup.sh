@@ -14,6 +14,7 @@ STOWED_DIRS=( alacritty     \
               i3            \
               kitty         \
               nvim          \
+              systemd       \
               terminfo      \
               tmux          \
               vim           \
@@ -43,5 +44,8 @@ done
 #
 # Post-Stow after-party
 #
+if [[ $(ps -p 1 -o comm=) == "systemd" ]]; then
+    systemctl --user enable --now ssh-agent.service
+fi
 
 exit 0
