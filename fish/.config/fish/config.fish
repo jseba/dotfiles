@@ -28,8 +28,10 @@ set -x LESS -MIFXR
 # path to SSH directory
 set -x SSH "$HOME/.ssh"
 
-# path to ssh-agent socket (managed by systemd)
-set -x SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/ssh-agent.sock"
+# path to ssh-agent socket (if not set, managed by systemd on linux)
+if test -z "$SSH_AUTH_SOCK"
+    set -x SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/ssh-agent.sock"
+end
 
 # Go local path
 set -x GOPATH "$HOME/go"
@@ -45,6 +47,13 @@ set -x PATH $PATH "$HOME/.config/emacs/bin"
 
 # add local bin to path
 set -x PATH $PATH "$HOME/.local/bin"
+
+if test -d /opt/orbstack-guest
+    set -x PATH $PATH /opt/orbstack-guest/bin
+
+    # automatically trigger the macOS host to open links
+    set -x BROWSER /opt/orbstack-guest/bin/open
+end
 
 ############################
 #
@@ -105,3 +114,7 @@ if test "$TERM" = "dumb"
 end
 
 set fish_greeting
+
+if command -sq starship
+    eval (starship init fish)
+end

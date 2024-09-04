@@ -7,13 +7,13 @@ type stow >/dev/null 2>&1 || { echo "Stow not found"; exit 1; }
 STOWED_DIRS=( alacritty     \
               bin           \
               dircolors     \
-              emacs         \
               fish          \
               fonts         \
               git           \
               i3            \
               kitty         \
               nvim          \
+              starship      \
               systemd       \
               terminfo      \
               tmux          \
