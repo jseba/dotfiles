@@ -1,0 +1,27 @@
+- name: Install Fish
+  ansible.builtin.apt:
+    name: fish
+    state: latest
+  become: true
+
+- name: Create Fish Configuration Directory
+  ansible.builtin.file:
+    dest: "{{ ansible_env.HOME }}/.config/fish"
+    state: directory
+
+- name: Render Fish Configuration File
+  ansible.builtin.template:
+    src: "{{ role_path }}/files/config.fish.jinja"
+    dest: "{{ ansible_env.HOME }}/.config/fish/config.fish"
+
+- name: Install Fish Configuration
+  ansible.builtin.file:
+    src: "{{ role_path }}/files/fish_functions"
+    dest: "{{ ansible_env.HOME }}/.config/fish/functions"
+    state: link
+
+- name: Set Fish as Login Shell
+  ansible.builtin.user:
+    name: "{{ user }}"
+    shell: "/usr/bin/fish"
+  become: true

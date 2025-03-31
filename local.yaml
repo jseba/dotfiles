@@ -1,0 +1,13 @@
+- hosts: localhost
+  gather_facts: true
+  vars:
+    user: "{{ ansible_facts.env.USER }}"
+  vars_files:
+    - config.yaml
+    - secrets.yaml
+  roles:
+    - system
+    - dev
+    - editor
+    - terminal
+    - secrets

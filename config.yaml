@@ -1,0 +1,9 @@
+go_root: "/usr/local/go"
+go_version: "1.24.1"
+go_os: "linux"
+go_arch: "amd64"
+go_install_clean: false
+go_url_base: "https://go.dev/dl"
+rust_cargo_home_suffix: ".cargo"
+rust_rustup_home_suffix: ".rustup"
+rust_version: "stable"

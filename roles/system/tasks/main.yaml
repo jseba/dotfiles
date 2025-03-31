@@ -1,0 +1,44 @@
+# vim: ft=yaml.ansible
+---
+- name: Add Apt Repository Keys
+  ansible.builtin.apt_key:
+    url: "{{ item }}"
+    state: present
+  loop:
+    - https://download.docker.com/linux/ubuntu/gpg
+  become: true
+
+- name: Add Apt Repositories
+  ansible.builtin.apt_repository: 
+    repo: "{{ item.repo }}"
+    filename: "{{ item.filename }}"
+    state: present
+    update_cache: true
+  with_items:
+    - { filename: "docker", repo: "deb [arch=amd64 trusted=yes] https://download.docker.com/linux/ubuntu noble stable" }
+  become: true
+
+- name: Refresh Apt Repositories
+  ansible.builtin.apt:
+    update_cache: true
+  become: true
+
+- name: Install Base System Tools
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - curl
+    - jq
+    - openssh-client
+    - sudo
+    - yq
+  become: true
+
+- name: Current User Can sudo Without Password
+  ansible.builtin.template:
+    src: "{{ role_path }}/files/sudo_user_nopasswd.jinja"
+    dest: "/etc/sudoers.d/{{ user }}_nopasswd"
+    validate: /usr/sbin/visudo -cf %s
+    mode: '0660'
+  become: true

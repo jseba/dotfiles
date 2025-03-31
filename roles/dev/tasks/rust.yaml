@@ -1,0 +1,62 @@
+- name: Define Rust User Install Directory
+  ansible.builtin.set_fact:
+    rust_user_home: "{{ ansible_env.HOME }}"
+    rust_rustup_path: "{{ ansible_env.HOME }}/{{ rust_cargo_home_suffix }}/bin/rustup"
+
+- name: Check rustup Exists
+  ansible.builtin.stat:
+    path: "{{ rust_rustup_path }}"
+  register: rustup_binary
+  failed_when: false
+
+- name: Install rustup System Requirements
+  ansible.builtin.apt:
+    name:
+      - curl
+      - acl
+      - make
+      - gcc
+    state: present
+  become: true
+
+- name: Install rustup
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
+  args:
+    creates: "{{ rust_user_home }}/{{ rust_rustup_home_suffix }}"
+    executable: /bin/bash
+  environment:
+    RUSTUP_HOME: "{{ rust_user_home }}/{{ rust_rustup_home_suffix }}"
+    CARGO_HOME: "{{ rust_user_home }}/{{ rust_cargo_home_suffix }}"
+
+- name: Check Rust Toolchain Version
+  ansible.builtin.shell:
+    cmd: |
+      {{ rust_rustup_path }} default | sed -n 's#\([^-]\+\).*#\1#p'
+  register: rustup_default_output
+  environment:
+    RUSTUP_HOME: "{{ rust_user_home }}/{{ rust_rustup_home_suffix }}"
+    CARGO_HOME: "{{ rust_user_home }}/{{ rust_cargo_home_suffix }}"
+    PATH: "{{ ansible_env.PATH}}:{{ rust_user_home }}/{{ rust_cargo_home_suffix }}/bin"
+  changed_when: false
+  ignore_errors: true
+
+- name: Get Current Rust Toolchain (if any)
+  when:
+    - not rustup_default_output
+  block:
+    - name: Print Current Rust Toolchain
+      ansible.builtin.debug:
+        msg: "{{ rustup_default_output.stdout_lines[0] }}"
+    - name: Define Current Rust Toolchain
+      ansible.builtin.set_fact:
+        rust_active_toolchain_version: "{{ rustup_default_output.stdout_lines[0] }}"
+
+- name: Set Default Rust Toolchain Version
+  ansible.builtin.command: "{{ rust_rustup_path }} default {{ rust_version }}"
+  environment:
+    RUSTUP_HOME: "{{ rust_user_home }}/{{ rust_rustup_home_suffix }}"
+    CARGO_HOME: "{{ rust_user_home }}/{{ rust_cargo_home_suffix }}"
+    PATH: "{{ ansible_env.PATH}}:{{ rust_user_home }}/{{ rust_cargo_home_suffix }}/bin"
+  when: rust_active_toolchain_version is undefined or rust_active_toolchain_version != rust_version

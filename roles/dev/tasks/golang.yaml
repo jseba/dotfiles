@@ -1,0 +1,30 @@
+- name: Check Go Toolchain Exists
+  ansible.builtin.stat:
+    path: "{{ go_root }}/bin/go"
+  register: go_binary
+  failed_when: false
+
+- name: Check Go Toolchain Version
+  ansible.builtin.command: "{{ go_root }}/bin/go version"
+  register: current_go_version
+  changed_when: false
+  failed_when: false
+
+- name: Define Expected Go Version String
+  ansible.builtin.set_fact:
+    go_version_string: "go{{ go_version }}"
+  changed_when: false
+
+- name: Define Expected Go Version Output
+  ansible.builtin.set_fact:
+    expected_go_version_output: "go version {{ go_version_string }} {{ go_os }}/{{ go_arch }}"
+  when: expected_go_version_output is not defined
+
+- name: Install Go Toolchain
+  ansible.builtin.unarchive:
+    src: "{{ go_url_base }}/go{{ go_version }}.{{ go_os }}-{{ go_arch }}.tar.gz"
+    dest: /usr/local
+    remote_src: true
+  when:
+    ((expected_go_version_output|string not in current_go_version.stdout|default(''))) or
+    (go_install_clean)

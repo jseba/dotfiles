@@ -136,7 +136,7 @@ endif
 if exists('*mkdir')
     let s:cachedir = expand('~').'/.cache/vim'
     if !isdirectory(s:cachedir)
-        call mkdir(s:cachedir)
+        call mkdir(s:cachedir, 'p')
     endif
 
     let &backupdir = s:cachedir.'/backup'

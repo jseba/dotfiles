@@ -1,0 +1,24 @@
+- name: Install Base Development Tools
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - cmake
+    - meson
+    - ninja-build
+    - automake
+    - autoconf
+    - make
+    - gcc
+    - g++
+    - clang
+  become: true
+
+- name: Include Git Configuration Tasks
+  ansible.builtin.include_tasks: "./git.yaml"
+
+- name: Include Go Toolchain Tasks
+  ansible.builtin.include_tasks: "./golang.yaml"
+
+- name: Include Rust Toolchain Tasks
+  ansible.builtin.include_tasks: "./rust.yaml"

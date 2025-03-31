@@ -1,0 +1,13 @@
+- name: Install vim (nox)
+  ansible.builtin.apt:
+    name: "vim-nox"
+  become: true
+
+- name: Install vimrc and Configuration
+  ansible.builtin.file:
+    src: "{{ role_path }}/files/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  loop:
+    - { src: "vimrc", dest: "{{ ansible_env.HOME }}/.vimrc" }
+    - { src: "vim", dest: "{{ ansible_env.HOME }}/.vim" }

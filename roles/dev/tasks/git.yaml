@@ -1,0 +1,22 @@
+- name: Install git
+  ansible.builtin.apt:
+    name: git
+    state: latest
+  become: true
+
+- name: Install git Global Ignore File
+  ansible.builtin.file:
+    src: "{{ role_path }}/files/{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  loop:
+    - { src: "gitignore", dest: "{{ ansible_env.HOME }}/.gitignore" }
+
+- name: Render git Configuration Templates
+  ansible.builtin.template:
+    src: "{{ role_path }}/files/{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: "gitconfig.jinja", dest: "{{ ansible_env.HOME }}/.gitconfig" }
+    - { src: "gitconfig.local.jinja", dest: "{{ ansible_env.HOME }}/.gitconfig.local" }
+

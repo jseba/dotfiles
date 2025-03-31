@@ -1,0 +1,5 @@
+- name: Include Vim Tasks
+  ansible.builtin.include_tasks: "./vim.yaml"
+
+- name: Include Neovim Tasks
+  ansible.builtin.include_tasks: "./neovim.yaml"

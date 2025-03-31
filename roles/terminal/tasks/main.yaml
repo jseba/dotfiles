@@ -1,0 +1,13 @@
+- name: Install Terminal Utilities
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - bat
+    - ripgrep
+    - fd-find
+    - btop
+  become: true
+
+- name: Include Fish Tasks
+  ansible.builtin.include_tasks: "./fish.yaml"
