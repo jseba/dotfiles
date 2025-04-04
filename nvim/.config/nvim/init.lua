@@ -11,7 +11,7 @@ Plug('echasnovski/mini.nvim')
 Plug('nvim-lua/plenary.nvim')
 Plug('nvim-lualine/lualine.nvim')
 Plug('nvim-tree/nvim-web-devicons')
-Plug('nvim-treesitter/nvim-treesitter', {branch = 'fix/matches'})
+Plug('nvim-treesitter/nvim-treesitter')
 Plug('nvim-treesitter/nvim-treesitter-context')
 Plug('nvimtools/none-ls.nvim')
 Plug('neovim/nvim-lspconfig')
@@ -108,8 +108,8 @@ o.cinoptions:append("w1") -- ...but ignore whitespace after the open paren
 -- Fix markdown indentation settings
 vim.g.markdown_recommended_style = 0
 
-o.background = 'light'
-c.colorscheme('edge')
+o.background = 'dark'
+c.colorscheme('tokyonight')
 
 local icons = {
     diagnostics = {
