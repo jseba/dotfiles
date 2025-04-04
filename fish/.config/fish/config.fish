@@ -42,9 +42,6 @@ set -x PATH $PATH /usr/local/go/bin $GOPATH/bin
 # add Rust installation to path
 set -x PATH $PATH "$HOME/.cargo/bin"
 
-# add Doom bin to path
-set -x PATH $PATH "$HOME/.config/emacs/bin"
-
 # add local bin to path
 set -x PATH $PATH "$HOME/.local/bin"
 
