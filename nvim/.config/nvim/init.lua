@@ -16,6 +16,7 @@ Plug('nvim-treesitter/nvim-treesitter-context')
 Plug('nvimtools/none-ls.nvim')
 Plug('neovim/nvim-lspconfig')
 Plug('VonHeikemen/lsp-zero.nvim')
+--Plug('saghen/blink.cmp', {['tag'] = 'v0.13.1'})
 Plug('NTBBloodbath/doom-one.nvim')
 Plug('folke/tokyonight.nvim')
 Plug('sainnhe/edge')
@@ -375,62 +376,106 @@ nls.setup({
 require('mini.completion').setup()
 
 local lsp_zero = require('lsp-zero')
-local lsp_attach = function(client, bufnr)
-  local opts = { buffer = bufnr }
-  lsp_zero.buffer_autoformat()
-
-  if client.name == 'gopls' then
-      if not client.server_capabilities.semanticTokensProvider then
-          local semantic = client.config.capabilities.textDocument.semanticTokens
-          client.server_capabilities.semanticTokensProvider = {
-              full = true,
-              legend = {
-                  tokenTypes = semantic.tokenTypes,
-                  tokenModifiers = semantic.tokenModifiers,
-              },
-              range = true,
-          }
-      end
-  end
-end
 lsp_zero.extend_lspconfig({
   sign_text = true,
-  lsp_attach = lsp_attach,
 })
 
-local lspconfig = require('lspconfig')
-lspconfig.gopls.setup({
-    gofumpt = true,
-    codelenses = {
-        gc_details = false,
-        generate = true,
-        regenerate_cgo = true,
-        run_govulncheck = true,
-        test = true,
-        tidy = true,
-        upgrade_dependency = true,
-        vendor = true,
-    },
-    hints = {
-        assignVariableTypes = true,
-        compositeLiteralFields = true,
-        compositeLiteralTypes = true,
-        constantValues = true,
-        functionTypeParameters = true,
-        parameterNames = true,
-        rangeVariableTypes = true,
-    },
-    analyses = {
-        fieldalignment = true,
-        nilness = true,
-        unusedparams = true,
-        unusedwrite = true,
-        useany = true,
-    },
-    usePlaceholders = false,
-    completeUnimported = true,
-    staticcheck = true,
-    directoryFilters = { '-.git', '-.vscode', '-.vscode-test', '-node_modules' },
-    semanticTokens = true,
+-- vim.diagnostic.config({ jump = { float = true } })
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--     callback = function(args)
+--         local bufnr = args.buf
+--         local client = vim.lsp.get_client_by_id(args.data.client_id)
+--         if client.server_capabilities.completionProvider then
+--             vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
+--         end
+--         if client.server_capabilities.definitionProvider then
+--             vim.bo[bufnr].tagfunc = 'v:lua.vim.lsp.tagfunc'
+--         end
+--     end,
+-- })
+-- local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- capabilities.textDocument.semanticTokens.multilineTokenSupport = true
+-- capabilities = require('blink.cmp').get_lsp_capabilities(capabilities)
+-- capabilities.textDocument.completion.completionItem.insertReplaceSupport = false
+
+vim.lsp.config('*', {
+    root_markers = { '.git', '.root' },
+    capabilities = capabilities,
 })
-lspconfig.rust_analyzer.setup({})
+
+vim.lsp.config. opls = {
+    filetypes = { 'go', 'gomod' },
+    cmd = { 'gopls', 'serve' },
+    on_attach = function(client, bufnr)
+        if not client.server_capabilities.semanticTokensProvider then
+            local semantic = client.config.capabilities.textDocument.semanticTokens
+            client.server_capabilities.semanticTokensProvider = {
+                full = true,
+                legend = {
+                    tokenTypes = semantic.tokenTypes,
+                    tokenModifiers = semantic.tokenModifiers,
+                },
+                range = true,
+            }
+        end
+        vim.api.nvim_create_autocmd('BufWritePre', {
+            buffer = bufnr,
+            callback = function()
+                vim.lsp.buf.format()
+            end,
+        })
+    end,
+    settings = {
+        gopls = {
+            gofumpt = true,
+            codelenses = {
+                gc_details = false,
+                generate = true,
+                regenerate_cgo = true,
+                run_govulncheck = true,
+                test = true,
+                tidy = true,
+                upgrade_dependency = true,
+                vendor = true,
+            },
+            hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+            },
+            analyses = {
+                staticcheck = true,
+                nilness = true,
+                unusedparams = true,
+                unusedwrite = true,
+                useany = true,
+            },
+            usePlaceholders = false,
+            completeUnimported = true,
+            staticcheck = true,
+            directoryFilters = { '-.git', '-.vscode', '-.vscode-test', '-node_modules' },
+            semanticTokens = true,
+            env = {
+                GOPACKAGESDRIVER = './tools/gopls.sh'
+            },
+        },
+    },
+}
+
+vim.lsp.config['rust_analyzer'] = {
+    cmd = { 'rust_analyzer' },
+    filetypes = { 'rust' },
+    checkOnSave = {
+        enabled = true,
+        command = 'clippy',
+    },
+}
+
+vim.lsp.enable({
+    'gopls',
+    'rust_analyzer',
+})
