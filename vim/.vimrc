@@ -13,13 +13,13 @@ endif
 " Plugins
 call plug#begin('~/.vim/plugged')
 
-Plug 'hashivim/vim-vagrant'
 Plug 'dag/vim-fish'
 Plug 'saltstack/salt-vim'
 Plug 'fatih/vim-go'
 Plug 'jseba/vim-cpp-enhanced-highlight'
 Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
+Plug 'dense-analysis/ale'
 
 Plug 'luochen1990/rainbow'
 Plug 'tpope/vim-commentary'
@@ -29,14 +29,12 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-fugitive'
 Plug 'haya14busa/is.vim'
 
-Plug 'nlknguyen/PaperColor-theme'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'morhetz/gruvbox'
 Plug 'itchyny/lightline.vim'
 
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': './install --bin' }
-
-Plug 'dense-analysis/ale'
 
 " Local plugins
 if filereadable(expand('$HOME/.vim/local/plugs.vim'))
@@ -107,6 +105,7 @@ set tabstop=4
 set tags-=./tags tags-=./tags; tags^=./tags;
 set textwidth=140
 set title
+set ttymouse=sgr
 set undofile
 set updatetime=300
 set viminfo^=%
@@ -320,7 +319,7 @@ let mapleader = "'"
 
 " Color scheme
 let g:gruvbox_contrast_dark = 'hard'
-"let g:gruvbox_italic = 1
+let g:gruvbox_italic = 1
 let g:gruvbox_improved_warnings = 1
 let g:PaperColor_Theme_Options = {
             \   'language': {
@@ -340,6 +339,7 @@ if !has('gui_running')
     endif
 
     set t_Co=256
+    set t_RV=[>c
     set t_so=[7m
     set t_se=[27m
     set t_ZH=[3m
@@ -371,7 +371,7 @@ colorscheme gruvbox
 
 " statusline setup
 let g:lightline = {
-            \ 'colorscheme': 'jellybeans',
+            \ 'colorscheme': 'catppuccin',
             \ 'active': {
             \   'left': [[ 'mode', 'paste' ],
             \            [ 'readonly', 'modified', 'filename' ]],
@@ -434,6 +434,7 @@ let g:go_metalinter_autosave = 0
 let g:go_def_mapping_enabled = 1
 let g:go_diagnostics_level = 0
 let g:go_template_autocreate = 0
+let g:go_gopls_gofumpt = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_functions = 1
 let g:go_highlight_function_parameters = 1
@@ -447,12 +448,60 @@ let g:go_highlight_variable_assignments = 1
 let g:go_highlight_diagnostic_errors = 1
 let g:go_highlight_diagnostic_warnings = 1
 
-" ALE
-set omnifunc=ale#completion#OmniFunc
+let g:go_gopls_settings = {
+            \   'build.directoryFilters': ['-.git','-.vscode','-node_modules','-_bazel'],
+            \   'ui.semanticTokens': v:true,
+            \   'ui.completion.usePlaceholders': v:false,
+            \   'ui.codelenses': {
+            \     'gc_details': v:false,
+            \     'generate': v:false,
+            \     'regenerate_cgo': v:false,
+            \     'test': v:false,
+            \     'tidy': v:false,
+            \     'upgrade_dependency': v:false,
+            \     'vendor': v:false,
+            \   },
+            \ }
+
+            " \   'ui.hints': {
+            " \     'assignVariableTypes': v:true,
+            " \     'compositeLiteralFields': v:true,
+            " \     'compositeLiteralTypes': v:true,
+            " \     'constantValues': v:true,
+            " \     'functionTypeParameters': v:true,
+            " \     'parameterNames': v:true,
+            " \     'rangeVariableTypes': v:true,
+            " \   },
+function! <SID>MaybeSetGoPackagesDriver()
+    let l:dir = getcwd()
+    while l:dir != "/"
+        if filereadable(simplify(join([l:dir, 'WORKSPACE'], '/'))) || filereadable(simplify(join([l:dir, 'MODULE.bazel'], '/')))
+            let l:maybe_driver_path = simplify(join([l:dir, 'tools/gopackagesdriver.sh'], '/'))
+            if filereadable(l:maybe_driver_path)
+                let $GOPACKAGESDRIVER = l:maybe_driver_path
+                break
+            end
+        end
+        let l:dir = fnamemodify(l:dir, ':h')
+    endwhile
+endfunction
+call <SID>MaybeSetGoPackagesDriver()
 
 augroup golang
   au!
-  au FileType go nnoremap <buffer> gK :GoDoc<cr>
+  au FileType go nnoremap <buffer> K :GoDoc<cr>
+augroup END
+
+" ALE
+let g:ale_completion_enabled = 1
+let g:ale_linters = {
+            \ 'go': [],
+            \ }
+
+augroup ale_omni
+    au!
+    au FileType javascript,typescript set omnifunc=ale#completion#OmniFunc
+    au FileType javascript,typescript set tagfunc=ale#definition#GoToCommandHandler
 augroup END
 
 " Rainbow delimiters
