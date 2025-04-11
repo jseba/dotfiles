@@ -1,0 +1,27 @@
+# vim: ft=yaml.ansible
+---
+- name: Install ssh-agent As Systemd User Service
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/ssh-agent.service"
+    dest: "{{ ansible_env.HOME }}/.config/systemd/user/ssh-agent.service"
+
+- name: Enable ssh-agent User Service
+  ansible.builtin.systemd_service:
+    name: ssh-agent
+    scope: user
+    state: "started"
+    enabled: true
+    daemon_reload: true
+
+- name: Install ksshaskpass
+  ansible.builtin.apt:
+    name: ksshaskpass
+    state: present
+  become: true
+
+- name: Configure ksshaskpass As Preferred Prompter
+  ansible.builtin.copy:
+    content: |
+      SSH_ASKPASS='/usr/bin/ksshaskpass'
+      SSH_ASKPASS_REQUIRE=prefer
+    dest: "{{ ansible_env.HOME }}/.environment.d/ssh_askpass.conf"

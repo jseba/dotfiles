@@ -1,13 +1,18 @@
 - name: Install Terminal Utilities
   ansible.builtin.apt:
-    name: "{{ item }}"
+    name:
+      - bat
+      - ripgrep
+      - fd-find
+      - btop
     state: latest
-  loop:
-    - bat
-    - ripgrep
-    - fd-find
-    - btop
   become: true
 
 - name: Include Fish Tasks
   ansible.builtin.include_tasks: "./fish.yaml"
+
+- name: Include Tmux Tasks
+  ansible.builtin.include_tasks: "./tmux.yaml"
+
+- name: Include Kitty Tasks
+  ansible.builtin.include_tasks: "./kitty.yaml"

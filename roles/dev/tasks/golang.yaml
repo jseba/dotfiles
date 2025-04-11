@@ -26,5 +26,6 @@
     dest: /usr/local
     remote_src: true
   when:
-    ((expected_go_version_output|string not in current_go_version.stdout|default(''))) or
+    (not go_binary.stat.exists) or
+    (go_check_version and (expected_go_version_output|string not in current_go_version.stdout|default(''))) or
     (go_install_clean)

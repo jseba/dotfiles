@@ -1,0 +1,10 @@
+- name: Install Tmux
+  ansible.builtin.apt:
+    name: tmux
+    state: latest
+  become: true
+
+- name: Install Tmux Configuration
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/tmux/tmux.conf"
+    dest: "{{ ansible_env.HOME }}/.tmux.conf"

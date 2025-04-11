@@ -11,12 +11,12 @@
 
 - name: Render Fish Configuration File
   ansible.builtin.template:
-    src: "{{ role_path }}/files/config.fish.jinja"
+    src: "{{ role_path }}/files/fish/config.fish.jinja"
     dest: "{{ ansible_env.HOME }}/.config/fish/config.fish"
 
 - name: Install Fish Configuration
   ansible.builtin.file:
-    src: "{{ role_path }}/files/fish_functions"
+    src: "{{ role_path }}/files/fish/fish_functions"
     dest: "{{ ansible_env.HOME }}/.config/fish/functions"
     state: link
 

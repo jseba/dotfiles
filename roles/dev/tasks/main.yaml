@@ -1,17 +1,17 @@
 - name: Install Base Development Tools
   ansible.builtin.apt:
-    name: "{{ item }}"
+    name:
+      - cmake
+      - meson
+      - ninja-build
+      - automake
+      - autoconf
+      - make
+      - gcc
+      - g++
+      - clang
+      - podman
     state: latest
-  loop:
-    - cmake
-    - meson
-    - ninja-build
-    - automake
-    - autoconf
-    - make
-    - gcc
-    - g++
-    - clang
   become: true
 
 - name: Include Git Configuration Tasks

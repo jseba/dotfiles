@@ -1,0 +1,19 @@
+- name: Install Kitty
+  ansible.builtin.apt:
+    name: kitty
+    state: latest
+  become: true
+
+- name: Create Kitty Configuration Directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/kitty"
+    state: directory
+
+- name: Install Kitty Configuration Files
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/kitty/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/.config/kitty/{{ item }}"
+  loop:
+    - "kitty.conf"
+    - "firefoxdev.conf"
+    - "ayu.conf"

@@ -1,0 +1,9 @@
+- name: Install Fonts
+  ansible.builtin.apt:
+    name:
+      - fonts-firacode
+      - fonts-hack
+      - fonts-font-awesome
+      - fonts-octicons
+    state: present
+  become: true

@@ -1,6 +1,7 @@
 - hosts: localhost
   gather_facts: true
   vars:
+    remote: false
     user: "{{ ansible_facts.env.USER }}"
   vars_files:
     - config.yaml

@@ -1,3 +1,5 @@
+# vim: ft=yaml.ansible
+---
 - name: Install git
   ansible.builtin.apt:
     name: git
@@ -6,17 +8,12 @@
 
 - name: Install git Global Ignore File
   ansible.builtin.file:
-    src: "{{ role_path }}/files/{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: "{{ role_path }}/files/gitignore"
+    dest: "{{ ansible_env.HOME }}/.gitignore"
     state: link
-  loop:
-    - { src: "gitignore", dest: "{{ ansible_env.HOME }}/.gitignore" }
 
-- name: Render git Configuration Templates
-  ansible.builtin.template:
-    src: "{{ role_path }}/files/{{ item.src }}"
-    dest: "{{ item.dest }}"
-  loop:
-    - { src: "gitconfig.jinja", dest: "{{ ansible_env.HOME }}/.gitconfig" }
-    - { src: "gitconfig.local.jinja", dest: "{{ ansible_env.HOME }}/.gitconfig.local" }
-
+- name: Install git Global Configuration File
+  ansible.builtin.file:
+    src: "{{ role_path }}/files/gitconfig"
+    dest: "{{ ansible_env.HOME }}/.gitconfig"
+    state: link

@@ -117,8 +117,7 @@
   enabled = true
 
 [user]
-  name = {{ user_name }}
-  email = {{ user_email }}
+  name = Josh Seba
 
 [include]
   path = ~/.gitconfig.local
