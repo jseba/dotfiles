@@ -1,0 +1,94 @@
+# non-Neovim rocks.
+[rocks]
+
+# Neovim plugins
+[plugins]
+"conform.nvim" = "9.0.0"
+"gitsigns.nvim" = "1.0.2"
+"lsp_signature.nvim" = "0.3.1"
+"lualine.nvim" = "scm"
+"mason-lspconfig.nvim" = "1.32.0"
+"mason.nvim" = "1.11.0"
+"mini.bufremove" = "0.15.0"
+"mini.comment" = "0.15.0"
+"plenary.nvim" = "scm"
+"rocks-git.nvim" = "2.5.3"
+"rocks-treesitter.nvim" = "1.3.0"
+"rocks.nvim" = "2.44.0"
+"telescope.nvim" = "scm"
+nvim-web-devicons = "0.100"
+tree-sitter-go = "0.0.39"
+tree-sitter-toml = "0.0.31"
+
+[plugins.nvim]
+git = "catppuccin/nvim"
+rev = "v1.9.0"
+
+[plugins.coq]
+git = "ms-jpq/coq_nvim"
+rev = "coq"
+
+[plugins."coq.artifacts"]
+git = "ms-jpq/coq.artifacts"
+rev = "artifacts"
+
+# Treesitter syntaxes
+[treesitter]
+auto_highlight = [
+  "comment",
+  "c",
+  "capnp",
+  "cpp",
+  "dockerfile",
+  "editorconfig",
+  "fish",
+  "git_config",
+  "git_rebase",
+  "gitattributes",
+  "gitcommit",
+  "gitignore",
+  "go",
+  "gomod",
+  "gosum",
+  "gotmpl",
+  "gowork",
+  "hcl",
+  "http",
+  "ini",
+  "javascript",
+  "jinja",
+  "jinja_inline",
+  "json",
+  "json5",
+  "jsonc",
+  "kconfig",
+  "lua",
+  "make",
+  "meson",
+  "ninja",
+  "passwd",
+  "perl",
+  "printf",
+  "promql",
+  "proto",
+  "puppet",
+  "python",
+  "regex",
+  "requirements",
+  "rst",
+  "rust",
+  "sql",
+  "ssh_config",
+  "starlark",
+  "strace",
+  "terraform",
+  "toml",
+  "typescript",
+  "typst",
+  "udev",
+  "vim",
+  "vimdoc",
+  "xml",
+  "yaml",
+]
+auto_install = true
