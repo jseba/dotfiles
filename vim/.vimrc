@@ -19,7 +19,6 @@ Plug 'fatih/vim-go'
 Plug 'jseba/vim-cpp-enhanced-highlight'
 Plug 'rhysd/vim-clang-format'
 Plug 'pboettch/vim-cmake-syntax'
-Plug 'dense-analysis/ale'
 
 Plug 'luochen1990/rainbow'
 Plug 'tpope/vim-commentary'
@@ -367,7 +366,7 @@ else
   set guioptions+=c
 endif
 
-colorscheme gruvbox
+colorscheme catppuccin
 
 " statusline setup
 let g:lightline = {
