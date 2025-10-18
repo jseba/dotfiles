@@ -37,7 +37,7 @@ return {
 				"**/*.{bzl,bazel}",
 			},
 			-- env = {
-			--     --GOPACKAGESDRIVER = '../tools/gopackagesdriver.sh'
+			-- 	GOPACKAGESDRIVER = "../tools/gopackagesdriver.sh",
 			-- },
 			directoryFilters = {
 				"-bazel-bin",

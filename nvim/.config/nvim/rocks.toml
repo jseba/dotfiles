@@ -50,6 +50,10 @@ rev = "coq"
 git = "ms-jpq/coq.artifacts"
 rev = "artifacts"
 
+[plugins.telescope-zoxide]
+git = "jvgrootveld/telescope-zoxide"
+rev = "v2.1"
+
 # Treesitter syntaxes
 [treesitter]
 auto_highlight = [

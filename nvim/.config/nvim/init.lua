@@ -133,6 +133,7 @@ local bufremove = require("mini.bufremove")
 
 --- Keybindings
 map("i", "kj", "<esc>", mopt)
+map("t", "kj", "<C-\\><C-n>", mopt)
 map("n", "vs", ":vsplit<cr>", mopt)
 map("n", "<space><", ":bprevious<cr>", mopt)
 map("n", "<space>>", ":bnext<cr>", mopt)
@@ -199,13 +200,18 @@ require("catppuccin").setup({
 	dim_inactive = {
 		enabled = true,
 	},
+	term_colors = true,
 })
 
 o.background = "dark"
 vim.cmd.colorscheme("catppuccin")
 
+require("telescope").load_extension("zoxide")
+local zoxide = require("telescope").extensions.zoxide
+
 local telescope = require("telescope.builtin")
 map("n", "<Space><Space>", telescope.git_files, mopt)
+map("n", "<Space>j", zoxide.list, mopt)
 map("n", "<Space>f", telescope.find_files, mopt)
 map("n", "<Space>a", telescope.live_grep, mopt)
 map("n", "<Space>b", telescope.buffers, mopt)
@@ -387,7 +393,7 @@ vim.diagnostic.config({
 
 vim.lsp.enable({
 	"gopls",
-	"rust_analyzer",
+	"rust-analyzer",
 	"starpls", -- starlark/bazel
 	"clangd",
 	"dockerls",
