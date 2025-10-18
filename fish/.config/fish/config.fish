@@ -43,7 +43,10 @@ set -x PATH $PATH /usr/local/go/bin $GOPATH/bin
 set -x PATH $PATH "$HOME/.cargo/bin"
 
 # add local bin to path
-set -x PATH $PATH "$HOME/.local/bin"
+set -x PATH "$HOME/.local/bin" $PATH
+
+# add Zig installation to path
+set -x PATH $PATH "$HOME/.zig"
 
 if test -d /opt/orbstack-guest
     set -x PATH $PATH /opt/orbstack-guest/bin
@@ -111,7 +114,15 @@ if test "$TERM" = "dumb"
 end
 
 set fish_greeting
+set fish_color_autosuggestion normal --dim
+set fish_color_command brblue
+set fish_color_param blue
 
 if command -sq starship
-    eval (starship init fish)
+    starship init fish | source
+end
+
+if command -sq zoxide
+    zoxide init fish | source
+    alias cd z
 end
