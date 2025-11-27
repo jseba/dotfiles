@@ -55,6 +55,9 @@ if test -d /opt/orbstack-guest
     set -x BROWSER /opt/orbstack-guest/bin/open
 end
 
+set -x PNPM_HOME "/home/jseba/.local/share/pnpm"
+set -x PATH $PATH "$PNPM_HOME"
+
 ############################
 #
 # Aliases
@@ -125,4 +128,8 @@ end
 if command -sq zoxide
     zoxide init fish | source
     alias cd z
+end
+
+if command -sq direnv
+    direnv hook fish | source
 end
