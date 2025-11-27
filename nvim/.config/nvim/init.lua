@@ -127,10 +127,6 @@ o.cinoptions:append("w1") -- ...but ignore whitespace after the open paren
 -- fix markdoown indentation style
 vim.g.markdown_recommended_style = 0
 
-local mopt = { noremap = true, silent = true }
-
-local bufremove = require("mini.bufremove")
-
 --- Keybindings
 map("i", "kj", "<esc>", mopt)
 map("t", "kj", "<C-\\><C-n>", mopt)
@@ -218,6 +214,7 @@ map("n", "<Space>b", telescope.buffers, mopt)
 map("n", "<Space>t", telescope.tags, mopt)
 map("n", "<Space>/", telescope.current_buffer_fuzzy_find, mopt)
 map("n", "<Space>g", telescope.git_commits, mopt)
+
 map("n", "<Space>,r", telescope.lsp_references, mopt)
 map("n", "<Space>,i", telescope.lsp_implementations, mopt)
 map("n", "<Space>,f", telescope.diagnostics, mopt)
